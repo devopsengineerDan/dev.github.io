@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on vaga.io</title>
+    <link>https://vaga.io/post/</link>
+    <description>Recent content in Posts on vaga.io</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Thu, 24 Dec 2015 00:00:00 +0000</lastBuildDate><atom:link href="https://vaga.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TEST Partager rapidement un fichier avec byt.tl</title>
+      <link>https://vaga.io/post/partager-rapidement-un-fichier-avec-byttl/</link>
+      <pubDate>Thu, 24 Dec 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://vaga.io/post/partager-rapidement-un-fichier-avec-byttl/</guid>
+      <description>Je fais un petit article pour présenter un service que j&amp;rsquo;ai réalisé avec Wayt.
+Nous cherchions un moyen rapide et simple pour partager des fichiers.
+Le principe était de pouvoir le décliner sur plusieurs plateformes (un site web, un terminal&amp;hellip;)
+Pour faire vite fait le tour, on a :
+ un service en golang qui nous permet de stocker les fichiers (une micro API) une interface web très minimaliste un binaire pour envoyer un fichier depuis un terminal  Le tout est sur une image Docker prêt à être déployé :</description>
+    </item>
+    
+  </channel>
+</rss>

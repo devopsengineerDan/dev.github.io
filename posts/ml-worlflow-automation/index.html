@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Machine learning workflow automation // Engineer Dancun</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.68.3" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Dancun Manyinsa" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://example.com/css/main.min.d5ed8558bcfb3aab1e3d1790fb902decbac1f989a0d27aa3b2a2320773186707.css" />
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Machine learning workflow automation"/>
+<meta name="twitter:description" content="Automating the Archetypal Machine Learning Workflow and Model Deployment This repository contains a Python-based Machine Learning (ML) project, whose primary aim is to demonstrate the archetypal ML workflow within a Jupyter notebook, together with some proof-of-concept ideas on automating key steps, using the Titanic binary classification dataset hosted on Kaggle. The ML workflow includes: data exploration and visualisation, feature engineering, model training and selection. The notebook - titanic-ml.ipynb - also yields a persisted prediction pipeline (pickled to the models directory), that is used downstream in the model deployment process."/>
+
+    <meta property="og:title" content="Machine learning workflow automation" />
+<meta property="og:description" content="Automating the Archetypal Machine Learning Workflow and Model Deployment This repository contains a Python-based Machine Learning (ML) project, whose primary aim is to demonstrate the archetypal ML workflow within a Jupyter notebook, together with some proof-of-concept ideas on automating key steps, using the Titanic binary classification dataset hosted on Kaggle. The ML workflow includes: data exploration and visualisation, feature engineering, model training and selection. The notebook - titanic-ml.ipynb - also yields a persisted prediction pipeline (pickled to the models directory), that is used downstream in the model deployment process." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/posts/ml-worlflow-automation/" />
+<meta property="article:published_time" content="2020-06-10T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-10T00:00:00+00:00" />
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://example.com"><img class="app-header-avatar" src="/avatar.jpg" alt="Dancun Manyinsa" /></a>
+      <h1>Engineer Dancun</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+      </nav>
+      <p>Software Engineer, Reseacher(AI and Quantum Science), and Habitual Quant</p>
+      <div class="app-header-social">
+        
+          <a href="https://www.github.com/DancunManyinsa" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/dancun-manyinsa-42518a17b/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="mailto:dancunmoruri@gmail.com" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-link">
+  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Machine learning workflow automation</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 10, 2020
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          3 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://example.com/tags/python/">python</a>
+              <a class="tag" href="https://example.com/tags/rust/">rust</a>
+              <a class="tag" href="https://example.com/tags/c/">c</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <hr>
+<h1 id="automating-the-archetypal-machine-learning-workflow-and-model-deployment">Automating the Archetypal Machine Learning Workflow and Model Deployment</h1>
+<p>This repository contains a Python-based Machine Learning (ML) project, whose primary aim is to demonstrate the archetypal ML workflow within a Jupyter notebook, together with some proof-of-concept ideas on automating key steps, using the Titanic binary classification dataset hosted on <a href="https://www.kaggle.com">Kaggle</a>. The ML workflow includes: data exploration and visualisation, feature engineering, model training and selection. The notebook - <code>titanic-ml.ipynb</code> - also yields a persisted prediction pipeline (pickled to the <code>models</code> directory), that is used downstream in the model deployment process. Note, that we have already downloaded the data from Kaggle, in CSV format, to the <code>data</code> directory of this project&rsquo;s root directory.</p>
+<p>The secondary aim of this project, is to demonstrate how the deployment of the model generated as a &lsquo;build artefact&rsquo; of the modelling notebook, can be automatically deployed as a managed RESTful prediction service on Kubernetes, without having to write <strong>any</strong> custom code. The full details are contained in the <code>deploy/deploy-model.ipynb</code> notebook, where we lean very heavily on the approaches discussed <a href="https://github.com/AlexIoannides/kubernetes-ml-ops">here</a>.</p>
+<h2 id="managing-project-dependencies-using-pipenv">Managing Project Dependencies using Pipenv</h2>
+<p>We use <a href="https://docs.pipenv.org">pipenv</a> for managing project dependencies and Python environments (i.e. virtual environments). All of the direct packages dependencies required to run the code (e.g. NumPy for arrays/tensors and Pandas for DataFrames), as well as all the packages used during development (e.g. flake8 for code linting and IPython for interactive console sessions), are described in the <code>Pipfile</code>. Their <strong>precise</strong> downstream dependencies are described in <code>Pipfile.lock</code>.</p>
+<h3 id="installing-pipenv">Installing Pipenv</h3>
+<p>To get started with Pipenv, first of all download it - assuming that there is a global version of Python available on your system and on the PATH, then this can be achieved by running the following command,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> pip3 install pipenv
+</code></pre></div><p>Pipenv is also available to install from many non-Python package managers. For example, on OS X it can be installed using the <a href="https://brew.sh">Homebrew</a> package manager, with the following terminal command,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> brew install pipenv
+</code></pre></div><p>For more information, including advanced configuration options, see the <a href="https://docs.pipenv.org">official pipenv documentation</a>.</p>
+<h3 id="installing-this-projects-dependencies">Installing this Projects&rsquo; Dependencies</h3>
+<p>Make sure that you&rsquo;re in the project&rsquo;s root directory (the same one in which the <code>Pipfile</code> resides), and then run,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> pipenv install <span style="color:#f92672">--</span>dev
+</code></pre></div><p>This will install all of the direct project dependencies as well as the development dependencies (the latter a consequence of the <code>--dev</code> flag).</p>
+<h3 id="running-python-ipython-and-jupyterlab-from-the-projects-virtual-environment">Running Python, IPython and JupyterLab from the Project&rsquo;s Virtual Environment</h3>
+<p>In order to continue development in a Python environment that precisely mimics the one the project was initially developed with, use Pipenv from the command line as follows,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> pipenv run python3
+</code></pre></div><p>The <code>python3</code> command could just as well be <code>ipython3</code> or the JupterLab, for example,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> pipenv run jupyter lab
+</code></pre></div><p>This will fire-up a JupyterLab <em>where the default Python 3 kernel includes all of the direct and development project dependencies</em>. This is how we advise that the notebooks within this project are used.</p>
+<h3 id="automatic-loading-of-environment-variables">Automatic Loading of Environment Variables</h3>
+<p>Pipenv will automatically pick-up and load any environment variables declared in the <code>.env</code> file, located in the package&rsquo;s root directory. For example, adding,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">SPARK_HOME<span style="color:#f92672">=</span>applications<span style="color:#f92672">/</span>spark<span style="color:#ae81ff">-2.3.1</span><span style="color:#f92672">/</span>bin
+</code></pre></div><p>Will enable access to this variable within any Python program, via a call to <code>os.environ['SPARK_HOME']</code>. Note, that if any security credentials are placed here, then this file <strong>must</strong> be removed from source control - i.e. add <code>.env</code> to the <code>.gitignore</code> file to prevent potential security risks.</p>
+<h3 id="pipenv-shells">Pipenv Shells</h3>
+<p>Prepending <code>pipenv</code> to every command you want to run within the context of your Pipenv-managed virtual environment, can get very tedious. This can be avoided by entering into a Pipenv-managed shell,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> pipenv shell
+</code></pre></div><p>which is equivalent to &lsquo;activating&rsquo; the virtual environment. Any command will now be executed within the virtual environment. Use <code>exit</code> to leave the shell session.</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+      <div>
+        <br>
+        <div>
+          <h5 class="title is-small">Share to social media</h5>
+          <div>
+            <a class="share share-network-twitter" style="background-color:#008080;"><i class="fab fah fa-lg fa-twitter"></i><span>Twitter</span></a>
+            <a class="share share-network-facebook" style="background-color:#1877f2;"><i class="fab fah fa-lg fa-facebook-f"></i><span>Facebook</span></a>
+            <a class="share share-network-linkedin" style="background-color:#2B1B17;"><i class="fab fah fa-lg fa-linkedin"></i><span>LinkedIn</span></a>
+            <a class="share share-network-hackernews" style="background-color:#008000"><i class="fab fah fa-lg fa-hacker-news"></i><span>HackerNews</span></a>
+            <a class="share share-network-pinterest" style="background-color:#bd081c;"><i class="fab fah fa-lg fa-pinterest"></i><span>Pinterest</span></a>
+            <a class="share share-network-pocket" style="background-color:#7F38EC;"><i class="fab fah fa-lg fa-get-pocket"></i><span>Pocket</span></a>
+            <a class="share share-network-email" style="background-color:#333333;"><i class="far fah fa-lg fa-envelope"></i><span>Email</span></a>
+            <a class="share share-network-flipboard" style="background-color: #837E7C;"><i class="fab fah fa-lg fa-flipboard"></i><span>Flipboard</span></a>
+            <a class="share share-network-quora" style="background-color:#808000;"><i class="fab fah fa-lg fa-quora"></i><span>Quora</span></a>
+            <a class="share share-network-reddit" style="background-color: #581845
+            ;"><i class="fab fah fa-lg fa-reddit-alien"></i><span>Reddit</span></a>
+            <a class="share share-network-telegram" style="background-color:#000080;"><i class="fab fah fa-lg fa-telegram-plane"></i><span>Telegram</span></a>
+            <a class="share share-network-whatsapp" style="background-color:#E55451;"><i class="fab fah fa-lg fa-whatsapp"></i><span>Whatsapp</span></a>
+            <a class="share share-network-sms" style="background-color:#513B1C;"><i class="far fah fa-lg fa-comment-dots"></i><span>SMS</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="comments">
+        <div id="disqus_thread" pageConfig="[object Object]"></div>
+      </div>
+      
+      <div id="disqus_thread"></div>
+      <script>
+          
+
+          
+
+          (function() { 
+          var d = document, s = d.createElement('script');
+          s.src = 'https://engineer-dancun-personal-blog.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      
+      <br><br><br>
+      <footer>
+        &copy;  
+        Powered by <a href="https://github.com/gohugoio/hugo" target="_blank">Hugo
+      </footer>
+      <script type="application/ld+json">
+        {
+          "@context" : "http://schema.org",
+          "@type" : "Blog",
+          "name": " Engineer Dancun ",
+          "url" : "https://devopsengineerdan.github.io",
+          "image": "./static/avatar.jpg",
+          "description": "Software Engineer and Researcher"
+        }
+        </script>
+        <script id="dsq-count-scr" src="//engineer-dancun.disqus.com/count.js" async></script>
+    </main>
+  </body>
+</html>

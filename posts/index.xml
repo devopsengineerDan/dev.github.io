@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Engineer Dancun</title>
+    <link>https://example.com/posts/</link>
+    <description>Recent content in Posts on Engineer Dancun</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 03 Mar 2021 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://example.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> Deploying machine learning models on kubernetes</title>
+      <link>https://example.com/posts/deploying-ml-models-on-kubernetes/</link>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/posts/deploying-ml-models-on-kubernetes/</guid>
+      <description>Deploying Machine Learning Models on Kubernetes Bodywork A common pattern for deploying Machine Learning (ML) models into production environments - e.g. ML models trained using the SciKit Learn or Keras packages (for Python), that are ready to provide predictions on new data - is to expose these ML as RESTful API microservices, hosted from within Docker containers. These can then deployed to a cloud environment for handling everything required for maintaining continuous availability - e.</description>
+    </item>
+    
+    <item>
+      <title>Implementing py-package-template</title>
+      <link>https://example.com/posts/py-package-template/</link>
+      <pubDate>Sun, 13 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/posts/py-package-template/</guid>
+      <description>Python Package Template Project  
+The py-template-project package allows users to download the contents of this GiHub repository, containing a skeleton Python package project to be used as a template for kick-starting development of any type of Package; destined for upload to PyPI, or just for local install using Pip. The downloaded package includes the following components to aid rapid development without having to spend time cloning existing set-ups from other projects:</description>
+    </item>
+    
+    <item>
+      <title>Machine learning workflow automation</title>
+      <link>https://example.com/posts/ml-worlflow-automation/</link>
+      <pubDate>Wed, 10 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/posts/ml-worlflow-automation/</guid>
+      <description>Automating the Archetypal Machine Learning Workflow and Model Deployment This repository contains a Python-based Machine Learning (ML) project, whose primary aim is to demonstrate the archetypal ML workflow within a Jupyter notebook, together with some proof-of-concept ideas on automating key steps, using the Titanic binary classification dataset hosted on Kaggle. The ML workflow includes: data exploration and visualisation, feature engineering, model training and selection. The notebook - titanic-ml.ipynb - also yields a persisted prediction pipeline (pickled to the models directory), that is used downstream in the model deployment process.</description>
+    </item>
+    
+    <item>
+      <title>Implementing machine learning bodywork</title>
+      <link>https://example.com/posts/ml-bodywork-core/</link>
+      <pubDate>Wed, 06 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/posts/ml-bodywork-core/</guid>
+      <description>Machine Learning Bodywork Core Bodywork deploys machine learning projects developed in Python, to Kubernetes. It helps you to:
+ serve models as microservices execute batch jobs run reproducible pipelines  On demand, or on a schedule. It automates repetitive DevOps tasks and frees machine learning engineers to focus on what they do best - solving data problems with machine learning.
+Get Started Bodywork is distributed as a Python package - install it from PyPI:</description>
+    </item>
+    
+    <item>
+      <title>MicroPython in action</title>
+      <link>https://example.com/posts/micropython-in-action/</link>
+      <pubDate>Thu, 13 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/posts/micropython-in-action/</guid>
+      <description>Watch MicroPython in action 
+ 
+The MicroPython project This is the MicroPython project, which aims to put an implementation of Python 3.x on microcontrollers and small embedded systems. You can find the official website at micropython.org.
+WARNING: this project is in beta stage and is subject to changes of the code-base, including project-wide name changes and API changes.
+MicroPython implements the entire Python 3.4 syntax (including exceptions, with, yield from, etc.</description>
+    </item>
+    
+    <item>
+      <title>Creating a New Theme</title>
+      <link>https://example.com/posts/creating-a-new-theme/</link>
+      <pubDate>Fri, 28 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/posts/creating-a-new-theme/</guid>
+      <description>Introduction This tutorial will show you how to create a simple theme in Hugo. I assume that you are familiar with HTML, the bash command line, and that you are comfortable using Markdown to format content. I&amp;rsquo;ll explain how Hugo uses templates and how you can organize your templates to create a theme. I won&amp;rsquo;t cover using CSS to style your theme.
+We&amp;rsquo;ll start with creating a new site with a very basic template.</description>
+    </item>
+    
+    <item>
+      <title>(Hu)go Template Primer</title>
+      <link>https://example.com/posts/goisforlovers/</link>
+      <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/posts/goisforlovers/</guid>
+      <description>Hugo uses the excellent Go html/template library for its template engine. It is an extremely lightweight engine that provides a very small amount of logic. In our experience that it is just the right amount of logic to be able to create a good static website. If you have used other template systems from different languages or frameworks you will find a lot of similarities in Go templates.
+This document is a brief primer on using Go templates.</description>
+    </item>
+    
+    <item>
+      <title>Getting Started with Hugo</title>
+      <link>https://example.com/posts/hugoisforlovers/</link>
+      <pubDate>Mon, 02 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/posts/hugoisforlovers/</guid>
+      <description>Step 1. Install Hugo Go to Hugo releases and download the appropriate version for your OS and architecture.
+Save it somewhere specific as we will be using it in the next step.
+More complete instructions are available at Install Hugo
+Step 2. Build the Docs Hugo has its own example site which happens to also be the documentation site you are reading right now.
+Follow the following steps:
+ Clone the Hugo repository Go into the repo Run hugo in server mode and build the docs Open your browser to http://localhost:1313  Corresponding pseudo commands:</description>
+    </item>
+    
+    <item>
+      <title>Migrate to Hugo from Jekyll</title>
+      <link>https://example.com/posts/migrate-from-jekyll/</link>
+      <pubDate>Sat, 10 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/posts/migrate-from-jekyll/</guid>
+      <description>Move static content to static Jekyll has a rule that any directory not starting with _ will be copied as-is to the _site output. Hugo keeps all static content under static. You should therefore move it all there. With Jekyll, something that looked like
+▾ &amp;lt;root&amp;gt;/ ▾ images/ logo.png  should become
+▾ &amp;lt;root&amp;gt;/ ▾ static/ ▾ images/ logo.png  Additionally, you&amp;rsquo;ll want any files that should reside at the root (such as CNAME) to be moved to static.</description>
+    </item>
+    
+  </channel>
+</rss>

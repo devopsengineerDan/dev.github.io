@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Implementing machine learning bodywork // Engineer Dancun</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.68.3" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Dancun Manyinsa" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://example.com/css/main.min.d5ed8558bcfb3aab1e3d1790fb902decbac1f989a0d27aa3b2a2320773186707.css" />
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Implementing machine learning bodywork"/>
+<meta name="twitter:description" content="Machine Learning Bodywork Core Bodywork deploys machine learning projects developed in Python, to Kubernetes. It helps you to:
+ serve models as microservices execute batch jobs run reproducible pipelines  On demand, or on a schedule. It automates repetitive DevOps tasks and frees machine learning engineers to focus on what they do best - solving data problems with machine learning.
+Get Started Bodywork is distributed as a Python package - install it from PyPI:"/>
+
+    <meta property="og:title" content="Implementing machine learning bodywork" />
+<meta property="og:description" content="Machine Learning Bodywork Core Bodywork deploys machine learning projects developed in Python, to Kubernetes. It helps you to:
+ serve models as microservices execute batch jobs run reproducible pipelines  On demand, or on a schedule. It automates repetitive DevOps tasks and frees machine learning engineers to focus on what they do best - solving data problems with machine learning.
+Get Started Bodywork is distributed as a Python package - install it from PyPI:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/posts/ml-bodywork-core/" />
+<meta property="article:published_time" content="2019-11-06T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-11-06T00:00:00+00:00" />
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://example.com"><img class="app-header-avatar" src="/avatar.jpg" alt="Dancun Manyinsa" /></a>
+      <h1>Engineer Dancun</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+      </nav>
+      <p>Software Engineer, Reseacher(AI and Quantum Science), and Habitual Quant</p>
+      <div class="app-header-social">
+        
+          <a href="https://www.github.com/DancunManyinsa" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/dancun-manyinsa-42518a17b/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="mailto:dancunmoruri@gmail.com" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-link">
+  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Implementing machine learning bodywork</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 6, 2019
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          2 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://example.com/tags/python/">python</a>
+              <a class="tag" href="https://example.com/tags/rust/">rust</a>
+              <a class="tag" href="https://example.com/tags/c/">c</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <hr>
+<h1 id="machine-learning-bodywork-core">Machine Learning Bodywork Core</h1>
+<p>Bodywork deploys machine learning projects developed in Python, to Kubernetes. It helps you to:</p>
+<ul>
+<li>serve models as microservices</li>
+<li>execute batch jobs</li>
+<li>run reproducible pipelines</li>
+</ul>
+<p>On demand, or on a schedule. It automates repetitive DevOps tasks and frees machine learning engineers to focus on what they do best - solving data problems with machine learning.</p>
+<h2 id="get-started">Get Started</h2>
+<p>Bodywork is distributed as a Python package - install it from <a href="https://pypi.org/project/bodywork/#description">PyPI</a>:</p>
+<!-- raw HTML omitted -->
+<p>Add a <a href="https://bodywork.readthedocs.io/en/latest/user_guide/#configuring-a-project-for-deployment-with-bodywork">bodywork.yaml</a> file to your Python project’s Git repo. The contents of this file describe how your project will be deployed:</p>
+<!-- raw HTML omitted -->
+<p>Bodywork is used from the command-line to deploy projects to Kubernetes clusters. With a single command, you can start Bodywork containers (hosted by us on Docker Hub), that pull Python modules directly from your project’s Git repo, and run them:</p>
+<!-- raw HTML omitted -->
+<p>You don’t need to build Docker images or understand how to configure Kuberentes resources. Bodywork will fill the gap between executable Python modules and operational jobs and services on Kubernetes.</p>
+<p>If you’re new to Kubernetes then check out our guide to <a href="https://bodywork.readthedocs.io/en/latest/kubernetes/#getting-started-with-kubernetes">Kubernetes for ML</a> - we’ll have you up-and-running with a test cluster on your laptop, in under 10 minutes.</p>
+<h2 id="documentation">Documentation</h2>
+<p>The documentation for bodywork-core can be found <a href="https://bodywork.readthedocs.io/en/latest/">here</a>. This is the best place to start.</p>
+<h2 id="deployment-templates">Deployment Templates</h2>
+<p>To accelerate your project&rsquo;s journey to production, we provide <a href="https://bodywork.readthedocs.io/en/latest/template_projects/">deployment templates</a> for common use-cases:</p>
+<ul>
+<li><a href="https://github.com/bodywork-ml/bodywork-batch-job-project">batch scoring data</a></li>
+<li><a href="https://github.com/bodywork-ml/bodywork-serve-model-project">deploying a model-scoring microservice with REST API</a></li>
+<li><a href="https://github.com/bodywork-ml/bodywork-ml-pipeline-project">scheduling a train-and-serve pipeline</a></li>
+</ul>
+<h2 id="we-want-your-feedback">We want your Feedback</h2>
+<p>If Bodywork sounds like a useful tool, then please send us a signal with a GitHub ★</p>
+<h2 id="contacting-us">Contacting Us</h2>
+<p>If you:</p>
+<ul>
+<li>Have a question that these pages haven&rsquo;t answered, or need help getting started with Kubernetes, then please use our <a href="https://github.com/bodywork-ml/bodywork-core/discussions">discussion board</a>.</li>
+<li>Have found a bug, then please <a href="https://github.com/bodywork-ml/bodywork-core/issues">open an issue</a>.</li>
+<li>Would like to contribute, then please talk to us <strong>first</strong> at <a href="mailto:info@bodyworkml.com">info@bodyworkml.com</a>.</li>
+<li>Would like to commission new functionality, then please contact us at <a href="mailto:info@bodyworkml.com">info@bodyworkml.com</a>.</li>
+</ul>
+<p>Bodywork is brought to you by <a href="https://www.bodyworkml.com">Bodywork Machine Learning</a>.</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+      <div>
+        <br>
+        <div>
+          <h5 class="title is-small">Share to social media</h5>
+          <div>
+            <a class="share share-network-twitter" style="background-color:#008080;"><i class="fab fah fa-lg fa-twitter"></i><span>Twitter</span></a>
+            <a class="share share-network-facebook" style="background-color:#1877f2;"><i class="fab fah fa-lg fa-facebook-f"></i><span>Facebook</span></a>
+            <a class="share share-network-linkedin" style="background-color:#2B1B17;"><i class="fab fah fa-lg fa-linkedin"></i><span>LinkedIn</span></a>
+            <a class="share share-network-hackernews" style="background-color:#008000"><i class="fab fah fa-lg fa-hacker-news"></i><span>HackerNews</span></a>
+            <a class="share share-network-pinterest" style="background-color:#bd081c;"><i class="fab fah fa-lg fa-pinterest"></i><span>Pinterest</span></a>
+            <a class="share share-network-pocket" style="background-color:#7F38EC;"><i class="fab fah fa-lg fa-get-pocket"></i><span>Pocket</span></a>
+            <a class="share share-network-email" style="background-color:#333333;"><i class="far fah fa-lg fa-envelope"></i><span>Email</span></a>
+            <a class="share share-network-flipboard" style="background-color: #837E7C;"><i class="fab fah fa-lg fa-flipboard"></i><span>Flipboard</span></a>
+            <a class="share share-network-quora" style="background-color:#808000;"><i class="fab fah fa-lg fa-quora"></i><span>Quora</span></a>
+            <a class="share share-network-reddit" style="background-color: #581845
+            ;"><i class="fab fah fa-lg fa-reddit-alien"></i><span>Reddit</span></a>
+            <a class="share share-network-telegram" style="background-color:#000080;"><i class="fab fah fa-lg fa-telegram-plane"></i><span>Telegram</span></a>
+            <a class="share share-network-whatsapp" style="background-color:#E55451;"><i class="fab fah fa-lg fa-whatsapp"></i><span>Whatsapp</span></a>
+            <a class="share share-network-sms" style="background-color:#513B1C;"><i class="far fah fa-lg fa-comment-dots"></i><span>SMS</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="comments">
+        <div id="disqus_thread" pageConfig="[object Object]"></div>
+      </div>
+      
+      <div id="disqus_thread"></div>
+      <script>
+          
+
+          
+
+          (function() { 
+          var d = document, s = d.createElement('script');
+          s.src = 'https://engineer-dancun-personal-blog.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      
+      <br><br><br>
+      <footer>
+        &copy;  
+        Powered by <a href="https://github.com/gohugoio/hugo" target="_blank">Hugo
+      </footer>
+      <script type="application/ld+json">
+        {
+          "@context" : "http://schema.org",
+          "@type" : "Blog",
+          "name": " Engineer Dancun ",
+          "url" : "https://devopsengineerdan.github.io",
+          "image": "./static/avatar.jpg",
+          "description": "Software Engineer and Researcher"
+        }
+        </script>
+        <script id="dsq-count-scr" src="//engineer-dancun.disqus.com/count.js" async></script>
+    </main>
+  </body>
+</html>

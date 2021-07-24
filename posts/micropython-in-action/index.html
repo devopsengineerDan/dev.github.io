@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>MicroPython in action // Engineer Dancun</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.68.3" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Dancun Manyinsa" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://example.com/css/main.min.d5ed8558bcfb3aab1e3d1790fb902decbac1f989a0d27aa3b2a2320773186707.css" />
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MicroPython in action"/>
+<meta name="twitter:description" content="Watch MicroPython in action 
+ 
+The MicroPython project This is the MicroPython project, which aims to put an implementation of Python 3.x on microcontrollers and small embedded systems. You can find the official website at micropython.org.
+WARNING: this project is in beta stage and is subject to changes of the code-base, including project-wide name changes and API changes.
+MicroPython implements the entire Python 3.4 syntax (including exceptions, with, yield from, etc."/>
+
+    <meta property="og:title" content="MicroPython in action" />
+<meta property="og:description" content="Watch MicroPython in action 
+ 
+The MicroPython project This is the MicroPython project, which aims to put an implementation of Python 3.x on microcontrollers and small embedded systems. You can find the official website at micropython.org.
+WARNING: this project is in beta stage and is subject to changes of the code-base, including project-wide name changes and API changes.
+MicroPython implements the entire Python 3.4 syntax (including exceptions, with, yield from, etc." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://example.com/posts/micropython-in-action/" />
+<meta property="article:published_time" content="2019-06-13T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-06-13T00:00:00+00:00" />
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://example.com"><img class="app-header-avatar" src="/avatar.jpg" alt="Dancun Manyinsa" /></a>
+      <h1>Engineer Dancun</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="/about/">About</a>
+      </nav>
+      <p>Software Engineer, Reseacher(AI and Quantum Science), and Habitual Quant</p>
+      <div class="app-header-social">
+        
+          <a href="https://www.github.com/DancunManyinsa" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/dancun-manyinsa-42518a17b/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="mailto:dancunmoruri@gmail.com" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-link">
+  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">MicroPython in action</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 13, 2019
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          5 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://example.com/tags/python/">python</a>
+              <a class="tag" href="https://example.com/tags/rust/">rust</a>
+              <a class="tag" href="https://example.com/tags/c/">c</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <hr>
+<h1 id="watch-micropython-in-action">Watch MicroPython in action</h1>
+<p><a href="https://www.youtube.com/embed/5LbgyDmRu9s?rel=0"><img src="" alt="Watch the video"></a></p>
+<p><a href="https://github.com/micropython/micropython/actions?query=branch%3Amaster+event%3Apush"><img src="https://github.com/micropython/micropython/workflows/unix%20port/badge.svg" alt="CI badge"></a> <a href="https://codecov.io/gh/micropython/micropython"><img src="https://codecov.io/gh/micropython/micropython/branch/master/graph/badge.svg?token=I92PfD05sD" alt="codecov"></a></p>
+<h1 id="the-micropython-project">The MicroPython project</h1>
+<p>This is the MicroPython project, which aims to put an implementation
+of Python 3.x on microcontrollers and small embedded systems.
+You can find the official website at <a href="http://www.micropython.org">micropython.org</a>.</p>
+<p>WARNING: this project is in beta stage and is subject to changes of the
+code-base, including project-wide name changes and API changes.</p>
+<p>MicroPython implements the entire Python 3.4 syntax (including exceptions,
+<code>with</code>, <code>yield from</code>, etc., and additionally <code>async</code>/<code>await</code> keywords from
+Python 3.5). The following core datatypes are provided: <code>str</code> (including
+basic Unicode support), <code>bytes</code>, <code>bytearray</code>, <code>tuple</code>, <code>list</code>, <code>dict</code>, <code>set</code>,
+<code>frozenset</code>, <code>array.array</code>, <code>collections.namedtuple</code>, classes and instances.
+Builtin modules include <code>sys</code>, <code>time</code>, and <code>struct</code>, etc. Select ports have
+support for <code>_thread</code> module (multithreading). Note that only a subset of
+Python 3 functionality is implemented for the data types and modules.</p>
+<p>MicroPython can execute scripts in textual source form or from precompiled
+bytecode, in both cases either from an on-device filesystem or &ldquo;frozen&rdquo; into
+the MicroPython executable.</p>
+<p>See the repository <a href="http://github.com/micropython/pyboard">http://github.com/micropython/pyboard</a> for the MicroPython
+board (PyBoard), the officially supported reference electronic circuit board.</p>
+<p>Major components in this repository:</p>
+<ul>
+<li>py/ &ndash; the core Python implementation, including compiler, runtime, and
+core library.</li>
+<li>mpy-cross/ &ndash; the MicroPython cross-compiler which is used to turn scripts
+into precompiled bytecode.</li>
+<li>ports/unix/ &ndash; a version of MicroPython that runs on Unix.</li>
+<li>ports/stm32/ &ndash; a version of MicroPython that runs on the PyBoard and similar
+STM32 boards (using ST&rsquo;s Cube HAL drivers).</li>
+<li>ports/minimal/ &ndash; a minimal MicroPython port. Start with this if you want
+to port MicroPython to another microcontroller.</li>
+<li>tests/ &ndash; test framework and test scripts.</li>
+<li>docs/ &ndash; user documentation in Sphinx reStructuredText format. Rendered
+HTML documentation is available at <a href="http://docs.micropython.org">http://docs.micropython.org</a>.</li>
+</ul>
+<p>Additional components:</p>
+<ul>
+<li>ports/bare-arm/ &ndash; a bare minimum version of MicroPython for ARM MCUs. Used
+mostly to control code size.</li>
+<li>ports/teensy/ &ndash; a version of MicroPython that runs on the Teensy 3.1
+(preliminary but functional).</li>
+<li>ports/pic16bit/ &ndash; a version of MicroPython for 16-bit PIC microcontrollers.</li>
+<li>ports/cc3200/ &ndash; a version of MicroPython that runs on the CC3200 from TI.</li>
+<li>ports/esp8266/ &ndash; a version of MicroPython that runs on Espressif&rsquo;s ESP8266 SoC.</li>
+<li>ports/esp32/ &ndash; a version of MicroPython that runs on Espressif&rsquo;s ESP32 SoC.</li>
+<li>ports/nrf/ &ndash; a version of MicroPython that runs on Nordic&rsquo;s nRF51 and nRF52 MCUs.</li>
+<li>extmod/ &ndash; additional (non-core) modules implemented in C.</li>
+<li>tools/ &ndash; various tools, including the pyboard.py module.</li>
+<li>examples/ &ndash; a few example Python scripts.</li>
+</ul>
+<p>The subdirectories above may include READMEs with additional info.</p>
+<p>&ldquo;make&rdquo; is used to build the components, or &ldquo;gmake&rdquo; on BSD-based systems.
+You will also need bash, gcc, and Python 3.3+ available as the command <code>python3</code>
+(if your system only has Python 2.7 then invoke make with the additional option
+<code>PYTHON=python2</code>).</p>
+<h2 id="the-micropython-cross-compiler-mpy-cross">The MicroPython cross-compiler <code>mpy-cross</code></h2>
+<p>Most ports require the MicroPython cross-compiler to be built first.  This
+program, called mpy-cross, is used to pre-compile Python scripts to .mpy
+files which can then be included (frozen) into the firmware/executable for
+a port.  To build mpy-cross use:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> cd mpy<span style="color:#f92672">-</span>cross
+<span style="color:#f92672">$</span> make
+</code></pre></div><h2 id="the-unix-version">The Unix version</h2>
+<p>The &ldquo;unix&rdquo; port requires a standard Unix environment with gcc and GNU make.
+x86 and x64 architectures are supported (i.e. x86 32- and 64-bit), as well
+as ARM and MIPS. Making full-featured port to another architecture requires
+writing some assembly code for the exception handling and garbage collection.
+Alternatively, fallback implementation based on setjmp/longjmp can be used.</p>
+<p>To build (see section below for required dependencies):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> cd ports<span style="color:#f92672">/</span>unix
+<span style="color:#f92672">$</span> make submodules
+<span style="color:#f92672">$</span> make
+</code></pre></div><p>Then to give it a try:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> ./micropython
+<span style="color:#f92672">&gt;&gt;&gt;</span> <span style="color:#a6e22e">list</span>(<span style="color:#ae81ff">5</span> <span style="color:#f92672">*</span> x <span style="color:#f92672">+</span> y for x in <span style="color:#a6e22e">range</span>(<span style="color:#ae81ff">10</span>) for y in [4, <span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>])
+</code></pre></div><p>Use <code>CTRL-D</code> (i.e. EOF) to exit the shell.
+Learn about command-line options (in particular, how to increase heap size
+which may be needed for larger applications):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> ./micropython <span style="color:#f92672">-</span>h
+</code></pre></div><p>Run complete testsuite:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> make test
+</code></pre></div><p>Unix version comes with a builtin package manager called upip, e.g.:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> ./micropython <span style="color:#f92672">-</span>m upip install micropython<span style="color:#f92672">-</span>pystone
+<span style="color:#f92672">$</span> ./micropython <span style="color:#f92672">-</span>m pystone
+</code></pre></div><p>Browse available modules on
+<a href="https://pypi.python.org/pypi?%3Aaction=search&amp;term=micropython">PyPI</a>.
+Standard library modules come from
+<a href="https://github.com/micropython/micropython-lib">micropython-lib</a> project.</p>
+<h2 id="external-dependencies">External dependencies</h2>
+<p>Building MicroPython ports may require some dependencies installed.</p>
+<p>For Unix port, <code>libffi</code> library and <code>pkg-config</code> tool are required. On
+Debian/Ubuntu/Mint derivative Linux distros, install <code>build-essential</code>
+(includes toolchain and make), <code>libffi-dev</code>, and <code>pkg-config</code> packages.</p>
+<p>Other dependencies can be built together with MicroPython. This may
+be required to enable extra features or capabilities, and in recent
+versions of MicroPython, these may be enabled by default. To build
+these additional dependencies, in the port directory you&rsquo;re
+interested in (e.g. <code>ports/unix/</code>) first execute:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> make submodules
+</code></pre></div><p>This will fetch all the relevant git submodules (sub repositories) that
+the port needs.  Use the same command to get the latest versions of
+submodules as they are updated from time to time. After that execute:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> make deplibs
+</code></pre></div><p>This will build all available dependencies (regardless whether they
+are used or not). If you intend to build MicroPython with additional
+options (like cross-compiling), the same set of options should be passed
+to <code>make deplibs</code>. To actually enable/disable use of dependencies, edit
+<code>ports/unix/mpconfigport.mk</code> file, which has inline descriptions of the options.
+For example, to build SSL module (required for <code>upip</code> tool described above,
+and so enabled by default), <code>MICROPY_PY_USSL</code> should be set to 1.</p>
+<p>For some ports, building required dependences is transparent, and happens
+automatically.  But they still need to be fetched with the <code>make submodules</code>
+command.</p>
+<h2 id="the-stm32-version">The STM32 version</h2>
+<p>The &ldquo;stm32&rdquo; port requires an ARM compiler, arm-none-eabi-gcc, and associated
+bin-utils.  For those using Arch Linux, you need arm-none-eabi-binutils,
+arm-none-eabi-gcc and arm-none-eabi-newlib packages.  Otherwise, try here:
+<a href="https://launchpad.net/gcc-arm-embedded">https://launchpad.net/gcc-arm-embedded</a></p>
+<p>To build:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> make deplibs
+<span style="color:#f92672">$</span> cd ports<span style="color:#f92672">/</span>stm32
+<span style="color:#f92672">$</span> make submodules
+<span style="color:#f92672">$</span> make
+</code></pre></div><p>You then need to get your board into DFU mode.  On the pyboard, connect the
+3V3 pin to the P1/DFU pin with a wire (on PYBv1.0 they are next to each other
+on the bottom left of the board, second row from the bottom).</p>
+<p>Then to flash the code via USB DFU to your device:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> make deploy
+</code></pre></div><p>This will use the included <code>tools/pydfu.py</code> script.  If flashing the firmware
+does not work it may be because you don&rsquo;t have the correct permissions, and
+need to use <code>sudo make deploy</code>.
+See the README.md file in the ports/stm32/ directory for further details.</p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+      <div>
+        <br>
+        <div>
+          <h5 class="title is-small">Share to social media</h5>
+          <div>
+            <a class="share share-network-twitter" style="background-color:#008080;"><i class="fab fah fa-lg fa-twitter"></i><span>Twitter</span></a>
+            <a class="share share-network-facebook" style="background-color:#1877f2;"><i class="fab fah fa-lg fa-facebook-f"></i><span>Facebook</span></a>
+            <a class="share share-network-linkedin" style="background-color:#2B1B17;"><i class="fab fah fa-lg fa-linkedin"></i><span>LinkedIn</span></a>
+            <a class="share share-network-hackernews" style="background-color:#008000"><i class="fab fah fa-lg fa-hacker-news"></i><span>HackerNews</span></a>
+            <a class="share share-network-pinterest" style="background-color:#bd081c;"><i class="fab fah fa-lg fa-pinterest"></i><span>Pinterest</span></a>
+            <a class="share share-network-pocket" style="background-color:#7F38EC;"><i class="fab fah fa-lg fa-get-pocket"></i><span>Pocket</span></a>
+            <a class="share share-network-email" style="background-color:#333333;"><i class="far fah fa-lg fa-envelope"></i><span>Email</span></a>
+            <a class="share share-network-flipboard" style="background-color: #837E7C;"><i class="fab fah fa-lg fa-flipboard"></i><span>Flipboard</span></a>
+            <a class="share share-network-quora" style="background-color:#808000;"><i class="fab fah fa-lg fa-quora"></i><span>Quora</span></a>
+            <a class="share share-network-reddit" style="background-color: #581845
+            ;"><i class="fab fah fa-lg fa-reddit-alien"></i><span>Reddit</span></a>
+            <a class="share share-network-telegram" style="background-color:#000080;"><i class="fab fah fa-lg fa-telegram-plane"></i><span>Telegram</span></a>
+            <a class="share share-network-whatsapp" style="background-color:#E55451;"><i class="fab fah fa-lg fa-whatsapp"></i><span>Whatsapp</span></a>
+            <a class="share share-network-sms" style="background-color:#513B1C;"><i class="far fah fa-lg fa-comment-dots"></i><span>SMS</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="comments">
+        <div id="disqus_thread" pageConfig="[object Object]"></div>
+      </div>
+      
+      <div id="disqus_thread"></div>
+      <script>
+          
+
+          
+
+          (function() { 
+          var d = document, s = d.createElement('script');
+          s.src = 'https://engineer-dancun-personal-blog.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      
+      <br><br><br>
+      <footer>
+        &copy;  
+        Powered by <a href="https://github.com/gohugoio/hugo" target="_blank">Hugo
+      </footer>
+      <script type="application/ld+json">
+        {
+          "@context" : "http://schema.org",
+          "@type" : "Blog",
+          "name": " Engineer Dancun ",
+          "url" : "https://devopsengineerdan.github.io",
+          "image": "./static/avatar.jpg",
+          "description": "Software Engineer and Researcher"
+        }
+        </script>
+        <script id="dsq-count-scr" src="//engineer-dancun.disqus.com/count.js" async></script>
+    </main>
+  </body>
+</html>

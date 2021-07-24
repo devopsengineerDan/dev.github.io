@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>c on Engineer Dancun</title>
+    <link>https://example.com/tags/c/</link>
+    <description>Recent content in c on Engineer Dancun</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 03 Mar 2021 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://example.com/tags/c/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> Deploying machine learning models on kubernetes</title>
+      <link>https://example.com/posts/deploying-ml-models-on-kubernetes/</link>
+      <pubDate>Wed, 03 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/posts/deploying-ml-models-on-kubernetes/</guid>
+      <description>Deploying Machine Learning Models on Kubernetes Bodywork A common pattern for deploying Machine Learning (ML) models into production environments - e.g. ML models trained using the SciKit Learn or Keras packages (for Python), that are ready to provide predictions on new data - is to expose these ML as RESTful API microservices, hosted from within Docker containers. These can then deployed to a cloud environment for handling everything required for maintaining continuous availability - e.</description>
+    </item>
+    
+    <item>
+      <title>Machine learning workflow automation</title>
+      <link>https://example.com/posts/ml-worlflow-automation/</link>
+      <pubDate>Wed, 10 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/posts/ml-worlflow-automation/</guid>
+      <description>Automating the Archetypal Machine Learning Workflow and Model Deployment This repository contains a Python-based Machine Learning (ML) project, whose primary aim is to demonstrate the archetypal ML workflow within a Jupyter notebook, together with some proof-of-concept ideas on automating key steps, using the Titanic binary classification dataset hosted on Kaggle. The ML workflow includes: data exploration and visualisation, feature engineering, model training and selection. The notebook - titanic-ml.ipynb - also yields a persisted prediction pipeline (pickled to the models directory), that is used downstream in the model deployment process.</description>
+    </item>
+    
+    <item>
+      <title>Implementing machine learning bodywork</title>
+      <link>https://example.com/posts/ml-bodywork-core/</link>
+      <pubDate>Wed, 06 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/posts/ml-bodywork-core/</guid>
+      <description>Machine Learning Bodywork Core Bodywork deploys machine learning projects developed in Python, to Kubernetes. It helps you to:
+ serve models as microservices execute batch jobs run reproducible pipelines  On demand, or on a schedule. It automates repetitive DevOps tasks and frees machine learning engineers to focus on what they do best - solving data problems with machine learning.
+Get Started Bodywork is distributed as a Python package - install it from PyPI:</description>
+    </item>
+    
+    <item>
+      <title>MicroPython in action</title>
+      <link>https://example.com/posts/micropython-in-action/</link>
+      <pubDate>Thu, 13 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://example.com/posts/micropython-in-action/</guid>
+      <description>Watch MicroPython in action 
+ 
+The MicroPython project This is the MicroPython project, which aims to put an implementation of Python 3.x on microcontrollers and small embedded systems. You can find the official website at micropython.org.
+WARNING: this project is in beta stage and is subject to changes of the code-base, including project-wide name changes and API changes.
+MicroPython implements the entire Python 3.4 syntax (including exceptions, with, yield from, etc.</description>
+    </item>
+    
+  </channel>
+</rss>
