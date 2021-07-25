@@ -100,6 +100,18 @@
 <h2 id="move-static-content-to-static">Move static content to <code>static</code></h2>
 <p>Jekyll has a rule that any directory not starting with <code>_</code> will be copied as-is to the <code>_site</code> output. Hugo keeps all static content under <code>static</code>. You should therefore move it all there.
 With Jekyll, something that looked like</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> cd ports<span style="color:#f92672">/</span>unix
+  <span style="color:#f92672">$</span> make submodules
+  <span style="color:#f92672">$</span> make
+  </code></pre></div>
+
+  <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> cd ports<span style="color:#f92672">/</span>unix
+    <span style="color:#f92672">$</span> make submodules
+    <span style="color:#f92672">$</span> make
+    </code></pre></div>
+
+
 <pre><code>▾ &lt;root&gt;/
     ▾ images/
         logo.png
@@ -125,7 +137,14 @@ With Jekyll, something that looked like</p>
 </li>
 <li>
 <p>Or, change the Hugo configuration to use <code>_site</code> instead of <code>public</code>.</p>
-<pre><code> {
+
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> cd ports<span style="color:#f92672">/</span>unix
+  <span style="color:#f92672"></span> make submodules
+  <span style="color:#f92672">$</span> make
+  </code></pre></div>
+
+<pre><code> 
      ..
      &quot;publishdir&quot;: &quot;_site&quot;,
      ..
@@ -228,8 +247,6 @@ Liquid::Template.register_tag('image', Jekyll::ImageTag)
 <p>Depending on the amount of customization that was done with each post with Jekyll, this step will require more or less effort. There are no hard and fast rules here except that <code>hugo server --watch</code> is your friend. Test your changes and fix errors as needed.</p>
 <h3 id="clean-up">Clean up</h3>
 <p>You&rsquo;ll want to remove the Jekyll configuration at this point. If you have anything else that isn&rsquo;t used, delete it.</p>
-<h2 id="a-practical-example-in-a-diff">A practical example in a diff</h2>
-<p><a href="http://heyitsalex.net/">Hey, it&rsquo;s Alex</a> was migrated in less than a <em>father-with-kids day</em> from Jekyll to Hugo. You can see all the changes (and screw-ups) by looking at this <a href="https://github.com/alexandre-normand/alexandre-normand/compare/869d69435bd2665c3fbf5b5c78d4c22759d7613a...b7f6605b1265e83b4b81495423294208cc74d610">diff</a>.</p>
 
     </div>
     <div class="post-footer">
