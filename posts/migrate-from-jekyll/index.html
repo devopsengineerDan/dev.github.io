@@ -39,7 +39,7 @@
           
           <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/about/">About</a>
       </nav>
-      <p>Software Engineer, Reseacher(AI and Quantum Science), and Habitual Quant</p>
+      <p>Software Engineer, Researcher(AI and Quantum Science), and Habitual Quant</p>
       <div class="app-header-social">
         
           <a href="https://www.github.com/DancunManyinsa" target="_blank" rel="noreferrer noopener">
@@ -100,18 +100,6 @@
 <h2 id="move-static-content-to-static">Move static content to <code>static</code></h2>
 <p>Jekyll has a rule that any directory not starting with <code>_</code> will be copied as-is to the <code>_site</code> output. Hugo keeps all static content under <code>static</code>. You should therefore move it all there.
 With Jekyll, something that looked like</p>
-
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> cd ports<span style="color:#f92672">/</span>unix
-  <span style="color:#f92672">$</span> make submodules
-  <span style="color:#f92672">$</span> make
-  </code></pre></div>
-
-  <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> cd ports<span style="color:#f92672">/</span>unix
-    <span style="color:#f92672">$</span> make submodules
-    <span style="color:#f92672">$</span> make
-    </code></pre></div>
-
-
 <pre><code>▾ &lt;root&gt;/
     ▾ images/
         logo.png
@@ -137,14 +125,7 @@ With Jekyll, something that looked like</p>
 </li>
 <li>
 <p>Or, change the Hugo configuration to use <code>_site</code> instead of <code>public</code>.</p>
-
-
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> cd ports<span style="color:#f92672">/</span>unix
-  <span style="color:#f92672"></span> make submodules
-  <span style="color:#f92672">$</span> make
-  </code></pre></div>
-
-<pre><code> 
+<pre><code> {
      ..
      &quot;publishdir&quot;: &quot;_site&quot;,
      ..
