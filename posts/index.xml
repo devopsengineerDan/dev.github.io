@@ -85,7 +85,7 @@ This document is a brief primer on using Go templates.</description>
     
     <item>
       <title>Getting Started with Hugo</title>
-      <link>https://example.com/posts/hugoisforlovers/</link>
+      <link>https://devopsengineerdan.github.io/posts/hugoisforlovers/</link>
       <pubDate>Mon, 02 Apr 2018 00:00:00 +0000</pubDate>
       
       <guid>https://devopsengineerdan.github.io/posts/hugoisforlovers/</guid>
@@ -104,8 +104,8 @@ Follow the following steps:
       
       <guid>https://devopsengineerdan.github.io/posts/migrate-from-jekyll/</guid>
       <description>Move static content to static Jekyll has a rule that any directory not starting with _ will be copied as-is to the _site output. Hugo keeps all static content under static. You should therefore move it all there. With Jekyll, something that looked like
-▾ &amp;lt;root&amp;gt;/ ▾ images/ logo.png  should become
-▾ &amp;lt;root&amp;gt;/ ▾ static/ ▾ images/ logo.png  Additionally, you&amp;rsquo;ll want any files that should reside at the root (such as CNAME) to be moved to static.</description>
+▾ &amp;lt;root&amp;gt;/ ▾ images/ logo.png should become
+▾ &amp;lt;root&amp;gt;/ ▾ static/ ▾ images/ logo.png Additionally, you&amp;rsquo;ll want any files that should reside at the root (such as CNAME) to be moved to static.</description>
     </item>
     
   </channel>

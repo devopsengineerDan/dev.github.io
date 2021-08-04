@@ -26,18 +26,18 @@ The py-template-project package allows users to download the contents of this Gi
   </head>
   <body>
     <header class="app-header">
-      <a href="https://devopsengineerdan.github.io"><img class="app-header-avatar" src="/avatar.jpg" alt="Dancun Manyinsa" /></a>
+      <a href="https://devopsengineerdan.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Dancun Manyinsa" /></a>
       <h1>Engineer Dancun</h1>
       <nav class="app-header-menu">
-          <a class="app-header-menu-item" href="/">Home</a>
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/">Home</a>
              - 
           
-          <a class="app-header-menu-item" href="/tags/">Tags</a>
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/tags/">Tags</a>
              - 
           
-          <a class="app-header-menu-item" href="/about/">About</a>
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/about/">About</a>
       </nav>
-      <p>Software Engineer, Researcher(AI and Quantum Science), and Habitual Quant</p>
+      <p>Software Engineer, Reseacher(AI and Quantum Science), and Habitual Quant</p>
       <div class="app-header-social">
         
           <a href="https://www.github.com/DancunManyinsa" target="_blank" rel="noreferrer noopener">
@@ -106,7 +106,7 @@ The py-template-project package allows users to download the contents of this Gi
 <li>automated testing and deployment using Travis CI.</li>
 </ul>
 <p>A description of how to work with (and modify) each of these components, is provided in more detail in the sections that follow-on below, as well as in the documentation and within the example code bundled with the package.</p>
-<p>This is obviously a opinionated view of how a Python package project ought to be structured, based largely on my own experiences and requirements. Where I have needed guidance on this subject, I have leant heavily on the advice given by the <a href="https://packaging.python.org/guides/distributing-packages-using-setuptools/">Python Packaging Authority (PyPA)</a> and used the excellent <a href="https://github.com/requests/requests">Requests</a> and <a href="https://github.com/pallets/flask">Flask</a> projects as references for &lsquo;best practices&rsquo;.</p>
+<p>This is obviously an opinionated view of how a Python package project ought to be structured, based largely on my own experiences and requirements. Where I have needed guidance on this subject, I have leant heavily on the advice given by the <a href="https://packaging.python.org/guides/distributing-packages-using-setuptools/">Python Packaging Authority (PyPA)</a> and used the excellent <a href="https://github.com/requests/requests">Requests</a> and <a href="https://github.com/pallets/flask">Flask</a> projects as references for &lsquo;best practices&rsquo;.</p>
 <h2 id="installing">Installing</h2>
 <p>Install and update using <a href="https://pip.pypa.io/en/stable/quickstart/">pip</a>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> pip3 install py<span style="color:#f92672">-</span>template<span style="color:#f92672">-</span>project
@@ -116,20 +116,20 @@ The py-template-project package allows users to download the contents of this Gi
 </code></pre></div><p>This will be downloaded to the current directory and will contain the following directory structure:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">py<span style="color:#f92672">-</span>package<span style="color:#f92672">-</span>tempate<span style="color:#f92672">/</span>
  <span style="color:#f92672">|--</span> docs<span style="color:#f92672">/</span>
- <span style="color:#f92672">|--</span> <span style="color:#f92672">|--</span> build_html<span style="color:#f92672">/</span>
- <span style="color:#f92672">|--</span> <span style="color:#f92672">|--</span> build_latex<span style="color:#f92672">/</span>
- <span style="color:#f92672">|--</span> <span style="color:#f92672">|--</span> source<span style="color:#f92672">/</span>
+ <span style="color:#f92672">|--</span>  <span style="color:#f92672">|--</span> build_html<span style="color:#f92672">/</span>
+ <span style="color:#f92672">|--</span>  <span style="color:#f92672">|--</span> build_latex<span style="color:#f92672">/</span>
+ <span style="color:#f92672">|--</span>  <span style="color:#f92672">|--</span> source<span style="color:#f92672">/</span>
  <span style="color:#f92672">|--</span> py<span style="color:#f92672">-</span>pkg<span style="color:#f92672">/</span>
- <span style="color:#f92672">|--</span> <span style="color:#f92672">|--</span> __init__.py
- <span style="color:#f92672">|--</span> <span style="color:#f92672">|--</span> __version__.py
- <span style="color:#f92672">|--</span> <span style="color:#f92672">|--</span> curves.py
- <span style="color:#f92672">|--</span> <span style="color:#f92672">|--</span> entry_points.py
+ <span style="color:#f92672">|--</span>  <span style="color:#f92672">|--</span> __init__.py
+ <span style="color:#f92672">|--</span>  <span style="color:#f92672">|--</span> __version__.py
+ <span style="color:#f92672">|--</span>  <span style="color:#f92672">|--</span> curves.py
+ <span style="color:#f92672">|--</span>  <span style="color:#f92672">|--</span> entry_points.py
  <span style="color:#f92672">|--</span> tests<span style="color:#f92672">/</span>
- <span style="color:#f92672">|--</span> <span style="color:#f92672">|--</span> test_data<span style="color:#f92672">/</span>
- <span style="color:#f92672">|--</span> <span style="color:#f92672">|</span>   <span style="color:#f92672">|--</span> supply_demand_data.json
- <span style="color:#f92672">|--</span> <span style="color:#f92672">|</span>   __init__.py
- <span style="color:#f92672">|--</span> <span style="color:#f92672">|</span>   conftest.py
- <span style="color:#f92672">|--</span> <span style="color:#f92672">|</span>   test_curves.py
+ <span style="color:#f92672">|--</span>  <span style="color:#f92672">|--</span> test_data<span style="color:#f92672">/</span>
+ <span style="color:#f92672">|--</span>  <span style="color:#f92672">|--</span>  <span style="color:#f92672">|--</span> supply_demand_data.json
+ <span style="color:#f92672">|--</span>  <span style="color:#f92672">|--</span>  __init__.py
+ <span style="color:#f92672">|--</span>  <span style="color:#f92672">|--</span> conftest.py
+ <span style="color:#f92672">|--</span>  <span style="color:#f92672">|--</span> test_curves.py
  <span style="color:#f92672">|--</span> .env
  <span style="color:#f92672">|--</span> .gitignore
  <span style="color:#f92672">|--</span> Pipfile
@@ -145,7 +145,7 @@ The py-template-project package allows users to download the contents of this Gi
 <p>The <code>curves.py</code> module contains sample code for modelling economic supply and demand curves and makes for a useful demonstration of how Python type annotation and interface definition via abstract base classes, can make code easier to read, document and reason about (I am a big fan). The test suite for this module is contained in the <code>tests</code> folder and demonstrates how to get up-and-running with PyTest.</p>
 <p>The <code>entry_points.py</code> module is referenced in the <code>setup.py</code> file via the <code>entry_points</code> definitions:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">entry_points<span style="color:#f92672">=</span>{
-    <span style="color:#e6db74">&#39;console_scripts&#39;</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#39;py-package-template=py_pkg.entry_points:main&#39;</span>],
+  <span style="color:#e6db74">&#39;console_scripts&#39;</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#39;py-package-template=py_pkg.entry_points:main&#39;</span>],
 }
 </code></pre></div><p>It enables the declared entry point - <code>py_pkg.entry_points.main</code> -  to be invoked when <code>py-package-template</code> is called from the command line. This is what enables the template project to be downloaded programmatically (check the code for the full details). This could easily be extended to start a server (e.g. using Flask), or run any other type of script.</p>
 <h3 id="project-dependencies">Project Dependencies</h3>
@@ -176,10 +176,10 @@ The py-template-project package allows users to download the contents of this Gi
 </code></pre></div><p>The test suite is structured as an independent Python package as follows:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">tests<span style="color:#f92672">/</span>
  <span style="color:#f92672">|--</span> test_data<span style="color:#f92672">/</span>
- <span style="color:#f92672">|</span>   <span style="color:#f92672">|--</span> supply_demand_data.json
- <span style="color:#f92672">|</span>   __init__.py
- <span style="color:#f92672">|</span>   conftest.py
- <span style="color:#f92672">|</span>   test_curves.py
+ <span style="color:#f92672">|--</span>  <span style="color:#f92672">|--</span> supply_demand_data.json
+ <span style="color:#f92672">|--</span> __init__.py
+ <span style="color:#f92672">|--</span> conftest.py
+ <span style="color:#f92672">|--</span> test_curves.py
 </code></pre></div><p>The <code>conftest.py</code> module is used by PyTest - in this particular instance for loading test data and building objects that will then be used by potentially many other tests. These are referred to as &lsquo;fixtures&rsquo; in PyTest - more details can be found <a href="https://docs.pytest.org/en/latest/fixture.html">here</a>.</p>
 <h3 id="linting-code">Linting Code</h3>
 <p>I prefer to use <a href="http://flake8.pycqa.org/en/latest/">flake8</a> for style guide enforcement. This can be invoked from the command line by running,</p>

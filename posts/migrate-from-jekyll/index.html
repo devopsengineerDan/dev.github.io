@@ -13,12 +13,13 @@
     <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Migrate to Hugo from Jekyll"/>
 <meta name="twitter:description" content="Move static content to static Jekyll has a rule that any directory not starting with _ will be copied as-is to the _site output. Hugo keeps all static content under static. You should therefore move it all there. With Jekyll, something that looked like
-▾ &lt;root&gt;/ ▾ images/ logo.png  should become
-▾ &lt;root&gt;/ ▾ static/ ▾ images/ logo.png  Additionally, you&rsquo;ll want any files that should reside at the root (such as CNAME) to be moved to static."/>
-<meta property="og:title" content="Migrate to Hugo from Jekyll" />
+▾ &lt;root&gt;/ ▾ images/ logo.png should become
+▾ &lt;root&gt;/ ▾ static/ ▾ images/ logo.png Additionally, you&rsquo;ll want any files that should reside at the root (such as CNAME) to be moved to static."/>
+
+    <meta property="og:title" content="Migrate to Hugo from Jekyll" />
 <meta property="og:description" content="Move static content to static Jekyll has a rule that any directory not starting with _ will be copied as-is to the _site output. Hugo keeps all static content under static. You should therefore move it all there. With Jekyll, something that looked like
-▾ &lt;root&gt;/ ▾ images/ logo.png  should become
-▾ &lt;root&gt;/ ▾ static/ ▾ images/ logo.png  Additionally, you&rsquo;ll want any files that should reside at the root (such as CNAME) to be moved to static." />
+▾ &lt;root&gt;/ ▾ images/ logo.png should become
+▾ &lt;root&gt;/ ▾ static/ ▾ images/ logo.png Additionally, you&rsquo;ll want any files that should reside at the root (such as CNAME) to be moved to static." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://devopsengineerdan.github.io/posts/migrate-from-jekyll/" />
 <meta property="article:published_time" content="2018-03-10T00:00:00+00:00" />
@@ -27,7 +28,7 @@
   </head>
   <body>
     <header class="app-header">
-      <a href="https://devopsengineerdan.github.io"><img class="app-header-avatar" src="/avatar.jpg" alt="Dancun Manyinsa" /></a>
+      <a href="https://devopsengineerdan.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Dancun Manyinsa" /></a>
       <h1>Engineer Dancun</h1>
       <nav class="app-header-menu">
           <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/">Home</a>
@@ -38,7 +39,7 @@
           
           <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/about/">About</a>
       </nav>
-      <p>Software Engineer, Researcher(AI and Quantum Science), and Habitual Quant</p>
+      <p>Software Engineer, Reseacher(AI and Quantum Science), and Habitual Quant</p>
       <div class="app-header-social">
         
           <a href="https://www.github.com/DancunManyinsa" target="_blank" rel="noreferrer noopener">
@@ -99,40 +100,34 @@
 <h2 id="move-static-content-to-static">Move static content to <code>static</code></h2>
 <p>Jekyll has a rule that any directory not starting with <code>_</code> will be copied as-is to the <code>_site</code> output. Hugo keeps all static content under <code>static</code>. You should therefore move it all there.
 With Jekyll, something that looked like</p>
-<pre><code>▾ &lt;root&gt;/
-    ▾ images/
-        logo.png
-</code></pre>
-<p>should become</p>
-<pre><code>▾ &lt;root&gt;/
-    ▾ static/
-        ▾ images/
-            logo.png
-</code></pre>
-<p>Additionally, you&rsquo;ll want any files that should reside at the root (such as <code>CNAME</code>) to be moved to <code>static</code>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">▾ <span style="color:#f92672">&lt;</span>root<span style="color:#f92672">&gt;/</span>
+ ▾ images<span style="color:#f92672">/</span>
+   logo.png
+</code></pre></div><p>should become</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">▾ <span style="color:#f92672">&lt;</span>root<span style="color:#f92672">&gt;/</span>
+ ▾ static<span style="color:#f92672">/</span>
+  ▾ images<span style="color:#f92672">/</span>
+    logo.png
+</code></pre></div><p>Additionally, you&rsquo;ll want any files that should reside at the root (such as <code>CNAME</code>) to be moved to <code>static</code>.</p>
 <h2 id="create-your-hugo-configuration-file">Create your Hugo configuration file</h2>
 <p>Hugo can read your configuration as JSON, YAML or TOML. Hugo supports parameters custom configuration too. Refer to the <a href="/overview/configuration/">Hugo configuration documentation</a> for details.</p>
 <h2 id="set-your-configuration-publish-folder-to-_site">Set your configuration publish folder to <code>_site</code></h2>
 <p>The default is for Jekyll to publish to <code>_site</code> and for Hugo to publish to <code>public</code>. If, like me, you have <a href="http://blog.blindgaenger.net/generate_github_pages_in_a_submodule.html"><code>_site</code> mapped to a git submodule on the <code>gh-pages</code> branch</a>, you&rsquo;ll want to do one of two alternatives:</p>
 <ol>
-<li>
-<p>Change your submodule to point to map <code>gh-pages</code> to public instead of <code>_site</code> (recommended).</p>
-<pre><code> git submodule deinit _site
- git rm _site
- git submodule add -b gh-pages git@github.com:your-username/your-repo.git public
-</code></pre>
-</li>
-<li>
-<p>Or, change the Hugo configuration to use <code>_site</code> instead of <code>public</code>.</p>
-<pre><code> {
-     ..
-     &quot;publishdir&quot;: &quot;_site&quot;,
-     ..
- }
-</code></pre>
-</li>
+<li>Change your submodule to point to map <code>gh-pages</code> to public instead of <code>_site</code> (recommended).</li>
 </ol>
-<h2 id="convert-jekyll-templates-to-hugo-templates">Convert Jekyll templates to Hugo templates</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> git submodule deinit _site
+<span style="color:#f92672">$</span> git rm _site
+<span style="color:#f92672">$</span> git submodule add <span style="color:#f92672">-</span>b gh<span style="color:#f92672">-</span>pages git<span style="color:#f92672">@</span>github.com<span style="color:#f92672">:</span>your<span style="color:#f92672">-</span>username<span style="color:#f92672">/</span>your<span style="color:#f92672">-</span>repo.git public
+</code></pre></div><ol start="2">
+<li>Or, change the Hugo configuration to use <code>_site</code> instead of <code>public</code>.</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{
+  ..
+  <span style="color:#e6db74">&#34;publishdir&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;_site&#34;</span>,
+  ..
+}
+</code></pre></div><h2 id="convert-jekyll-templates-to-hugo-templates">Convert Jekyll templates to Hugo templates</h2>
 <p>That&rsquo;s the bulk of the work right here. The documentation is your friend. You should refer to <a href="http://jekyllrb.com/docs/templates/">Jekyll&rsquo;s template documentation</a> if you need to refresh your memory on how you built your blog and <a href="/layout/templates/">Hugo&rsquo;s template</a> to learn Hugo&rsquo;s way.</p>
 <p>As a single reference data point, converting my templates for <a href="http://heyitsalex.net/">heyitsalex.net</a> took me no more than a few hours.</p>
 <h2 id="convert-jekyll-plugins-to-hugo-shortcodes">Convert Jekyll plugins to Hugo shortcodes</h2>
@@ -140,88 +135,84 @@ With Jekyll, something that looked like</p>
 <h3 id="implementation">Implementation</h3>
 <p>As an example, I was using a custom <a href="https://github.com/alexandre-normand/alexandre-normand/blob/74bb12036a71334fdb7dba84e073382fc06908ec/_plugins/image_tag.rb"><code>image_tag</code></a> plugin to generate figures with caption when running Jekyll. As I read about shortcodes, I found Hugo had a nice built-in shortcode that does exactly the same thing.</p>
 <p>Jekyll&rsquo;s plugin:</p>
-<pre><code>module Jekyll
-  class ImageTag &lt; Liquid::Tag
-    @url = nil
-    @caption = nil
-    @class = nil
-    @link = nil
-    // Patterns
-    IMAGE_URL_WITH_CLASS_AND_CAPTION =
-    IMAGE_URL_WITH_CLASS_AND_CAPTION_AND_LINK = /(\w+)(\s+)((https?:\/\/|\/)(\S+))(\s+)&quot;(.*?)&quot;(\s+)-&gt;((https?:\/\/|\/)(\S+))(\s*)/i
-    IMAGE_URL_WITH_CAPTION = /((https?:\/\/|\/)(\S+))(\s+)&quot;(.*?)&quot;/i
-    IMAGE_URL_WITH_CLASS = /(\w+)(\s+)((https?:\/\/|\/)(\S+))/i
-    IMAGE_URL = /((https?:\/\/|\/)(\S+))/i
-    def initialize(tag_name, markup, tokens)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">module Jekyll
+  class ImageTag <span style="color:#f92672">&lt;</span> Liquid<span style="color:#f92672">::</span>Tag
+    <span style="color:#f92672">@</span>url <span style="color:#f92672">=</span> nil
+    <span style="color:#f92672">@</span>caption <span style="color:#f92672">=</span> nil
+    <span style="color:#f92672">@</span>class <span style="color:#f92672">=</span> nil
+    <span style="color:#f92672">@</span>link <span style="color:#f92672">=</span> nil
+    <span style="color:#f92672">//</span> Patterns
+    IMAGE_URL_WITH_CLASS_AND_CAPTION <span style="color:#f92672">=</span>
+    IMAGE_URL_WITH_CLASS_AND_CAPTION_AND_LINK <span style="color:#f92672">=</span> <span style="color:#f92672">/</span>(\w<span style="color:#f92672">+</span>)(\s<span style="color:#f92672">+</span>)((https<span style="color:#f92672">?:</span>\<span style="color:#f92672">/</span>\<span style="color:#f92672">/|</span>\<span style="color:#f92672">/</span>)(\S<span style="color:#f92672">+</span>))(\s<span style="color:#f92672">+</span>)<span style="color:#e6db74">&#34;(.*?)&#34;</span>(\s<span style="color:#f92672">+</span>)<span style="color:#f92672">-&gt;</span>((https<span style="color:#f92672">?:</span>\<span style="color:#f92672">/</span>\<span style="color:#f92672">/|</span>\<span style="color:#f92672">/</span>)(\S<span style="color:#f92672">+</span>))(\s<span style="color:#f92672">*</span>)<span style="color:#f92672">/</span>i
+    IMAGE_URL_WITH_CAPTION <span style="color:#f92672">=</span> <span style="color:#f92672">/</span>((https<span style="color:#f92672">?:</span>\<span style="color:#f92672">/</span>\<span style="color:#f92672">/|</span>\<span style="color:#f92672">/</span>)(\S<span style="color:#f92672">+</span>))(\s<span style="color:#f92672">+</span>)<span style="color:#e6db74">&#34;(.*?)&#34;</span><span style="color:#f92672">/</span>i
+    IMAGE_URL_WITH_CLASS <span style="color:#f92672">=</span> <span style="color:#f92672">/</span>(\w<span style="color:#f92672">+</span>)(\s<span style="color:#f92672">+</span>)((https<span style="color:#f92672">?:</span>\<span style="color:#f92672">/</span>\<span style="color:#f92672">/|</span>\<span style="color:#f92672">/</span>)(\S<span style="color:#f92672">+</span>))<span style="color:#f92672">/</span>i
+    IMAGE_URL <span style="color:#f92672">=</span> <span style="color:#f92672">/</span>((https<span style="color:#f92672">?:</span>\<span style="color:#f92672">/</span>\<span style="color:#f92672">/|</span>\<span style="color:#f92672">/</span>)(\S<span style="color:#f92672">+</span>))<span style="color:#f92672">/</span>i
+    def <span style="color:#a6e22e">initialize</span>(tag_name, markup, tokens)
       super
-      if markup =~ IMAGE_URL_WITH_CLASS_AND_CAPTION_AND_LINK
-        @class   = $1
-        @url     = $3
-        @caption = $7
-        @link = $9
-      elsif markup =~ IMAGE_URL_WITH_CLASS_AND_CAPTION
-        @class   = $1
-        @url     = $3
-        @caption = $7
-      elsif markup =~ IMAGE_URL_WITH_CAPTION
-        @url     = $1
-        @caption = $5
-      elsif markup =~ IMAGE_URL_WITH_CLASS
-        @class = $1
-        @url   = $3
-      elsif markup =~ IMAGE_URL
-        @url = $1
+      if markup <span style="color:#f92672">=~</span> IMAGE_URL_WITH_CLASS_AND_CAPTION_AND_LINK
+        <span style="color:#f92672">@</span>class   <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#ae81ff">1</span>
+        <span style="color:#f92672">@</span>url     <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#ae81ff">3</span>
+        <span style="color:#f92672">@</span>caption <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#ae81ff">7</span>
+        <span style="color:#f92672">@</span>link <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#ae81ff">9</span>
+      elsif markup <span style="color:#f92672">=~</span> IMAGE_URL_WITH_CLASS_AND_CAPTION
+        <span style="color:#f92672">@</span>class   <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#ae81ff">1</span>
+        <span style="color:#f92672">@</span>url     <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#ae81ff">3</span>
+        <span style="color:#f92672">@</span>caption <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#ae81ff">7</span>
+      elsif markup <span style="color:#f92672">=~</span> IMAGE_URL_WITH_CAPTION
+        <span style="color:#f92672">@</span>url     <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#ae81ff">1</span>
+        <span style="color:#f92672">@</span>caption <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#ae81ff">5</span>
+      elsif markup <span style="color:#f92672">=~</span> IMAGE_URL_WITH_CLASS
+        <span style="color:#f92672">@</span>class <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#ae81ff">1</span>
+        <span style="color:#f92672">@</span>url   <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#ae81ff">3</span>
+      elsif markup <span style="color:#f92672">=~</span> IMAGE_URL
+        <span style="color:#f92672">@</span>url <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#ae81ff">1</span>
       end
     end
-    def render(context)
-      if @class
-        source = &quot;&lt;figure class='#{@class}'&gt;&quot;
+    def <span style="color:#a6e22e">render</span>(context)
+      if <span style="color:#f92672">@</span>class
+        source <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&lt;figure class=&#39;#{@class}&#39;&gt;&#34;</span>
       else
-        source = &quot;&lt;figure&gt;&quot;
+        source <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&lt;figure&gt;&#34;</span>
       end
-      if @link
-        source += &quot;&lt;a href=\&quot;#{@link}\&quot;&gt;&quot;
+      if <span style="color:#f92672">@</span>link
+        source <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34;&lt;a href=\&#34;#{@link}\&#34;&gt;&#34;</span>
       end
-      source += &quot;&lt;img src=\&quot;#{@url}\&quot;&gt;&quot;
-      if @link
-        source += &quot;&lt;/a&gt;&quot;
+      source <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34;&lt;img src=\&#34;#{@url}\&#34;&gt;&#34;</span>
+      if <span style="color:#f92672">@</span>link
+        source <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34;&lt;/a&gt;&#34;</span>
       end
-      source += &quot;&lt;figcaption&gt;#{@caption}&lt;/figcaption&gt;&quot; if @caption
-      source += &quot;&lt;/figure&gt;&quot;
+      source <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34;&lt;figcaption&gt;#{@caption}&lt;/figcaption&gt;&#34;</span> if <span style="color:#f92672">@</span>caption
+      source <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34;&lt;/figure&gt;&#34;</span>
       source
     end
   end
 end
-Liquid::Template.register_tag('image', Jekyll::ImageTag)
-</code></pre>
-<p>is written as this Hugo shortcode:</p>
-<pre><code>&lt;!-- image --&gt;
-&lt;figure {{ with .Get &quot;class&quot; }}class=&quot;{{.}}&quot;{{ end }}&gt;
-    {{ with .Get &quot;link&quot;}}&lt;a href=&quot;{{.}}&quot;&gt;{{ end }}
-        &lt;img src=&quot;{{ .Get &quot;src&quot; }}&quot; {{ if or (.Get &quot;alt&quot;) (.Get &quot;caption&quot;) }}alt=&quot;{{ with .Get &quot;alt&quot;}}{{.}}{{else}}{{ .Get &quot;caption&quot; }}{{ end }}&quot;{{ end }} /&gt;
-    {{ if .Get &quot;link&quot;}}&lt;/a&gt;{{ end }}
-    {{ if or (or (.Get &quot;title&quot;) (.Get &quot;caption&quot;)) (.Get &quot;attr&quot;)}}
-    &lt;figcaption&gt;{{ if isset .Params &quot;title&quot; }}
-        {{ .Get &quot;title&quot; }}{{ end }}
-        {{ if or (.Get &quot;caption&quot;) (.Get &quot;attr&quot;)}}&lt;p&gt;
-        {{ .Get &quot;caption&quot; }}
-        {{ with .Get &quot;attrlink&quot;}}&lt;a href=&quot;{{.}}&quot;&gt; {{ end }}
-            {{ .Get &quot;attr&quot; }}
-        {{ if .Get &quot;attrlink&quot;}}&lt;/a&gt; {{ end }}
-        &lt;/p&gt; {{ end }}
-    &lt;/figcaption&gt;
+Liquid<span style="color:#f92672">::</span><span style="color:#a6e22e">Template.register_tag</span>(<span style="color:#e6db74">&#39;image&#39;</span>, Jekyll<span style="color:#f92672">::</span>ImageTag)
+</code></pre></div><p>is written as this Hugo shortcode:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">&lt;!--</span> image <span style="color:#f92672">--&gt;</span>
+<span style="color:#f92672">&lt;</span>figure {{ with .Get <span style="color:#e6db74">&#34;class&#34;</span> }}class<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{{.}}&#34;</span>{{ end }}<span style="color:#f92672">&gt;</span>
+    {{ with .Get <span style="color:#e6db74">&#34;link&#34;</span>}}<span style="color:#f92672">&lt;</span>a href<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{{.}}&#34;</span><span style="color:#f92672">&gt;</span>{{ end }}
+        <span style="color:#f92672">&lt;</span>img src<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{{ .Get &#34;</span>src<span style="color:#e6db74">&#34; }}&#34;</span> {{ if <span style="color:#a6e22e">or </span>(.Get <span style="color:#e6db74">&#34;alt&#34;</span>) (.Get <span style="color:#e6db74">&#34;caption&#34;</span>) }}alt<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{{ with .Get &#34;</span>alt<span style="color:#e6db74">&#34;}}{{.}}{{else}}{{ .Get &#34;</span>caption<span style="color:#e6db74">&#34; }}{{ end }}&#34;</span>{{ end }} <span style="color:#f92672">/&gt;</span>
+    {{ if .Get <span style="color:#e6db74">&#34;link&#34;</span>}}<span style="color:#f92672">&lt;/</span>a<span style="color:#f92672">&gt;</span>{{ end }}
+    {{ if <span style="color:#a6e22e">or </span>(<span style="color:#a6e22e">or </span>(.Get <span style="color:#e6db74">&#34;title&#34;</span>) (.Get <span style="color:#e6db74">&#34;caption&#34;</span>)) (.Get <span style="color:#e6db74">&#34;attr&#34;</span>)}}
+    <span style="color:#f92672">&lt;</span>figcaption<span style="color:#f92672">&gt;</span>{{ if isset .Params <span style="color:#e6db74">&#34;title&#34;</span> }}
+        {{ .Get <span style="color:#e6db74">&#34;title&#34;</span> }}{{ end }}
+        {{ if <span style="color:#a6e22e">or </span>(.Get <span style="color:#e6db74">&#34;caption&#34;</span>) (.Get <span style="color:#e6db74">&#34;attr&#34;</span>)}}<span style="color:#f92672">&lt;</span>p<span style="color:#f92672">&gt;</span>
+        {{ .Get <span style="color:#e6db74">&#34;caption&#34;</span> }}
+        {{ with .Get <span style="color:#e6db74">&#34;attrlink&#34;</span>}}<span style="color:#f92672">&lt;</span>a href<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{{.}}&#34;</span><span style="color:#f92672">&gt;</span> {{ end }}
+            {{ .Get <span style="color:#e6db74">&#34;attr&#34;</span> }}
+        {{ if .Get <span style="color:#e6db74">&#34;attrlink&#34;</span>}}<span style="color:#f92672">&lt;/</span>a<span style="color:#f92672">&gt;</span> {{ end }}
+        <span style="color:#f92672">&lt;/</span>p<span style="color:#f92672">&gt;</span> {{ end }}
+    <span style="color:#f92672">&lt;/</span>figcaption<span style="color:#f92672">&gt;</span>
     {{ end }}
-&lt;/figure&gt;
-&lt;!-- image --&gt;
-</code></pre>
-<h3 id="usage">Usage</h3>
+<span style="color:#f92672">&lt;/</span>figure<span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;!--</span> image <span style="color:#f92672">--&gt;</span>
+</code></pre></div><h3 id="usage">Usage</h3>
 <p>I simply changed:</p>
-<pre><code>{% image full http://farm5.staticflickr.com/4136/4829260124_57712e570a_o_d.jpg &quot;One of my favorite touristy-type photos. I secretly waited for the good light while we were &quot;having fun&quot; and took this. Only regret: a stupid pole in the top-left corner of the frame I had to clumsily get rid of at post-processing.&quot; -&gt;http://www.flickr.com/photos/alexnormand/4829260124/in/set-72157624547713078/ %}
-</code></pre>
-<p>to this (this example uses a slightly extended version named <code>fig</code>, different than the built-in <code>figure</code>):</p>
-<pre><code>{{% fig class=&quot;full&quot; src=&quot;http://farm5.staticflickr.com/4136/4829260124_57712e570a_o_d.jpg&quot; title=&quot;One of my favorite touristy-type photos. I secretly waited for the good light while we were having fun and took this. Only regret: a stupid pole in the top-left corner of the frame I had to clumsily get rid of at post-processing.&quot; link=&quot;http://www.flickr.com/photos/alexnormand/4829260124/in/set-72157624547713078/&quot; %}}
-</code></pre>
-<p>As a bonus, the shortcode named parameters are, arguably, more readable.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{<span style="color:#f92672">% image full http://farm5.staticflickr.com/4136/4829260124_57712e570a_o_d.jpg &#34;One of my favorite touristy-type photos. I secretly waited for the good light while we were &#34;having fun&#34; and took this. Only regret: a stupid pole in the top-left corner of the frame I had to clumsily get rid of at post-processing.&#34; -&gt;http://www.flickr.com/photos/alexnormand/4829260124/in/set-72157624547713078/ %</span>}
+</code></pre></div><p>to this (this example uses a slightly extended version named <code>fig</code>, different than the built-in <code>figure</code>):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{<span style="color:#f92672">% fig class=&#34;full&#34; src=&#34;http://farm5.staticflickr.com/4136/4829260124_57712e570a_o_d.jpg&#34; title=&#34;One of my favorite touristy-type photos. I secretly waited for the good light while we were having fun and took this. Only regret: a stupid pole in the top-left corner of the frame I had to clumsily get rid of at post-processing.&#34; link=&#34;http://www.flickr.com/photos/alexnormand/4829260124/in/set-72157624547713078/&#34; %</span>}}
+</code></pre></div><p>As a bonus, the shortcode named parameters are, arguably, more readable.</p>
 <h2 id="finishing-touches">Finishing touches</h2>
 <h3 id="fix-content">Fix content</h3>
 <p>Depending on the amount of customization that was done with each post with Jekyll, this step will require more or less effort. There are no hard and fast rules here except that <code>hugo server --watch</code> is your friend. Test your changes and fix errors as needed.</p>
