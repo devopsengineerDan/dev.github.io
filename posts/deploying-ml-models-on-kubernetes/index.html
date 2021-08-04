@@ -104,10 +104,10 @@
 <h2 id="containerising-a-simple-machine-learning-model-scoring-service-using-flask-and-docker">Containerising a Simple Machine Learning Model Scoring Service using Flask and Docker</h2>
 <p>We start by demonstrating how to achieve this basic competence using the simple Python ML model scoring REST API contained in the <code>api.py</code> module, together with the <code>Dockerfile</code>, both within the <code>py-flask-ml-score-api</code> directory, whose core contents are as follows,</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">py<span style="color:#f92672">-</span>flask<span style="color:#f92672">-</span>ml<span style="color:#f92672">-</span>score<span style="color:#f92672">-</span>api<span style="color:#f92672">/</span>
- <span style="color:#f92672">|</span> Dockerfile
- <span style="color:#f92672">|</span> Pipfile
- <span style="color:#f92672">|</span> Pipfile.lock
- <span style="color:#f92672">|</span> api.py
+ <span style="color:#f92672">|--</span> Dockerfile
+ <span style="color:#f92672">|--</span> Pipfile
+ <span style="color:#f92672">|--</span> Pipfile.lock
+ <span style="color:#f92672">|--</span> api.py
 </code></pre></div><p>If you&rsquo;re already feeling lost then these files are discussed in the points below, otherwise feel free to skip to the next section.</p>
 <h3 id="defining-the-flask-service-in-the-apipy-module">Defining the Flask Service in the <code>api.py</code> Module</h3>
 <p>This is a Python module that uses the <a href="http://flask.pocoo.org">Flask</a> framework for defining a web service (<code>app</code>), with a function (<code>score</code>), that executes in response to a HTTP request to a specific URL (or &lsquo;route&rsquo;), thanks to being wrapped by the <code>app.route</code> function. For reference, the relevant code is reproduced below,</p>
@@ -288,10 +288,10 @@ To further debug and diagnose cluster problems, use <span style="color:#e6db74">
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> helm create NAME<span style="color:#f92672">-</span>OF<span style="color:#f92672">-</span>YOUR<span style="color:#f92672">-</span>HELM<span style="color:#f92672">-</span>CHART
 </code></pre></div><p>This creates a new directory - e.g. <code>helm-ml-score-app</code> as included with this repository - with the following high-level directory structure,</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"> helm<span style="color:#f92672">-</span>ml<span style="color:#f92672">-</span>score<span style="color:#f92672">-</span>app<span style="color:#f92672">/</span>
- <span style="color:#f92672">|</span> <span style="color:#f92672">--</span> charts<span style="color:#f92672">/</span>
- <span style="color:#f92672">|</span> <span style="color:#f92672">--</span> templates<span style="color:#f92672">/</span>
- <span style="color:#f92672">|</span> Chart.yaml
- <span style="color:#f92672">|</span> values.yaml
+ <span style="color:#f92672">|--</span> charts<span style="color:#f92672">/</span>
+ <span style="color:#f92672">|--</span> templates<span style="color:#f92672">/</span>
+ <span style="color:#f92672">|--</span> Chart.yaml
+ <span style="color:#f92672">|--</span> values.yaml
 </code></pre></div><p>Briefly, the <code>charts</code> directory contains other charts that our new chart will depend on (we will not make use of this), the <code>templates</code> directory contains our Helm templates, <code>Chart.yaml</code> contains core information for our chart (e.g. name and version information) and <code>values.yaml</code> contains default values to render our templates with (in the case that no values are set from the command line).</p>
 <p>The next step is to delete all of the files in the <code>templates</code> directory (apart from <code>NOTES.txt</code>), and to replace them with our own. We start with <code>namespace.yaml</code> for declaring a namespace for our app,</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">apiVersion</span>: v1
@@ -354,10 +354,10 @@ To further debug and diagnose cluster problems, use <span style="color:#e6db74">
 <h3 id="building-an-ml-component-for-seldon">Building an ML Component for Seldon</h3>
 <p>To deploy a ML component using Seldon, we need to create Seldon-compatible Docker images. We start by following <a href="https://docs.seldon.io/projects/seldon-core/en/latest/python/python_wrapping_docker.html">these guidelines</a> for defining a Python class that wraps an ML model targeted for deployment with Seldon. This is contained within the <code>seldon-ml-score-component</code> directory, whose contents are similar to those in <code>py-flask-ml-score-api</code>,</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">seldon<span style="color:#f92672">-</span>ml<span style="color:#f92672">-</span>score<span style="color:#f92672">-</span>component<span style="color:#f92672">/</span>
- <span style="color:#f92672">|</span> Dockerfile
- <span style="color:#f92672">|</span> MLScore.py
- <span style="color:#f92672">|</span> Pipfile
- <span style="color:#f92672">|</span> Pipfile.lock
+ <span style="color:#f92672">|--</span> Dockerfile
+ <span style="color:#f92672">|--</span> MLScore.py
+ <span style="color:#f92672">|--</span> Pipfile
+ <span style="color:#f92672">|--</span> Pipfile.lock
 </code></pre></div><h4 id="building-the-docker-image-for-use-with-seldon">Building the Docker Image for use with Seldon</h4>
 <p>Seldon requires that the Docker image for the ML scoring service be structured in a particular way:</p>
 <ul>
