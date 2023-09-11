@@ -118,15 +118,15 @@ details can be found in the <a href="https://golang.org/pkg/html/template/">Go d
 functions.</p>
 <p><strong>Go variables and functions are accessible within {{ }}</strong></p>
 <p>Accessing a predefined variable &ldquo;foo&rdquo;:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ foo }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ foo }}
 </code></pre></div><p><strong>Parameters are separated using spaces</strong></p>
 <p>Calling the add function with input of 1, 2:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ add <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ add 1 2 }}
 </code></pre></div><p><strong>Methods and fields are accessed via dot notation</strong></p>
 <p>Accessing the Page Parameter &ldquo;bar&rdquo;</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ .Params.bar }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ .Params.bar }}
 </code></pre></div><p><strong>Parentheses can be used to group items together</strong></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ if <span style="color:#a6e22e">or </span>(isset .Params <span style="color:#e6db74">&#34;alt&#34;</span>) (isset .Params <span style="color:#e6db74">&#34;caption&#34;</span>) }} Caption {{ end }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ if or (isset .Params &#34;alt&#34;) (isset .Params &#34;caption&#34;) }} Caption {{ end }}
 </code></pre></div><h2 id="variables">Variables</h2>
 <p>Each Go template has a struct (object) made available to it. In hugo each
 template is passed either a page or a node struct depending on which type of
@@ -135,8 +135,8 @@ page you are rendering. More details are available on the
 <p>A variable is accessed by referencing the variable name.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">title</span>&gt;{{ .Title }}&lt;/<span style="color:#f92672">title</span>&gt;
 </code></pre></div><p>Variables can also be defined and referenced.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ <span style="color:#f92672">$</span>address <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;123 Main St.&#34;</span>}}
-{{ <span style="color:#f92672">$</span>address }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ $address := &#34;123 Main St.&#34;}}
+{{ $address }}
 </code></pre></div><h2 id="functions">Functions</h2>
 <p>Go template ship with a few functions which provide basic functionality. The Go
 template system also provides a mechanism for applications to extend the
@@ -146,14 +146,14 @@ are useful for building websites. Functions are called by using their name
 followed by the required parameters separated by spaces. Template
 functions cannot be added without recompiling hugo.</p>
 <p><strong>Example:</strong></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ add <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ add 1 2 }}
 </code></pre></div><h2 id="includes">Includes</h2>
 <p>When including another template you will pass to it the data it will be
 able to access. To pass along the current context please remember to
 include a trailing dot. The templates location will always be starting at
 the /layout/ directory within Hugo.</p>
 <p><strong>Example:</strong></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ template <span style="color:#e6db74">&#34;chrome/header.html&#34;</span> . }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ template &#34;chrome/header.html&#34; . }}
 </code></pre></div><h2 id="logic">Logic</h2>
 <p>Go templates provide the most basic iteration and conditional logic.</p>
 <h3 id="iteration">Iteration</h3>
@@ -161,17 +161,17 @@ the /layout/ directory within Hugo.</p>
 a map, array or slice. The following are different examples of how to use
 range.</p>
 <p><strong>Example 1: Using Context</strong></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ range array }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ range array }}
     {{ . }}
 {{ end }}
 </code></pre></div><p><strong>Example 2: Declaring value variable name</strong></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{range <span style="color:#f92672">$</span>element <span style="color:#f92672">:=</span> array}}
-    {{ <span style="color:#f92672">$</span>element }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{range $element := array}}
+    {{ $element }}
 {{ end }}
 </code></pre></div><p><strong>Example 2: Declaring key and value variable name</strong></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{range <span style="color:#f92672">$</span>index, <span style="color:#f92672">$</span>element <span style="color:#f92672">:=</span> array}}
-    {{ <span style="color:#f92672">$</span>index }}
-    {{ <span style="color:#f92672">$</span>element }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{range $index, $element := array}}
+    {{ $index }}
+    {{ $element }}
 {{ end }}
 </code></pre></div><h3 id="conditionals">Conditionals</h3>
 <p>If, else, with, or, &amp; and provide the framework for handling conditional
@@ -185,13 +185,13 @@ logic in Go Templates. Like range, each statement is closed with <code>end</code
 <p><strong>Example 1: If</strong></p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ if isset .Params &#34;title&#34; }}&lt;<span style="color:#f92672">h4</span>&gt;{{ index .Params &#34;title&#34; }}&lt;/<span style="color:#f92672">h4</span>&gt;{{ end }}
 </code></pre></div><p><strong>Example 2: If -&gt; Else</strong></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ if isset .Params <span style="color:#e6db74">&#34;alt&#34;</span> }}
-    {{ index .Params <span style="color:#e6db74">&#34;alt&#34;</span> }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ if isset .Params &#34;alt&#34; }}
+    {{ index .Params &#34;alt&#34; }}
 {{else}}
-    {{ index .Params <span style="color:#e6db74">&#34;caption&#34;</span> }}
+    {{ index .Params &#34;caption&#34; }}
 {{ end }}
 </code></pre></div><p><strong>Example 3: And &amp; Or</strong></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ if <span style="color:#a6e22e">and </span>(<span style="color:#a6e22e">or </span>(isset .Params <span style="color:#e6db74">&#34;title&#34;</span>) (isset .Params <span style="color:#e6db74">&#34;caption&#34;</span>)) (isset .Params <span style="color:#e6db74">&#34;attr&#34;</span>)}}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ if and (or (isset .Params &#34;title&#34;) (isset .Params &#34;caption&#34;)) (isset .Params &#34;attr&#34;)}}
 </code></pre></div><p><strong>Example 4: With</strong></p>
 <p>An alternative way of writing &ldquo;if&rdquo; and then referencing the same value
 is to use &ldquo;with&rdquo; instead. With rebinds the context <code>.</code> within its scope,
@@ -199,10 +199,10 @@ and skips the block if the variable is absent.</p>
 <p>The first example above could be simplified as:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ with .Params.title }}&lt;<span style="color:#f92672">h4</span>&gt;{{ . }}&lt;/<span style="color:#f92672">h4</span>&gt;{{ end }}
 </code></pre></div><p><strong>Example 5: If -&gt; Else If</strong></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ if isset .Params <span style="color:#e6db74">&#34;alt&#34;</span> }}
-    {{ index .Params <span style="color:#e6db74">&#34;alt&#34;</span> }}
-{{ else if isset .Params <span style="color:#e6db74">&#34;caption&#34;</span> }}
-    {{ index .Params <span style="color:#e6db74">&#34;caption&#34;</span> }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ if isset .Params &#34;alt&#34; }}
+    {{ index .Params &#34;alt&#34; }}
+{{ else if isset .Params &#34;caption&#34; }}
+    {{ index .Params &#34;caption&#34; }}
 {{ end }}
 </code></pre></div><h2 id="pipes">Pipes</h2>
 <p>One of the most powerful components of Go templates is the ability to
@@ -215,20 +215,20 @@ pipes is that they only can work with a single value and that value
 becomes the last parameter of the next pipeline.</p>
 <p>A few simple examples should help convey how to use the pipe.</p>
 <p><strong>Example 1 :</strong></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ if eq <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">1</span> }} Same {{ end }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ if eq 1 1 }} Same {{ end }}
 </code></pre></div><p>is the same as</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ eq <span style="color:#ae81ff">1</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">|</span> if }} Same {{ end }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ eq 1 1 | if }} Same {{ end }}
 </code></pre></div><p>It does look odd to place the if at the end, but it does provide a good
 illustration of how to use the pipes.</p>
 <p><strong>Example 2 :</strong></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ index .Params <span style="color:#e6db74">&#34;disqus_url&#34;</span> <span style="color:#f92672">|</span> html }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ index .Params &#34;disqus_url&#34; | html }}
 </code></pre></div><p>Access the page parameter called &ldquo;disqus_url&rdquo; and escape the HTML.</p>
 <p><strong>Example 3 :</strong></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{ if <span style="color:#a6e22e">or </span>(<span style="color:#a6e22e">or </span>(isset .Params <span style="color:#e6db74">&#34;title&#34;</span>) (isset .Params <span style="color:#e6db74">&#34;caption&#34;</span>)) (isset .Params <span style="color:#e6db74">&#34;attr&#34;</span>)}}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ if or (or (isset .Params &#34;title&#34;) (isset .Params &#34;caption&#34;)) (isset .Params &#34;attr&#34;)}}
 Stuff Here
 {{ end }}
 </code></pre></div><p>Could be rewritten as</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">{{  isset .Params <span style="color:#e6db74">&#34;caption&#34;</span> <span style="color:#f92672">|</span> or isset .Params <span style="color:#e6db74">&#34;title&#34;</span> <span style="color:#f92672">|</span> or isset .Params <span style="color:#e6db74">&#34;attr&#34;</span> <span style="color:#f92672">|</span> if }}
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{  isset .Params &#34;caption&#34; | or isset .Params &#34;title&#34; | or isset .Params &#34;attr&#34; | if }}
 Stuff Here
 {{ end }}
 </code></pre></div><h2 id="context-aka-the-dot">Context (aka. the dot)</h2>
@@ -261,13 +261,13 @@ benefit from having the table of contents provided. Sometimes the TOC just
 doesn&rsquo;t make a lot of sense. We&rsquo;ve defined a variable in our front matter
 of some pages to turn off the TOC from being displayed.</p>
 <p>Here is the example front matter:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">title<span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Permalinks&#34;</span>
-date<span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;2013-11-18&#34;</span>
-aliases<span style="color:#f92672">:</span>
-  <span style="color:#f92672">-</span> <span style="color:#e6db74">&#34;/doc/permalinks/&#34;</span>
-groups<span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;extras&#34;</span>]
-groups_weight<span style="color:#f92672">:</span> <span style="color:#ae81ff">30</span>
-notoc<span style="color:#f92672">:</span> true
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">title</span>: <span style="color:#e6db74">&#34;Permalinks&#34;</span>
+<span style="color:#66d9ef">date</span>: <span style="color:#e6db74">&#34;2013-11-18&#34;</span>
+<span style="color:#66d9ef">aliases</span>:
+  - <span style="color:#e6db74">&#34;/doc/permalinks/&#34;</span>
+<span style="color:#66d9ef">groups</span>: [<span style="color:#e6db74">&#34;extras&#34;</span>]
+<span style="color:#66d9ef">groups_weight</span>: <span style="color:#ae81ff">30</span>
+<span style="color:#66d9ef">notoc</span>: <span style="color:#66d9ef">true</span>
 </code></pre></div><p>Here is the corresponding code inside of the template:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">{{ if not .Params.notoc }}
     &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;toc&#34;</span> <span style="color:#a6e22e">class</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;well col-md-4 col-sm-6&#34;</span>&gt;
@@ -321,15 +321,16 @@ so, such as in this example:</p>
             <a class="share share-network-twitter" style="background-color:#008080;"><i class="fab fah fa-lg fa-twitter"></i><span>Twitter</span></a>
             <a class="share share-network-facebook" style="background-color:#1877f2;"><i class="fab fah fa-lg fa-facebook-f"></i><span>Facebook</span></a>
             <a class="share share-network-linkedin" style="background-color:#2B1B17;"><i class="fab fah fa-lg fa-linkedin"></i><span>LinkedIn</span></a>
-            <a class="share share-network-hackernews" style="background-color:#E55451;"><i class="fab fah fa-lg fa-hacker-news"></i><span>HackerNews</span></a>
+            <a class="share share-network-hackernews" style="background-color:#008000"><i class="fab fah fa-lg fa-hacker-news"></i><span>HackerNews</span></a>
             <a class="share share-network-pinterest" style="background-color:#bd081c;"><i class="fab fah fa-lg fa-pinterest"></i><span>Pinterest</span></a>
             <a class="share share-network-pocket" style="background-color:#7F38EC;"><i class="fab fah fa-lg fa-get-pocket"></i><span>Pocket</span></a>
             <a class="share share-network-email" style="background-color:#333333;"><i class="far fah fa-lg fa-envelope"></i><span>Email</span></a>
             <a class="share share-network-flipboard" style="background-color: #837E7C;"><i class="fab fah fa-lg fa-flipboard"></i><span>Flipboard</span></a>
             <a class="share share-network-quora" style="background-color:#808000;"><i class="fab fah fa-lg fa-quora"></i><span>Quora</span></a>
-            <a class="share share-network-reddit" style="background-color: #581845;"><i class="fab fah fa-lg fa-reddit-alien"></i><span>Reddit</span></a>
+            <a class="share share-network-reddit" style="background-color: #581845
+            ;"><i class="fab fah fa-lg fa-reddit-alien"></i><span>Reddit</span></a>
             <a class="share share-network-telegram" style="background-color:#000080;"><i class="fab fah fa-lg fa-telegram-plane"></i><span>Telegram</span></a>
-            <a class="share share-network-whatsapp" style="background-color:#008000;"><i class="fab fah fa-lg fa-whatsapp"></i><span>Whatsapp</span></a>
+            <a class="share share-network-whatsapp" style="background-color:#E55451;"><i class="fab fah fa-lg fa-whatsapp"></i><span>Whatsapp</span></a>
             <a class="share share-network-sms" style="background-color:#513B1C;"><i class="far fah fa-lg fa-comment-dots"></i><span>SMS</span></a>
           </div>
         </div>

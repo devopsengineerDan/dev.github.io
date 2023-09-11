@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Deploying ML Models with Bodywork // Engineer Dancun</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.68.3" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Dancun Manyinsa" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://devopsengineerdan.github.io/css/main.min.d5ed8558bcfb3aab1e3d1790fb902decbac1f989a0d27aa3b2a2320773186707.css" />
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Deploying ML Models with Bodywork"/>
+<meta name="twitter:description" content="Deploying ML Models with Bodywork Solutions to ML problems are usually first developed in Jupyter notebooks. We are then faced with an altogether different problem - how to engineer these notebook solutions into your products and systems and continue to maintain their performance through time, after new data is generated.
+ Table of Contents   What is this Tutorial Going to Teach Me? Introduction  Why is MLOps Getting so Much Attention?"/>
+
+    <meta property="og:title" content="Deploying ML Models with Bodywork" />
+<meta property="og:description" content="Deploying ML Models with Bodywork Solutions to ML problems are usually first developed in Jupyter notebooks. We are then faced with an altogether different problem - how to engineer these notebook solutions into your products and systems and continue to maintain their performance through time, after new data is generated.
+ Table of Contents   What is this Tutorial Going to Teach Me? Introduction  Why is MLOps Getting so Much Attention?" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://devopsengineerdan.github.io/posts/deploying-ml-models-with-bodywork/" />
+<meta property="article:published_time" content="2023-09-09T13:28:50+03:00" />
+<meta property="article:modified_time" content="2023-09-09T13:28:50+03:00" />
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://devopsengineerdan.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Dancun Manyinsa" /></a>
+      <h1>Engineer Dancun</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/about/">About</a>
+      </nav>
+      <p>Software Engineer, Researcher(AI and Quantum Science), and Habitual Quant</p>
+      <div class="app-header-social">
+        
+          <a href="https://www.github.com/DancunManyinsa" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/dancun-manyinsa-42518a17b/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="mailto:dancunmoruri@gmail.com" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-link">
+  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Deploying ML Models with Bodywork</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Sep 9, 2023
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          11 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://devopsengineerdan.github.io/tags/python/">python</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <hr>
+<h1 id="deploying-ml-models-with-bodywork">Deploying ML Models with Bodywork</h1>
+<p><img src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/96dcd641-e202-457f-9cfe-b857196204c7" alt="bodywork-cli"></p>
+<p>Solutions to ML problems are usually first developed in Jupyter notebooks. We are then faced with an altogether different problem - how to engineer these notebook solutions into your products and systems and continue to maintain their performance through time, after new data is generated.</p>
+<blockquote>
+<h3 id="table-of-contents">Table of Contents</h3>
+</blockquote>
+<ul>
+<li><a href="#what-is-this-tutorial-going-to-teach-me">What is this Tutorial Going to Teach Me?</a></li>
+<li><a href="#introduction">Introduction</a>
+<ul>
+<li><a href="#why-is-mlops-getting-so-much-attention">Why is MLOps Getting so Much Attention?</a></li>
+<li><a href="#ml-deployment-with-bodywork">ML Deployment with Bodywork</a></li>
+</ul>
+</li>
+<li><a href="#before-we-start">Before we Start</a></li>
+<li><a href="#the-ml-task">The ML Task</a></li>
+<li><a href="#a-continuous-training-pipeline">A Continuous Training Pipeline</a></li>
+<li><a href="#configuring-the-training-stage">Configuring the Training Stage</a></li>
+<li><a href="#configuring-the-prediction-service">Configuring the Prediction Service</a></li>
+<li><a href="#configuring-the-pipeline">Configuring the Pipeline</a></li>
+<li><a href="#deploying-the-pipeline">Deploying the Pipeline</a></li>
+<li><a href="#testing-the-api">Testing the API</a></li>
+<li><a href="#scheduling-the-pipeline">Scheduling the Pipeline</a></li>
+<li><a href="#cleaning-up">Cleaning Up</a></li>
+</ul>
+<h2 id="what-is-this-tutorial-going-to-teach-me">What is this Tutorial Going to Teach Me?</h2>
+<ul>
+<li>How to re-engineer a ML solution from a Jupyter notebook into a production-ready Python modules.</li>
+<li>How to develop a two-stage ML pipeline that trains a model and then creates a prediction service to exposes it via a REST API.</li>
+<li>How to deploy the pipeline to <a href="https://kubernetes.io/">Kubernetes</a> using <a href="https://github.com/">GitHub</a> and <a href="https://bodywork.readthedocs.io/en/latest/">Bodywork</a>.</li>
+<li>How to configure the pipeline to run on a schedule, so the model is periodically re-trained and re-deployed without the intervention of an ML engineer.</li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<p>I’ve written at length on the subject of getting machine learning into production - an area that now falls under Machine Learning Operations (MLOps). MLOps has become a hot topic - take my <a href="%7Bfilename%7Dk8s-ml-ops.md">blog post</a> on <em>Deploying Python ML Models with Flask, Docker and Kubernetes</em>, which is accessed by hundreds of ML practitioners every month; or the fact that Thoughtwork’s <a href="https://www.thoughtworks.com/insights/articles/intelligent-enterprise-series-cd4ml">essay</a> on <em>Continuous Delivery for ML</em> has become an essential reference for all ML engineers, together with Google’s <a href="https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html">paper</a> on the <em>Hidden Technical Debt in ML Systems</em>; and MLOps even has its own entry on <a href="https://en.wikipedia.org/wiki/MLOps">Wikipedia</a>.</p>
+<h3 id="why-is-mlops-getting-so-much-attention">Why is MLOps Getting so Much Attention?</h3>
+<p>In my opinion, this is because we are at a point where a significant number of organisations have now overcome their data ingestion and engineering problems. They are able to provide their data scientists with the data required to solve business problems using ML, only to find that, as Thoughtworks put it,</p>
+<blockquote>
+<p>“<em>Getting machine learning applications into production is hard</em>”</p>
+</blockquote>
+<p>To tackle some of the core complexities of MLOps, many ML engineering teams have settled on approaches that are based-upon deploying containerised models, usually as RESTful prediction services, to some type of cloud platform. Kubernetes is especially useful for this as I have <a href="%7Bfilename%7Dk8s-ml-ops.md">written about before</a>.</p>
+<h3 id="ml-deployment-with-bodywork">ML Deployment with Bodywork</h3>
+<p>Running ML code in containers has become a common pattern to guarantee reproducibility between what has been developed and what is deployed in production environments.</p>
+<p>Most ML engineers do not, however, have the time to develop the skills and expertise required to deliver and deploy containerised ML systems into production environments. This requires an understanding of how to build container images, how to push build artefacts to image repositories and how to configure a container orchestration platform to use these, to execute batch jobs and deploy services.</p>
+<p>Developing and maintaining these deployment pipelines is time-consuming. If there are multiple projects - each requiring re-training and re-deployment - then the management of these pipelines will quickly become a large burden.</p>
+<p>This is where Bodywork steps-in - it will deliver your project&rsquo;s Python modules directly from your Git repository into Docker containers and manage their deployment to a Kubernetes cluster. In other words, Bodywork automates the repetitive tasks that most ML engineers think of as <a href="https://en.wikipedia.org/wiki/DevOps">DevOps</a>, allowing them to focus their time on what they do best - i.e., engineering solutions to ML tasks.</p>
+<p>This post serves as a short tutorial on how to use Bodywork to productionise a common pipeline pattern (train-and-deploy), and it will refer to files within a Bodywork project hosted on GitHub - see <a href="https://github.com/bodywork-ml/bodywork-ml-pipeline-project">bodywork-ml-pipeline-project</a>.</p>
+<p><img src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/7f25fedd-c6bf-4d14-9cfe-fb1c1e1d8d2b" alt="ml-pipeline"></p>
+<h2 id="before-we-start">Before we Start</h2>
+<p>If you want to run the examples you will need to <a href="https://bodywork.readthedocs.io/en/latest/installation/">install Bodywork</a> on your machine and setup access to Kubernetes (see this <a href="https://bodywork.readthedocs.io/en/latest/kubernetes/#quickstart">Kubernetes Quickstart Guide</a> for help here). I recommend that you find five minutes to read about the <a href="https://bodywork.readthedocs.io/en/latest/key_concepts/">key concepts</a> that Bodywork is built upon, before beginning to work-through the examples below.</p>
+<h2 id="the-ml-task">The ML Task</h2>
+<p>The ML problem we have chosen to use for this example, is the classification of iris plants into one of their three sub-species, given their physical dimensions. It uses the infamous <a href="https://scikit-learn.org/stable/datasets/index.html#iris-dataset">iris plants dataset</a> and is an example of a multi-class classification task.</p>
+<p>The Jupyter notebook titled <a href="https://github.com/bodywork-ml/bodywork-ml-pipeline-project/blob/master/notebooks/ml_prototype_work.ipynb">ml_prototype_work.ipynb</a>, documents the trivial ML workflow used to arrive at a solution to this task. It trains a Decision Tree classifier and persists the trained model to cloud storage (an AWS bucket). Take five minutes to read through it.</p>
+<h2 id="a-continuous-training-pipeline">A Continuous Training Pipeline</h2>
+<p>The two stage train-and-deploy pipeline is packaged as a <a href="https://github.com/bodywork-ml/bodywork-ml-pipeline-project">GitHub repository</a>, and is structured as follows,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">root<span style="color:#f92672">/</span>
+ <span style="color:#f92672">|--</span> notebooks<span style="color:#f92672">/</span>
+     <span style="color:#f92672">|--</span> ml_prototype_work.ipynb
+ <span style="color:#f92672">|--</span> pipeline<span style="color:#f92672">/</span>
+     <span style="color:#f92672">|--</span> train_model.py
+     <span style="color:#f92672">|--</span> serve_model.py
+ <span style="color:#f92672">|--</span> bodywork.yaml
+</code></pre></div><p>All the configuration for this deployment is held within <code>bodywork.yaml</code>, whose contents are reproduced below.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">version</span>: <span style="color:#e6db74">&#34;1.1&#34;</span>
+
+<span style="color:#66d9ef">pipeline</span>:
+  <span style="color:#66d9ef">name</span>: bodywork-ml-pipeline-project
+  <span style="color:#66d9ef">docker_image</span>: bodyworkml/bodywork-core:latest
+  <span style="color:#66d9ef">DAG</span>: stage_1_train_model &gt;&gt; stage_2_scoring_service
+
+<span style="color:#66d9ef">stages</span>:
+  <span style="color:#66d9ef">stage_1_train_model</span>:
+    <span style="color:#66d9ef">executable_module_path</span>: pipeline/train_model.py
+    <span style="color:#66d9ef">requirements</span>:
+      - boto3==<span style="color:#ae81ff">1.21.14</span>
+      - joblib==<span style="color:#ae81ff">1.1.0</span>
+      - pandas==<span style="color:#ae81ff">1.4.1</span>
+      - scikit-learn==<span style="color:#ae81ff">1.0.2</span>
+    <span style="color:#66d9ef">cpu_request</span>: <span style="color:#ae81ff">0.5</span>
+    <span style="color:#66d9ef">memory_request_mb</span>: <span style="color:#ae81ff">100</span>
+    <span style="color:#66d9ef">batch</span>:
+      <span style="color:#66d9ef">max_completion_time_seconds</span>: <span style="color:#ae81ff">60</span>
+      <span style="color:#66d9ef">retries</span>: <span style="color:#ae81ff">2</span>
+
+  <span style="color:#66d9ef">stage_2_scoring_service</span>:
+    <span style="color:#66d9ef">executable_module_path</span>: pipeline/serve_model.py
+    <span style="color:#66d9ef">requirements</span>:
+      - flask==<span style="color:#ae81ff">2.1.2</span>
+      - joblib==<span style="color:#ae81ff">1.1.0</span>
+      - numpy==<span style="color:#ae81ff">1.22.3</span>
+      - scikit-learn==<span style="color:#ae81ff">1.0.2</span>
+    <span style="color:#66d9ef">cpu_request</span>: <span style="color:#ae81ff">0.25</span>
+    <span style="color:#66d9ef">memory_request_mb</span>: <span style="color:#ae81ff">100</span>
+    <span style="color:#66d9ef">service</span>:
+      <span style="color:#66d9ef">max_startup_time_seconds</span>: <span style="color:#ae81ff">60</span>
+      <span style="color:#66d9ef">replicas</span>: <span style="color:#ae81ff">2</span>
+      <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">5000</span>
+      <span style="color:#66d9ef">ingress</span>: <span style="color:#66d9ef">true</span>
+
+<span style="color:#66d9ef">logging</span>:
+  <span style="color:#66d9ef">log_level</span>: INFO
+</code></pre></div><p>The remainder of this tutorial is concerned with explaining how the configuration within <code>bodywork.yaml</code> is used to deploy the pipeline, as defined within the <code>train_model.py</code> and <code>serve_model.py</code> Python modules.</p>
+<h2 id="configuring-the-training-stage">Configuring the Training Stage</h2>
+<p>The <code>stages.stage_1_train_model.executable_module_path</code> points to the executable Python module - <code>train_model.py</code> - that defines what will happen when the <code>stage_1_train_model</code> (batch) stage is executed, within a pre-built <a href="https://hub.docker.com/repository/docker/bodyworkml/bodywork-core">Bodywork container</a>. This module contains the code required to:</p>
+<ol>
+<li>download data from an AWS S3 bucket;</li>
+<li>pre-process the data (e.g. extract labels for supervised learning);</li>
+<li>train the model and compute performance metrics; and,</li>
+<li>persist the model to the same AWS S3 bucket that contains the original data.</li>
+</ol>
+<p>It can be summarised as,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> datetime <span style="color:#f92672">import</span> datetime
+<span style="color:#f92672">from</span> urllib.request <span style="color:#f92672">import</span> urlopen
+
+<span style="color:#75715e"># other imports</span>
+<span style="color:#75715e"># ...</span>
+
+DATA_URL <span style="color:#f92672">=</span> (<span style="color:#e6db74">&#39;http://bodywork-ml-pipeline-project.s3.eu-west-2.amazonaws.com&#39;</span>
+            <span style="color:#e6db74">&#39;/data/iris_classification_data.csv&#39;</span>)
+
+<span style="color:#75715e"># other constants</span>
+<span style="color:#75715e"># ...</span>
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>() <span style="color:#f92672">-&gt;</span> None:
+    <span style="color:#e6db74">&#34;&#34;&#34;Main script to be executed.&#34;&#34;&#34;</span>
+    data <span style="color:#f92672">=</span> download_dataset(DATA_URL)
+    features, labels <span style="color:#f92672">=</span> pre_process_data(data)
+    trained_model <span style="color:#f92672">=</span> train_model(features, labels)
+    persist_model(trained_model)
+
+
+<span style="color:#75715e"># other functions definitions used in main()</span>
+<span style="color:#75715e"># ...</span>
+
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+    main()
+</code></pre></div><p>We recommend that you spend five minutes familiarising yourself with the full contents of <a href="https://github.com/bodywork-ml/bodywork-ml-pipeline-project/blob/master/pipeline/train_model.py">train_model.py</a>. When Bodywork runs the stage, it will do so in exactly the same way as if you were to run,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> python train_model.py
+</code></pre></div><p>And so everything defined in <code>main()</code> will be executed.</p>
+<p>The <code>stages.stage_1_train_model.requirements</code> parameter in the <code>bodywork.yaml</code> file lists the 3rd party Python packages that will be Pip-installed on the pre-built Bodywork container, as required to run the <code>train_model.py</code> module. In this example we have,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">boto3<span style="color:#f92672">==</span><span style="color:#ae81ff">1.21.14</span>
+joblib<span style="color:#f92672">==</span><span style="color:#ae81ff">1.1.0</span>
+pandas<span style="color:#f92672">==</span><span style="color:#ae81ff">1.4.1</span>
+scikit<span style="color:#f92672">-</span>learn<span style="color:#f92672">==</span><span style="color:#ae81ff">1.0.2</span>
+</code></pre></div><ul>
+<li><code>boto3</code> - for interacting with AWS;</li>
+<li><code>joblib</code> - for persisting models;</li>
+<li><code>pandas</code> - for manipulating the raw data; and,</li>
+<li><code>scikit-learn</code> - for training the model.</li>
+</ul>
+<p>Finally, the remaining parameters in <code>stages.stage_1_train_model</code> section of <code>bodywork.yaml</code> allow us to configure the remaining key parameters for the stage,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">stage_1_train_model</span>:
+  <span style="color:#66d9ef">executable_module_path</span>: stage_1_train_model/train_model.py
+  <span style="color:#66d9ef">requirements</span>:
+    - boto3==<span style="color:#ae81ff">1.21.14</span>
+    - joblib==<span style="color:#ae81ff">1.1.0</span>
+    - pandas==<span style="color:#ae81ff">1.4.1</span>
+    - scikit-learn==<span style="color:#ae81ff">1.0.2</span>
+  <span style="color:#66d9ef">cpu_request</span>: <span style="color:#ae81ff">0.5</span>
+  <span style="color:#66d9ef">memory_request_mb</span>: <span style="color:#ae81ff">100</span>
+  <span style="color:#66d9ef">batch</span>:
+    <span style="color:#66d9ef">max_completion_time_seconds</span>: <span style="color:#ae81ff">60</span>
+    <span style="color:#66d9ef">retries</span>: <span style="color:#ae81ff">2</span>
+</code></pre></div><p>From which it is clear to see that we have specified that this stage is a batch stage (as opposed to a service-deployment), together with an estimate of the CPU and memory resources to request from the Kubernetes cluster, how long to wait and how many times to retry, etc.</p>
+<h2 id="configuring-the-prediction-service">Configuring the Prediction Service</h2>
+<p>The <code>stages.stage_2_scoring_service.executable_module_path</code> parameter points to the executable Python module - <code>serve_model.py</code> - that defines what will happen when the <code>stage_2_scoring_service</code> (service) stage is executed, within a pre-built Bodywork container. This module contains the code required to:</p>
+<ol>
+<li>load the model trained in <code>stage_1_train_model</code> and persisted to cloud storage; and,</li>
+<li>start a Flask service to score instances (or rows) of data, sent as JSON to the API endpoint.</li>
+</ol>
+<p>We chose to develop the prediction service using <a href="https://flask.palletsprojects.com/en/1.1.x/">Flask</a>, but this is <strong>not</strong> a requirement in any way and you are free to use any frameworks you like - e.g., <a href="https://fastapi.tiangolo.com">FastAPI</a>.</p>
+<p>The contents of <code>serve_model.py</code> defines the REST API server and can be summarised as,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> urllib.request <span style="color:#f92672">import</span> urlopen
+<span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> Dict
+
+<span style="color:#75715e"># other imports</span>
+<span style="color:#75715e"># ...</span>
+
+MODEL_URL <span style="color:#f92672">=</span> (<span style="color:#e6db74">&#39;http://bodywork-ml-pipeline-project.s3.eu-west-2.amazonaws.com/models&#39;</span>
+             <span style="color:#e6db74">&#39;/iris_tree_classifier.joblib&#39;</span>)
+
+<span style="color:#75715e"># other constants</span>
+<span style="color:#75715e"># ...</span>
+
+app <span style="color:#f92672">=</span> Flask(__name__)
+
+
+<span style="color:#a6e22e">@app.route</span>(<span style="color:#e6db74">&#39;/iris/v1/score&#39;</span>, methods<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#39;POST&#39;</span>])
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">score</span>() <span style="color:#f92672">-&gt;</span> Response:
+    <span style="color:#e6db74">&#34;&#34;&#34;Iris species classification API endpoint&#34;&#34;&#34;</span>
+    request_data <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span>json
+    X <span style="color:#f92672">=</span> make_features_from_request_data(request_data)
+    model_output <span style="color:#f92672">=</span> model_predictions(X)
+    response_data <span style="color:#f92672">=</span> jsonify({<span style="color:#f92672">**</span>model_output, <span style="color:#e6db74">&#39;model_info&#39;</span>: str(model)})
+    <span style="color:#66d9ef">return</span> make_response(response_data)
+
+
+<span style="color:#75715e"># other functions definitions used in score() and below</span>
+<span style="color:#75715e"># ...</span>
+
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+    model <span style="color:#f92672">=</span> get_model(MODEL_URL)
+    <span style="color:#66d9ef">print</span>(f<span style="color:#e6db74">&#39;loaded model={model}&#39;</span>)
+    <span style="color:#66d9ef">print</span>(f<span style="color:#e6db74">&#39;starting API server&#39;</span>)
+    app<span style="color:#f92672">.</span>run(host<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;0.0.0.0&#39;</span>, port<span style="color:#f92672">=</span><span style="color:#ae81ff">5000</span>)
+</code></pre></div><p>We recommend that you spend five minutes familiarising yourself with the full contents of <a href="https://github.com/bodywork-ml/bodywork-ml-pipeline-project/blob/master/pipeline/serve_model.py">serve_model.py</a>. When Bodywork runs the stage, it will start the server defined by <code>app</code> and expose the <code>/iris/v1/score</code> route that is being handled by <code>score()</code>. Note, that this process has no scheduled end and the stage will be kept up-and-running until it is re-deployed or <a href="https://bodywork.readthedocs.io/en/latest/user_guide/#deleting-services">deleted</a>.</p>
+<p>The <code>stages.stage_2_scoring_service.requirements</code> parameter in the <code>bodywork.yaml</code> file lists the 3rd party Python packages that will be Pip-installed on the pre-built Bodywork container, as required to run the <code>serve_model.py</code> module. In this example we have,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">boto3<span style="color:#f92672">==</span><span style="color:#ae81ff">1.21.14</span>
+joblib<span style="color:#f92672">==</span><span style="color:#ae81ff">1.1.0</span>
+pandas<span style="color:#f92672">==</span><span style="color:#ae81ff">1.4.1</span>
+scikit<span style="color:#f92672">-</span>learn<span style="color:#f92672">==</span><span style="color:#ae81ff">1.0.2</span>
+</code></pre></div><ul>
+<li><code>Flask</code> - the framework upon which the REST API server is built;</li>
+<li><code>joblib</code> - for loading the persisted model;</li>
+<li><code>numpy</code> &amp; <code>scikit-learn</code> - for working with the ML model.</li>
+</ul>
+<p>Finally, the remaining parameters in <code>stages.stage_2_scoring_service</code> section of <code>bodywork.yaml</code> allow us to configure the remaining key parameters for the stage,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">stage_2_scoring_service</span>:
+  <span style="color:#66d9ef">executable_module_path</span>: stage_2_scoring_service/serve_model.py
+  <span style="color:#66d9ef">requirements</span>:
+    - flask==<span style="color:#ae81ff">2.1.2</span>
+    - joblib==<span style="color:#ae81ff">1.1.0</span>
+    - numpy==<span style="color:#ae81ff">1.22.3</span>
+    - scikit-learn==<span style="color:#ae81ff">1.0.2</span>
+  <span style="color:#66d9ef">cpu_request</span>: <span style="color:#ae81ff">0.25</span>
+  <span style="color:#66d9ef">memory_request_mb</span>: <span style="color:#ae81ff">100</span>
+  <span style="color:#66d9ef">service</span>:
+    <span style="color:#66d9ef">max_startup_time_seconds</span>: <span style="color:#ae81ff">30</span>
+    <span style="color:#66d9ef">replicas</span>: <span style="color:#ae81ff">2</span>
+    <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">5000</span>
+    <span style="color:#66d9ef">ingress</span>: <span style="color:#66d9ef">true</span>
+</code></pre></div><p>From which it is clear to see that we have specified that this stage will create a service (as opposed to run a batch job), together with an estimate of the CPU and memory resources to request from the Kubernetes cluster, how long to wait for the service to start-up and be &lsquo;ready&rsquo;, which port to expose, to create a path to the service from an externally-facing ingress controller (if present in the cluster), and how many instances (or replicas) of the server should be created to stand-behind the cluster-service.</p>
+<h2 id="configuring-the-pipeline">Configuring the Pipeline</h2>
+<p>The <code>project</code> section of <code>bodywork.yaml</code> contains the configuration for the pipeline,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">pipeline</span>:
+  <span style="color:#66d9ef">name</span>: bodywork-ml-pipeline-project
+  <span style="color:#66d9ef">docker_image</span>: bodyworkml/bodywork-core:latest
+  <span style="color:#66d9ef">DAG</span>: stage_1_train_model &gt;&gt; stage_2_scoring_service
+</code></pre></div><p>The most important element is the specification of the workflow DAG, which in this instance is simple and will instruct the Bodywork workflow-controller to first run the training stage, and then (if successful) create the prediction service.</p>
+<h2 id="deploying-the-pipeline">Deploying the Pipeline</h2>
+<p>To deploy the pipeline and create the prediction service, use the following command,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> bw create deployment <span style="color:#e6db74">&#34;https://github.com/bodywork-ml/bodywork-ml-pipeline-project&#34;</span>
+</code></pre></div><p>Which will run the pipeline defined in the default branch of the project&rsquo;s remote Git repository (e.g., <code>master</code>), and stream the logs to stdout - e.g,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">==========================================</span> deploying master branch from https<span style="color:#f92672">://</span>github.com<span style="color:#f92672">/</span>bodywork<span style="color:#f92672">-</span>ml<span style="color:#f92672">/</span>bodywork<span style="color:#f92672">-</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>project <span style="color:#f92672">===========================================</span>
+[02<span style="color:#f92672">/</span><span style="color:#ae81ff">21</span><span style="color:#f92672">/</span><span style="color:#ae81ff">22</span> <span style="color:#ae81ff">14</span><span style="color:#f92672">:</span><span style="color:#ae81ff">50</span><span style="color:#f92672">:</span><span style="color:#ae81ff">59</span>] INFO     Creating k8s namespace <span style="color:#f92672">=</span> bodywork<span style="color:#f92672">-</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>project                                                                                             
+[02<span style="color:#f92672">/</span><span style="color:#ae81ff">21</span><span style="color:#f92672">/</span><span style="color:#ae81ff">22</span> <span style="color:#ae81ff">14</span><span style="color:#f92672">:</span><span style="color:#ae81ff">51</span><span style="color:#f92672">:</span><span style="color:#ae81ff">00</span>] INFO     Creating k8s service account <span style="color:#f92672">=</span> bodywork<span style="color:#f92672">-</span>stage                                                                                                     
+[02<span style="color:#f92672">/</span><span style="color:#ae81ff">21</span><span style="color:#f92672">/</span><span style="color:#ae81ff">22</span> <span style="color:#ae81ff">14</span><span style="color:#f92672">:</span><span style="color:#ae81ff">51</span><span style="color:#f92672">:</span><span style="color:#ae81ff">00</span>] INFO     Attempting to execute DAG step <span style="color:#f92672">=</span> [stage_1_train_model]                                                                                            
+[02<span style="color:#f92672">/</span><span style="color:#ae81ff">21</span><span style="color:#f92672">/</span><span style="color:#ae81ff">22</span> <span style="color:#ae81ff">14</span><span style="color:#f92672">:</span><span style="color:#ae81ff">51</span><span style="color:#f92672">:</span><span style="color:#ae81ff">00</span>] INFO     Creating k8s job for stage <span style="color:#f92672">=</span> stage<span style="color:#ae81ff">-1</span><span style="color:#f92672">-</span>train<span style="color:#f92672">-</span>model  
+<span style="color:#66d9ef">...</span>
+</code></pre></div><h2 id="testing-the-api">Testing the API</h2>
+<p>The details of any serviced associated with the pipeline, can be retrieved using,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> bw get deployment <span style="color:#e6db74">&#34;bodywork-ml-pipeline-project&#34;</span> <span style="color:#e6db74">&#34;stage-2-scoring-service&#34;</span>
+
+┏━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Field                ┃ Value                                                                         ┃
+┡━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ name                 │ stage<span style="color:#ae81ff">-2</span><span style="color:#f92672">-</span>scoring<span style="color:#f92672">-</span>service                                                       │
+│ namespace            │ bodywork<span style="color:#f92672">-</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>project                                                  │
+│ service_exposed      │ True                                                                          │
+│ service_url          │ http<span style="color:#f92672">://</span>stage<span style="color:#ae81ff">-2</span><span style="color:#f92672">-</span>scoring<span style="color:#f92672">-</span>service.bodywork<span style="color:#f92672">-</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>project.svc.cluster.local │
+│ service_port         │ <span style="color:#ae81ff">5000</span>                                                                          │
+│ available_replicas   │ <span style="color:#ae81ff">2</span>                                                                             │
+│ unavailable_replicas │ <span style="color:#ae81ff">0</span>                                                                             │
+│ git_url              │ https<span style="color:#f92672">://</span>github.com<span style="color:#f92672">/</span>bodywork<span style="color:#f92672">-</span>ml<span style="color:#f92672">/</span>bodywork<span style="color:#f92672">-</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>project                   │
+│ git_branch           │ master                                                                        │
+│ git_commit_hash      │ e9df4b4                                                                       │
+│ has_ingress          │ True                                                                          │
+│ ingress_route        │ <span style="color:#f92672">/</span>bodywork<span style="color:#f92672">-</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>project<span style="color:#f92672">/</span>stage<span style="color:#ae81ff">-2</span><span style="color:#f92672">-</span>scoring<span style="color:#f92672">-</span>service                         │
+└──────────────────────┴───────────────────────────────────────────────────────────────────────────────┘
+</code></pre></div><p>Services are accessible via the public internet if you have <a href="https://bodywork.readthedocs.io/en/latest/kubernetes/#installing-nginx">installed an ingress controller</a> within your cluster, and the <code>stages.STAGE_NAME.service.ingress</code> <a href="#service-deployment-stages">configuration parameter</a> is set to <code>true</code>. If you are using Kubernetes via Minikube and our <a href="https://bodywork.readthedocs.io/en/latest/kubernetes/#quickstart">Kuberentes Quickstart</a> guide, then this will have been enabled for you. Otherwise, services will only be accessible via HTTP from <strong>within</strong> the cluster, via the <code>service_url</code>.</p>
+<p>Assuming that you are setup to access services from outside the cluster, then you can test the endpoint using,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> curl http<span style="color:#f92672">://</span>YOUR_CLUSTERS_EXTERNAL_IP<span style="color:#f92672">/</span>bodywork<span style="color:#f92672">-</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>project<span style="color:#f92672">/</span>stage<span style="color:#ae81ff">-2</span><span style="color:#f92672">-</span>scoring<span style="color:#f92672">-</span>service<span style="color:#f92672">/</span>iris<span style="color:#f92672">/</span>v1<span style="color:#f92672">/</span>score \
+    <span style="color:#f92672">--</span>request POST \
+    <span style="color:#f92672">--</span>header <span style="color:#e6db74">&#34;Content-Type: application/json&#34;</span> \
+    <span style="color:#f92672">--</span>data <span style="color:#e6db74">&#39;{&#34;sepal_length&#34;: 5.1, &#34;sepal_width&#34;: 3.5, &#34;petal_length&#34;: 1.4, &#34;petal_width&#34;: 0.2}&#39;</span>
+</code></pre></div><p>See <a href="https://bodywork.readthedocs.io/en/latest/kubernetes/#accessing-services">here</a> for instructions on how to retrieve <code>YOUR_CLUSTERS_EXTERNAL_IP</code> if you are using Minikube, otherwise refer to the instructions <a href="https://bodywork.readthedocs.io/en/latest/kubernetes/#connecting-to-the-cluster">here</a>. This request ought to return,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+    <span style="color:#f92672">&#34;species_prediction&#34;</span>:<span style="color:#e6db74">&#34;setosa&#34;</span>,
+    <span style="color:#f92672">&#34;probabilities&#34;</span>:<span style="color:#e6db74">&#34;setosa=1.0|versicolor=0.0|virginica=0.0&#34;</span>,
+    <span style="color:#f92672">&#34;model_info&#34;</span>: <span style="color:#e6db74">&#34;DecisionTreeClassifier(class_weight=&#39;balanced&#39;, random_state=42)&#34;</span>
+}
+</code></pre></div><p>According to how the payload has been defined in the <code>stage_2_scoring_service/serve_model.py</code> module.</p>
+<h2 id="scheduling-the-pipeline">Scheduling the Pipeline</h2>
+<p>If you&rsquo;re happy with the results of this test deployment, you can then schedule the pipeline to run on the cluster, on a schedule. For example, to setup the the workflow to run every day at midnight, use the following command,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> bw create cronjob <span style="color:#e6db74">&#34;https://github.com/bodywork-ml/bodywork-ml-pipeline-project&#34;</span> \
+    <span style="color:#f92672">--</span>name <span style="color:#e6db74">&#34;daily&#34;</span> \
+    <span style="color:#f92672">--</span>schedule <span style="color:#e6db74">&#34;0 * * * *&#34;</span> \
+    <span style="color:#f92672">--</span>retries <span style="color:#ae81ff">2</span>
+</code></pre></div><p>Each scheduled pipeline execution will attempt to run the pipeline - i.e., retraining the model and updating the prediction service - as defined by the state of this repository&rsquo;s default branch (<code>master</code>), at the time of execution. To change the branch used for deployment, use the <code>--branch</code> option.</p>
+<p>To get the execution history for this cronjob use,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> bw get cronjob <span style="color:#e6db74">&#34;daily&#34;</span> <span style="color:#f92672">--</span>history
+</code></pre></div><p>Which should return output along the lines of,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">           run ID <span style="color:#f92672">=</span> daily<span style="color:#ae81ff">-1645446900</span>
+┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Field           ┃ Value                     ┃
+┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ start_time      │ <span style="color:#ae81ff">2022-02-21</span> <span style="color:#ae81ff">12</span><span style="color:#f92672">:</span><span style="color:#ae81ff">35</span><span style="color:#f92672">:</span><span style="color:#ae81ff">06+00</span><span style="color:#f92672">:</span><span style="color:#ae81ff">00</span> │
+│ completion_time │ <span style="color:#ae81ff">2022-02-21</span> <span style="color:#ae81ff">12</span><span style="color:#f92672">:</span><span style="color:#ae81ff">39</span><span style="color:#f92672">:</span><span style="color:#ae81ff">32+01</span><span style="color:#f92672">:</span><span style="color:#ae81ff">03</span> │
+│ active          │ False                     │
+│ succeeded       │ True                      │
+│ failed          │ False                     │
+└─────────────────┴───────────────────────────┘
+</code></pre></div><p>Then to stream the logs from any given cronjob run (e.g. to debug and/or monitor for errors), use,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> bw get cronjobs daily <span style="color:#f92672">--</span>logs <span style="color:#e6db74">&#34;hourly-1645446900&#34;</span>
+</code></pre></div><h2 id="cleaning-up">Cleaning Up</h2>
+<p>To tear-down the prediction service created by the pipeline you can use,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> bw delete deployment <span style="color:#e6db74">&#34;bodywork-ml-pipeline-project&#34;</span>
+</code></pre></div>
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+      <div>
+        <br>
+        <div>
+          <h5 class="title is-small">Share to social media</h5>
+          <div>
+            <a class="share share-network-twitter" style="background-color:#008080;"><i class="fab fah fa-lg fa-twitter"></i><span>Twitter</span></a>
+            <a class="share share-network-facebook" style="background-color:#1877f2;"><i class="fab fah fa-lg fa-facebook-f"></i><span>Facebook</span></a>
+            <a class="share share-network-linkedin" style="background-color:#2B1B17;"><i class="fab fah fa-lg fa-linkedin"></i><span>LinkedIn</span></a>
+            <a class="share share-network-hackernews" style="background-color:#008000"><i class="fab fah fa-lg fa-hacker-news"></i><span>HackerNews</span></a>
+            <a class="share share-network-pinterest" style="background-color:#bd081c;"><i class="fab fah fa-lg fa-pinterest"></i><span>Pinterest</span></a>
+            <a class="share share-network-pocket" style="background-color:#7F38EC;"><i class="fab fah fa-lg fa-get-pocket"></i><span>Pocket</span></a>
+            <a class="share share-network-email" style="background-color:#333333;"><i class="far fah fa-lg fa-envelope"></i><span>Email</span></a>
+            <a class="share share-network-flipboard" style="background-color: #837E7C;"><i class="fab fah fa-lg fa-flipboard"></i><span>Flipboard</span></a>
+            <a class="share share-network-quora" style="background-color:#808000;"><i class="fab fah fa-lg fa-quora"></i><span>Quora</span></a>
+            <a class="share share-network-reddit" style="background-color: #581845
+            ;"><i class="fab fah fa-lg fa-reddit-alien"></i><span>Reddit</span></a>
+            <a class="share share-network-telegram" style="background-color:#000080;"><i class="fab fah fa-lg fa-telegram-plane"></i><span>Telegram</span></a>
+            <a class="share share-network-whatsapp" style="background-color:#E55451;"><i class="fab fah fa-lg fa-whatsapp"></i><span>Whatsapp</span></a>
+            <a class="share share-network-sms" style="background-color:#513B1C;"><i class="far fah fa-lg fa-comment-dots"></i><span>SMS</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="comments">
+        <div id="disqus_thread" pageConfig="[object Object]"></div>
+      </div>
+      
+      <div id="disqus_thread"></div>
+      <script>
+          
+
+          
+
+          (function() { 
+          var d = document, s = d.createElement('script');
+          s.src = 'https://engineer-dancun-personal-blog.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      
+      <br><br><br>
+      <footer>
+        &copy;  
+        Powered by <a href="https://github.com/gohugoio/hugo" target="_blank">Hugo
+      </footer>
+      <script type="application/ld+json">
+        {
+          "@context" : "http://schema.org",
+          "@type" : "Blog",
+          "name": " Engineer Dancun ",
+          "url" : "https://devopsengineerdan.github.io",
+          "image": "./static/avatar.jpg",
+          "description": "Software Engineer and Researcher"
+        }
+        </script>
+        <script id="dsq-count-scr" src="//engineer-dancun.disqus.com/count.js" async></script>
+    </main>
+  </body>
+</html>

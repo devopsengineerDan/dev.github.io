@@ -46,8 +46,7 @@ Get Started Bodywork is distributed as a Python package - install it from PyPI:<
       <pubDate>Thu, 13 Jun 2019 00:00:00 +0000</pubDate>
       
       <guid>https://devopsengineerdan.github.io/posts/micropython-in-action/</guid>
-      <description>Watch MicroPython in action 
- 
+      <description>Watch MicroPython in action  
 The MicroPython project This is the MicroPython project, which aims to put an implementation of Python 3.x on microcontrollers and small embedded systems. You can find the official website at micropython.org.
 WARNING: this project is in beta stage and is subject to changes of the code-base, including project-wide name changes and API changes.
 MicroPython implements the entire Python 3.4 syntax (including exceptions, with, yield from, etc.</description>

@@ -3,6 +3,46 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://devopsengineerdan.github.io/posts/best-practices-for-engineering-data-pipelines-part2/</loc>
+    <lastmod>2023-09-09T13:30:03+03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://devopsengineerdan.github.io/</loc>
+    <lastmod>2023-09-09T13:30:03+03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://devopsengineerdan.github.io/posts/</loc>
+    <lastmod>2023-09-09T13:30:03+03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://devopsengineerdan.github.io/tags/python/</loc>
+    <lastmod>2023-09-09T13:30:03+03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://devopsengineerdan.github.io/tags/</loc>
+    <lastmod>2023-09-09T13:30:03+03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://devopsengineerdan.github.io/posts/best-practices-for-engineering-data-pipelines-part1/</loc>
+    <lastmod>2023-09-09T13:29:58+03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://devopsengineerdan.github.io/posts/deploying-ml-models-with-bodywork/</loc>
+    <lastmod>2023-09-09T13:28:50+03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://devopsengineerdan.github.io/posts/best-practices-for-pyspark-etl/</loc>
+    <lastmod>2023-09-09T13:27:53+03:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://devopsengineerdan.github.io/posts/deploying-ml-models-on-kubernetes/</loc>
     <lastmod>2021-03-03T00:00:00+00:00</lastmod>
   </url>
@@ -13,27 +53,7 @@
   </url>
   
   <url>
-    <loc>https://devopsengineerdan.github.io/</loc>
-    <lastmod>2021-03-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://devopsengineerdan.github.io/posts/</loc>
-    <lastmod>2021-03-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://devopsengineerdan.github.io/tags/python/</loc>
-    <lastmod>2021-03-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://devopsengineerdan.github.io/tags/rust/</loc>
-    <lastmod>2021-03-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://devopsengineerdan.github.io/tags/</loc>
     <lastmod>2021-03-03T00:00:00+00:00</lastmod>
   </url>
   
@@ -53,17 +73,27 @@
   </url>
   
   <url>
+    <loc>https://devopsengineerdan.github.io/tags/hugo/</loc>
+    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://devopsengineerdan.github.io/tags/jekyll/</loc>
+    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://devopsengineerdan.github.io/posts/migrate-from-jekyll/</loc>
+    <lastmod>2019-10-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://devopsengineerdan.github.io/posts/micropython-in-action/</loc>
     <lastmod>2019-06-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://devopsengineerdan.github.io/posts/creating-a-new-theme/</loc>
-    <lastmod>2018-09-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://devopsengineerdan.github.io/tags/hugo/</loc>
     <lastmod>2018-09-28T00:00:00+00:00</lastmod>
   </url>
   
@@ -115,16 +145,6 @@
   <url>
     <loc>https://devopsengineerdan.github.io/tags/tutorial/</loc>
     <lastmod>2018-04-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://devopsengineerdan.github.io/tags/jekyll/</loc>
-    <lastmod>2018-03-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://devopsengineerdan.github.io/posts/migrate-from-jekyll/</loc>
-    <lastmod>2018-03-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>

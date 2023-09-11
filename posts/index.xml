@@ -6,10 +6,49 @@
     <description>Recent content in Posts on Engineer Dancun</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 03 Mar 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 09 Sep 2023 13:30:03 +0300</lastBuildDate>
     
 	<atom:link href="https://devopsengineerdan.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Best Practices for Engineering ML Pipelines - Part 2</title>
+      <link>https://devopsengineerdan.github.io/posts/best-practices-for-engineering-data-pipelines-part2/</link>
+      <pubDate>Sat, 09 Sep 2023 13:30:03 +0300</pubDate>
+      
+      <guid>https://devopsengineerdan.github.io/posts/best-practices-for-engineering-data-pipelines-part2/</guid>
+      <description>This is the second part in a series of articles demonstrating best practices for engineering ML pipelines and deploying them to production. In the first part we focused on project setup - everything from codebase structure to configuring a CI/CD pipeline and making an initial deployment of a skeleton pipeline.
+In this part we are going to focus on developing a fully-operational pipeline and will cover:
+ A simple approach to data and model versioning, using cloud object storage.</description>
+    </item>
+    
+    <item>
+      <title>Best Practices for Engineering ML Pipelines - Part 1</title>
+      <link>https://devopsengineerdan.github.io/posts/best-practices-for-engineering-data-pipelines-part1/</link>
+      <pubDate>Sat, 09 Sep 2023 13:29:58 +0300</pubDate>
+      
+      <guid>https://devopsengineerdan.github.io/posts/best-practices-for-engineering-data-pipelines-part1/</guid>
+      <description>The is the first in a series of articles demonstrating how to engineer a machine learning pipeline and deploy it to a production environment. We’re going to assume that a solution to a ML problem already exists within a Jupyter notebook, and that our task is to engineer this solution into an operational ML system, that can train a model, serve it via a web API and automatically repeat this process on a schedule when new data is made available.</description>
+    </item>
+    
+    <item>
+      <title>Deploying ML Models with Bodywork</title>
+      <link>https://devopsengineerdan.github.io/posts/deploying-ml-models-with-bodywork/</link>
+      <pubDate>Sat, 09 Sep 2023 13:28:50 +0300</pubDate>
+      
+      <guid>https://devopsengineerdan.github.io/posts/deploying-ml-models-with-bodywork/</guid>
+      <description>Deploying ML Models with Bodywork Solutions to ML problems are usually first developed in Jupyter notebooks. We are then faced with an altogether different problem - how to engineer these notebook solutions into your products and systems and continue to maintain their performance through time, after new data is generated.
+ Table of Contents   What is this Tutorial Going to Teach Me? Introduction  Why is MLOps Getting so Much Attention?</description>
+    </item>
+    
+    <item>
+      <title>Best Practices for PySpark ETL Projects</title>
+      <link>https://devopsengineerdan.github.io/posts/best-practices-for-pyspark-etl/</link>
+      <pubDate>Sat, 09 Sep 2023 13:27:53 +0300</pubDate>
+      
+      <guid>https://devopsengineerdan.github.io/posts/best-practices-for-pyspark-etl/</guid>
+      <description>I have often lent heavily on Apache Spark and the SparkSQL APIs for operationalising any type of batch data-processing &amp;lsquo;job&amp;rsquo;, within a production environment where handling fluctuating volumes of data reliably and consistently are on-going business concerns. These batch data-processing jobs may involve nothing more than joining data sources and performing aggregations, or they may apply machine learning models to generate inventory recommendations - regardless of the complexity, this often reduces to defining Extract, Transform and Load (ETL) jobs.</description>
+    </item>
     
     <item>
       <title> Deploying machine learning models on kubernetes</title>
@@ -51,13 +90,23 @@ Get Started Bodywork is distributed as a Python package - install it from PyPI:<
     </item>
     
     <item>
+      <title>Migrate to Hugo from Jekyll</title>
+      <link>https://devopsengineerdan.github.io/posts/migrate-from-jekyll/</link>
+      <pubDate>Thu, 10 Oct 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://devopsengineerdan.github.io/posts/migrate-from-jekyll/</guid>
+      <description>Move static content to static Jekyll has a rule that any directory not starting with _ will be copied as-is to the _site output. Hugo keeps all static content under static. You should therefore move it all there. With Jekyll, something that looked like
+▾ &amp;lt;root&amp;gt;/ ▾ images/ logo.png should become
+▾ &amp;lt;root&amp;gt;/ ▾ static/ ▾ images/ logo.png Additionally, you&amp;rsquo;ll want any files that should reside at the root (such as CNAME) to be moved to static.</description>
+    </item>
+    
+    <item>
       <title>MicroPython in action</title>
       <link>https://devopsengineerdan.github.io/posts/micropython-in-action/</link>
       <pubDate>Thu, 13 Jun 2019 00:00:00 +0000</pubDate>
       
       <guid>https://devopsengineerdan.github.io/posts/micropython-in-action/</guid>
-      <description>Watch MicroPython in action 
- 
+      <description>Watch MicroPython in action  
 The MicroPython project This is the MicroPython project, which aims to put an implementation of Python 3.x on microcontrollers and small embedded systems. You can find the official website at micropython.org.
 WARNING: this project is in beta stage and is subject to changes of the code-base, including project-wide name changes and API changes.
 MicroPython implements the entire Python 3.4 syntax (including exceptions, with, yield from, etc.</description>
@@ -95,17 +144,6 @@ More complete instructions are available at Install Hugo
 Step 2. Build the Docs Hugo has its own example site which happens to also be the documentation site you are reading right now.
 Follow the following steps:
  Clone the Hugo repository Go into the repo Run hugo in server mode and build the docs Open your browser to http://localhost:1313  Corresponding pseudo commands:</description>
-    </item>
-    
-    <item>
-      <title>Migrate to Hugo from Jekyll</title>
-      <link>https://devopsengineerdan.github.io/posts/migrate-from-jekyll/</link>
-      <pubDate>Sat, 10 Mar 2018 00:00:00 +0000</pubDate>
-      
-      <guid>https://devopsengineerdan.github.io/posts/migrate-from-jekyll/</guid>
-      <description>Move static content to static Jekyll has a rule that any directory not starting with _ will be copied as-is to the _site output. Hugo keeps all static content under static. You should therefore move it all there. With Jekyll, something that looked like
-▾ &amp;lt;root&amp;gt;/ ▾ images/ logo.png should become
-▾ &amp;lt;root&amp;gt;/ ▾ static/ ▾ images/ logo.png Additionally, you&amp;rsquo;ll want any files that should reside at the root (such as CNAME) to be moved to static.</description>
     </item>
     
   </channel>

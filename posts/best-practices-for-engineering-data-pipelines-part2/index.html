@@ -1,0 +1,1368 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Best Practices for Engineering ML Pipelines - Part 2 // Engineer Dancun</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.68.3" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Dancun Manyinsa" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://devopsengineerdan.github.io/css/main.min.d5ed8558bcfb3aab1e3d1790fb902decbac1f989a0d27aa3b2a2320773186707.css" />
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Best Practices for Engineering ML Pipelines - Part 2"/>
+<meta name="twitter:description" content="This is the second part in a series of articles demonstrating best practices for engineering ML pipelines and deploying them to production. In the first part we focused on project setup - everything from codebase structure to configuring a CI/CD pipeline and making an initial deployment of a skeleton pipeline.
+In this part we are going to focus on developing a fully-operational pipeline and will cover:
+ A simple approach to data and model versioning, using cloud object storage."/>
+
+    <meta property="og:title" content="Best Practices for Engineering ML Pipelines - Part 2" />
+<meta property="og:description" content="This is the second part in a series of articles demonstrating best practices for engineering ML pipelines and deploying them to production. In the first part we focused on project setup - everything from codebase structure to configuring a CI/CD pipeline and making an initial deployment of a skeleton pipeline.
+In this part we are going to focus on developing a fully-operational pipeline and will cover:
+ A simple approach to data and model versioning, using cloud object storage." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://devopsengineerdan.github.io/posts/best-practices-for-engineering-data-pipelines-part2/" />
+<meta property="article:published_time" content="2023-09-09T13:30:03+03:00" />
+<meta property="article:modified_time" content="2023-09-09T13:30:03+03:00" />
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://devopsengineerdan.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Dancun Manyinsa" /></a>
+      <h1>Engineer Dancun</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/about/">About</a>
+      </nav>
+      <p>Software Engineer, Researcher(AI and Quantum Science), and Habitual Quant</p>
+      <div class="app-header-social">
+        
+          <a href="https://www.github.com/DancunManyinsa" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/dancun-manyinsa-42518a17b/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="mailto:dancunmoruri@gmail.com" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-link">
+  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Best Practices for Engineering ML Pipelines - Part 2</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Sep 9, 2023
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          32 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://devopsengineerdan.github.io/tags/python/">python</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <hr>
+<p><img src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/4eb0599c-7062-4e5a-84cf-b03055e87bf1" alt="pipelines-logo"></p>
+<p>This is the second part in a series of articles demonstrating best practices for engineering ML pipelines and deploying them to production. In the <a href="%7Bfilename%7Dengineering-ml-pipelines-part-1.md">first part</a> we focused on project setup - everything from codebase structure to configuring a CI/CD pipeline and making an initial deployment of a skeleton pipeline.</p>
+<p>In this part we are going to focus on developing a fully-operational pipeline and will cover:</p>
+<ul>
+<li>A simple approach to data and model versioning, using cloud object storage.</li>
+<li>How to factor-out common code and make it reusable between projects.</li>
+<li>Defending against errors and handling failure.</li>
+<li>How to enable configurable pipelines that can run in multiple environments without code changes.</li>
+<li>Developing the automated model-training stage and how to write tests for it.</li>
+<li>Developing and testing the serve-model stage that exposes the trained model via a web API.</li>
+<li>Updating the deployment configuration and releasing the changes to production.</li>
+<li>Scheduling the pipeline to run on a schedule.</li>
+</ul>
+<p>All of the code referred to in this series of posts is available on  <a href="https://github.com/bodywork-ml/ml-pipeline-engineering">GitHub</a>, with a dedicated branch for each part, so you can explore the code in its various stages of development. Have a quick look before reading on.</p>
+<blockquote>
+<h3 id="table-of-contents">Table of Contents</h3>
+</blockquote>
+<ul>
+<li><a href="#a-simple-strategy-for-dataset-and-model-versioning">A Simple Strategy for Dataset and Model Versioning</a></li>
+<li><a href="#reusing-common-code">Reusing Common Code</a>
+<ul>
+<li><a href="#distributing-python-packages-within-your-company">Distributing Python Packages within your Company</a></li>
+</ul>
+</li>
+<li><a href="#defending-against-errors-and-handling-failures">Defending Against Errors and Handling Failures</a></li>
+<li><a href="#configurable-pipelines">Configurable Pipelines</a></li>
+<li><a href="#engineering-the-model-training-job">Engineering the Model Training Job</a>
+<ul>
+<li><a href="#prepare-data">Prepare Data</a></li>
+<li><a href="#train-model">Train Model</a></li>
+<li><a href="#validating-trained-models">Validating Trained Models</a></li>
+<li><a href="#end-to-end-functional-tests">End-to-End Functional Tests</a></li>
+<li><a href="#input-validation-for-the-stage">Input Validation for the Stage</a></li>
+</ul>
+</li>
+<li><a href="#developing-the-model-serving-stage">Developing the Model Serving Stage</a>
+<ul>
+<li><a href="#updating-the-tests">Updating the Tests</a></li>
+</ul>
+</li>
+<li><a href="#updating-the-deployment-and-releasing-to-production">Updating the Deployment and Releasing to Production</a></li>
+<li><a href="#scheduling-the-pipeline-to-run-on-a-schedule">Scheduling the Pipeline to run on a Schedule</a></li>
+<li><a href="#wrap-up">Wrap-Up</a></li>
+<li><a href="#appendix">Appendix</a>
+<ul>
+<li><a href="#the-dataset-class">The Dataset Class</a></li>
+<li><a href="#the-model-class">The Model Class</a></li>
+<li><a href="#train_modelpy">train_model.py</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="a-simple-strategy-for-dataset-and-model-versioning">A Simple Strategy for Dataset and Model Versioning</h2>
+<p>To recap, the data engineering team will deliver the latest tranche of training data to an AWS S3 bucket, in CSV format. They will take responsibility for verifying that these files have the correct schema and contain no unexpected errors. Each filename will contain the timestamp of its creation, in ISO format, so that the datasets in the bucket will look as follows:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">s3<span style="color:#f92672">://</span>time<span style="color:#f92672">-</span>to<span style="color:#f92672">-</span>dispatch<span style="color:#f92672">/</span>
+<span style="color:#f92672">|--</span> datasets<span style="color:#f92672">/</span>
+    <span style="color:#f92672">|--</span> time_to_dispatch_2021<span style="color:#ae81ff">-07-03</span>T23<span style="color:#f92672">:</span><span style="color:#ae81ff">05</span><span style="color:#f92672">:</span><span style="color:#ae81ff">32</span>.csv
+    <span style="color:#f92672">|--</span> time_to_dispatch_2021<span style="color:#ae81ff">-07-02</span>T23<span style="color:#f92672">:</span><span style="color:#ae81ff">05</span><span style="color:#f92672">:</span><span style="color:#ae81ff">13</span>.csv
+    <span style="color:#f92672">|--</span> time_to_dispatch_2021<span style="color:#ae81ff">-07-01</span>T23<span style="color:#f92672">:</span><span style="color:#ae81ff">04</span><span style="color:#f92672">:</span><span style="color:#ae81ff">52</span>.csv
+    <span style="color:#f92672">|--</span> <span style="color:#66d9ef">...</span>
+</code></pre></div><p>The train-model stage of the pipeline will only need to download the latest file for training a new model. We could stop here and rely solely on the filenames as a lightweight versioning strategy, but it is safer to enable <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html">versioning</a> for the S3 bucket and to track of the hash of the dataset used for training, which is computed automatically for every object stored on S3 (the MD5 hash of an object is stored as its <a href="https://docs.aws.amazon.com/AmazonS3/latest/API/API_Object.html">Entity Tag or ETag</a>). This allows us to defend against accidental deletes and/or overwrites and enables us to locate the precise dataset associated with a trained model.</p>
+<p>Because this concept of a dataset is bigger than just an arbitrarily named file on S3, we will need to develop a custom <code>Dataset</code> class for representing files on S3 and retrieving their hashes, together with functions/methods for getting and putting <code>Datasets</code> to S3.  All of this can be developed on top of  the <a href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html">boto3</a> AWS client library for Python.</p>
+<p>Trained models will be serialised to file using Python’s <a href="https://docs.python.org/3.8/library/pickle.html">pickle</a> module (this works well for SciKit-Learn models), and uploaded to the same AWS bucket, using the same timestamped file-naming convention:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">s3<span style="color:#f92672">://</span>time<span style="color:#f92672">-</span>to<span style="color:#f92672">-</span>dispatch<span style="color:#f92672">/</span>
+<span style="color:#f92672">|--</span> models<span style="color:#f92672">/</span>
+    <span style="color:#f92672">|--</span> time_to_dispatch_2021<span style="color:#ae81ff">-07-03</span>T23<span style="color:#f92672">:</span><span style="color:#ae81ff">45</span><span style="color:#f92672">:</span><span style="color:#ae81ff">23</span>.csv
+    <span style="color:#f92672">|--</span> time_to_dispatch_2021<span style="color:#ae81ff">-07-02</span>T23<span style="color:#f92672">:</span><span style="color:#ae81ff">45</span><span style="color:#f92672">:</span><span style="color:#ae81ff">31</span>.csv
+    <span style="color:#f92672">|--</span> time_to_dispatch_2021<span style="color:#ae81ff">-07-01</span>T23<span style="color:#f92672">:</span><span style="color:#ae81ff">44</span><span style="color:#f92672">:</span><span style="color:#ae81ff">25</span>.csv
+    <span style="color:#f92672">|--</span> <span style="color:#66d9ef">...</span>
+</code></pre></div><p>When triggered, the serve-model stage of the pipeline will only need to download the most recently persisted model, to ensure that it will generate predictions using the model from the output of the train-model stage. As with the datasets, we could stop here and rely solely on the filenames as a lightweight versioning strategy, but auditing and debugging predictions will be made much easier if we can access model metadata, such as the details of the exact dataset used for training.</p>
+<p>The concept of a model becomes bigger than just the trained model in isolation, so we will also need to develop a custom <code>Model</code> class. This needs to ‘wrap’ the trained model object, so that it can be associated with all of the metadata that we need to operate our basic model versioning system. As with the custom <code>Dataset</code> class, we will need to develop functions/methods for getting and putting the <code>Model</code> object to S3.</p>
+<p>There is a significant development effort required for implementing the functionality described above and it is likely that this will be repeated in many projects. We are going to cover how to handle reusable code in the section below, but you can see our implementations for the <code>Dataset</code> and <code>Model</code> classes using the links below, which we have also reproduced at the end of this article.</p>
+<ul>
+<li><a href="https://github.com/bodywork-ml/bodywork-pipeline-utils/blob/main/src/bodywork_pipeline_utils/aws/datasets.py">Dataset class</a></li>
+<li><a href="https://github.com/bodywork-ml/bodywork-pipeline-utils/blob/main/src/bodywork_pipeline_utils/aws/models.py">Model class</a></li>
+</ul>
+<h2 id="reusing-common-code">Reusing Common Code</h2>
+<p>The canonical way for distributing reusable Python modules, is by implementing them within a Python package that can be installed into any project that benefits from the functionality. This is what we have done for the dataset and model versioning functionality described in the previous section, and for configuring the logger used in both stages (so we can can enforce a common log format across projects). You can explore the codebase for this package, named <code>bodywork-pipeline-utils</code>,  on <a href="https://github.com/bodywork-ml/bodywork-pipeline-utils">GitHub</a>. The functions and classes within it are shown below,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">|--</span> aws
+    <span style="color:#f92672">|--</span> Dataset
+    <span style="color:#f92672">|--</span> get_latest_csv_dataset_from_s3
+    <span style="color:#f92672">|--</span> get_latest_parquet_dataset_from_s3
+    <span style="color:#f92672">|--</span> put_csv_dataset_to_s3
+    <span style="color:#f92672">|--</span> put_parquet_dataset_to_s3
+    <span style="color:#f92672">|--</span> Model
+    <span style="color:#f92672">|--</span> get_latest_pkl_model_from_s3
+<span style="color:#f92672">|--</span> logging
+    <span style="color:#f92672">|--</span> configure_logger
+</code></pre></div><p>A discussion of best practices for developing a Python package is beyond the scope of these articles, but you can use <code>bodywork-pipeline-utils</code> as a template and/or refer to the <a href="https://www.pypa.io/en/latest/">Python Packaging Authority</a>. The Scikit-Learn team has also published their insights into <a href="https://arxiv.org/abs/1309.0238">API design for machine learning software</a>, which we recommend reading.</p>
+<h3 id="distributing-python-packages-within-your-company">Distributing Python Packages within your Company</h3>
+<p>The easiest way to distribute Python packages within an organisation is directly from your Version Control System (VCS) - e.g. a remote Git repository hosted on GitHub. You do not <strong>need</strong> to host an internal PyPI server, unless you have a specific reason to do so. To install a Python package from a remote Git repo you can use,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> pip install git<span style="color:#f92672">+</span>https<span style="color:#f92672">://</span>github.com<span style="color:#f92672">/</span>bodywork<span style="color:#f92672">-</span>ml<span style="color:#f92672">/</span>bodywork<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>utils<span style="color:#f92672">@</span>v0.1.5
+</code></pre></div><p>Where <code>v0.1.5</code> is the release tag, but could also be a Git commit hash. This will need to be specified in <code>requrements_pipe.txt</code> as,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">git<span style="color:#f92672">+</span>https<span style="color:#f92672">://</span>github.com<span style="color:#f92672">/</span>bodywork<span style="color:#f92672">-</span>ml<span style="color:#f92672">/</span>bodywork<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>utils<span style="color:#f92672">@</span>v0.1.5
+</code></pre></div><p>Pip supports many VCSs and protocols - e.g. private Git repositories can be accessed via SSH by using <code>git+ssh</code> and ensuring that the machine making the request has the appropriate SSH keys available. Refer to the <a href="https://pip.pypa.io/en/stable/cli/pip_install/#vcs-support">documentation for pip</a> for more information.</p>
+<h2 id="defending-against-errors-and-handling-failures">Defending Against Errors and Handling Failures</h2>
+<p>Pipelines can experience many types of error - here are some examples:</p>
+<ul>
+<li>Invalid configuration, such as specifying the wrong storage location for datasets and models.</li>
+<li>Access to datasets and models becomes temporarily unavailable.</li>
+<li>Errors in an unverified dataset causes model-training to fail.</li>
+<li>An unexpected jump in <a href="https://en.wikipedia.org/wiki/Concept_drift">concept drift</a> causes model metrics to breach performance thresholds.</li>
+</ul>
+<p>When developing pipeline stages, it is critical that error events such as these are identified and logged to aid with debugging, and that the pipeline is not allowed to proceed. Our chosen pattern for handling errors is demonstrated in this snippet from <code>train_model.py</code>,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> sys
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+
+<span style="color:#75715e"># ...</span>
+
+    <span style="color:#66d9ef">try</span>:
+        main(
+            s3_bucket,
+            r2_metric_error_threshold,
+            r2_metric_warning_threshold,
+            HYPERPARAM_GRID
+        )
+		  sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">0</span>)
+    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+        log<span style="color:#f92672">.</span>error(f<span style="color:#e6db74">&#34;Error encountered when training model - {e}&#34;</span>)
+        sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">1</span>)
+</code></pre></div><p>The pipeline is defined in the <code>main</code> function, which is executed within a <code>try... except</code> block. If it executes without error, then we signal this to Kubernetes with an exit-code of <code>0</code> . If any error is encountered, then the exception is caught, we log the details and signal this to Kubernetes with an exit-code of <code>1</code> (so it can attempt a retry, if this has been configured).</p>
+<p>Exceptions within <code>main</code> are likely to be raised from within 3rd party packages that we’ve installed - e.g. if <code>bodywork-pipeline-utils</code> can’t access AWS or if Scikit-Learn fails to train a model. We recommend reading the documentation (or source code) for external functions and classes to understand what exceptions they raise and if the pipeline would benefit from custom handling and logging.</p>
+<p>Sometimes, however, we need to look for the error ourselves and raise the exception manually, as shown below when the key test metric falls below a pre-configured threshold level,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>(
+    s3_bucket: str,
+    metric_error_threshold: float,
+    metric_warning_threshold: float,
+    hyperparam_grid: Dict[str, Any]
+) <span style="color:#f92672">-&gt;</span> None:
+    <span style="color:#e6db74">&#34;&#34;&#34;Main training job.&#34;&#34;&#34;</span>
+    log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#34;Starting train-model stage.&#34;</span>)
+
+    <span style="color:#75715e"># ...</span>
+
+    <span style="color:#66d9ef">if</span> metrics<span style="color:#f92672">.</span>r_squared <span style="color:#f92672">&gt;=</span> metric_error_threshold:
+        <span style="color:#66d9ef">if</span> metrics<span style="color:#f92672">.</span>r_squared <span style="color:#f92672">&gt;=</span> metric_warning_threshold:
+            log<span style="color:#f92672">.</span>warning(<span style="color:#e6db74">&#34;Metrics breached warning threshold - check for drift.&#34;</span>)
+        s3_location <span style="color:#f92672">=</span> persist_model(s3_bucket, model, dataset, metrics)
+        log<span style="color:#f92672">.</span>info(f<span style="color:#e6db74">&#34;Model serialised and persisted to s3://{s3_location}&#34;</span>)
+    <span style="color:#66d9ef">else</span>:
+        msg <span style="color:#f92672">=</span> (
+            f<span style="color:#e6db74">&#34;r-squared metric ({{metrics.r_squared:.3f}}) is below deployment &#34;</span>
+            f<span style="color:#e6db74">&#34;threshold {metric_error_threshold}&#34;</span>
+        )
+        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">RuntimeError</span>(msg)
+</code></pre></div><p>This works as follows:</p>
+<ul>
+<li>If the r-squared metric is above the error threshold and the warning threshold, then persist the trained model.</li>
+<li>If the r-squared metric is above the error threshold, but below the warning threshold, then log a warning message and then persist the trained model.</li>
+<li>If the r-squared metric is below the error threshold, then raise an exception, which will cause the stage to log an error and exit with a non-zero exit code (halting the pipeline), using the logic in the <code>try... except</code> block discussed earlier in this section.</li>
+</ul>
+<p>Using logs to communicate pipeline state will take on additional importance later on in Part Three of this series, when we add monitoring, observability and alerting to our pipeline.</p>
+<h2 id="configurable-pipelines">Configurable Pipelines</h2>
+<p>Pipelines can benefit from parametrisation to make them re-usable across deployment environments (and potentially tenants, if this makes sense for your project). For example, passing the S3 bucket as an external argument to each stage, enables the pipeline to operate both in a staging environment, as well as in production. Similarly, external arguments can be used to set thresholds for defining when warnings and alerts are triggered, based on model training metrics, which can make testing the pipeline much easier.</p>
+<p>Each stage of our pipeline is defined by an executable Python module.  The easiest way to pass arguments to a module is via the command line. For example,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> python <span style="color:#f92672">-</span>m pipeline.train_model time<span style="color:#f92672">-</span>to<span style="color:#f92672">-</span>dispatch <span style="color:#ae81ff">0.9</span> <span style="color:#ae81ff">0.8</span>
+</code></pre></div><p>Passes an array of strings, <code>[&quot;time-to-dispatch&quot;, &quot;0.9&quot;, &quot;0.8&quot;]</code> to <code>train_model.py</code>, that can be retrieved from <code>sys.argv</code> as demonstrated in the excerpt from <code>train_model.py</code> below.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> sys
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    <span style="color:#66d9ef">try</span>:
+        args <span style="color:#f92672">=</span> sys<span style="color:#f92672">.</span>argv
+        s3_bucket <span style="color:#f92672">=</span> args[<span style="color:#ae81ff">1</span>]
+        r2_metric_error_threshold <span style="color:#f92672">=</span> float(args[<span style="color:#ae81ff">2</span>])
+        <span style="color:#66d9ef">if</span> r2_metric_error_threshold <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">or</span> r2_metric_error_threshold <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>:
+            <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">ValueError</span>()
+        r2_metric_warning_threshold <span style="color:#f92672">=</span> float(args[<span style="color:#ae81ff">3</span>])
+        <span style="color:#66d9ef">if</span> r2_metric_warning_threshold <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">or</span> r2_metric_warning_threshold <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>:
+            <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">ValueError</span>()
+    <span style="color:#66d9ef">except</span> (<span style="color:#a6e22e">ValueError</span>, <span style="color:#a6e22e">IndexError</span>):
+        log<span style="color:#f92672">.</span>error(
+            <span style="color:#e6db74">&#34;Invalid arguments passed to train_model.py. &#34;</span>
+            <span style="color:#e6db74">&#34;Expected S3_BUCKET R_SQUARED_ERROR_THRESHOLD R_SQUARED_WARNING_THRESHOLD, &#34;</span>
+            <span style="color:#e6db74">&#34;where all thresholds must be in the range [0, 1].&#34;</span>
+        )
+        sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">1</span>)
+
+    <span style="color:#66d9ef">try</span>:
+        main(
+            s3_bucket,
+            r2_metric_error_threshold,
+            r2_metric_warning_threshold,
+            HYPERPARAM_GRID
+        )
+    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+        log<span style="color:#f92672">.</span>error(f<span style="color:#e6db74">&#34;Error encountered when training model - {e}&#34;</span>)
+        sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">1</span>)
+</code></pre></div><p>Note how we cast the numeric arguments to <code>float</code> types before performing basic input validation to ensure that users can’t accidentally specify invalided arguments that could lead to unintended consequences.</p>
+<p>When deployed by Bodywork,  <code>train_model.py</code> will be executed in a dedicated container on Kubernetes. The required arguments can be passed via the <code>args</code> parameter in the <code>bodywork.yaml</code> file that describes the deployment, as shown below.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#75715e"># bodywork.yaml</span>
+...
+<span style="color:#66d9ef">stages</span>:
+  <span style="color:#66d9ef">train_model</span>:
+    <span style="color:#66d9ef">executable_module_path</span>: pipeline/train_model.py
+      <span style="color:#66d9ef">args</span>: [<span style="color:#e6db74">&#34;time-to-dispatch&#34;</span>, <span style="color:#e6db74">&#34;0.9&#34;</span>, <span style="color:#e6db74">&#34;0.8&#34;</span>]
+      ...
+</code></pre></div><h2 id="engineering-the-model-training-job">Engineering the Model Training Job</h2>
+<p>The core task here is to engineer the ML solution in the <a href="https://github.com/bodywork-ml/ml-pipeline-engineering/blob/master/notebooks/time_to_dispatch_model.ipynb">time_to_dispatch_model.ipynb notebook</a>,  provided to us by the data scientist who worked on this task, into the pipeline stage defined in <a href="https://github.com/bodywork-ml/ml-pipeline-engineering/blob/part-two/pipeline/train_model.py">pipeline/train_model.py</a> (reproduced in the Appendix below). The central workflow is defined in the <code>main</code> function,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> Any, Dict, List, NamedTuple, Tuple
+
+<span style="color:#f92672">from</span> bodywork_pipeline_utils <span style="color:#f92672">import</span> aws, logging
+<span style="color:#f92672">from</span> bodywork_pipeline_utils.aws <span style="color:#f92672">import</span> Dataset
+
+<span style="color:#75715e"># ...</span>
+
+log <span style="color:#f92672">=</span> logging<span style="color:#f92672">.</span>configure_logger()
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>(
+    s3_bucket: str,
+    metric_error_threshold: float,
+    metric_warning_threshold: float,
+    hyperparam_grid: Dict[str, Any]
+) <span style="color:#f92672">-&gt;</span> None:
+    <span style="color:#e6db74">&#34;&#34;&#34;Main training job.&#34;&#34;&#34;</span>
+    log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#34;Starting train-model stage.&#34;</span>)
+    dataset <span style="color:#f92672">=</span> aws<span style="color:#f92672">.</span>get_latest_csv_dataset_from_s3(s3_bucket, <span style="color:#e6db74">&#34;datasets&#34;</span>)
+    log<span style="color:#f92672">.</span>info(f<span style="color:#e6db74">&#34;Retrieved dataset from s3://{s3_bucket}/{dataset.key}&#34;</span>)
+
+    feature_and_labels <span style="color:#f92672">=</span> prepare_data(dataset<span style="color:#f92672">.</span>data)
+    model, metrics <span style="color:#f92672">=</span> train_model(feature_and_labels, hyperparam_grid)
+    validate_trained_model_logic(model, feature_and_labels)
+    log<span style="color:#f92672">.</span>info(
+        f<span style="color:#e6db74">&#34;Trained model: r-squared={metrics.r_squared:.3f}, &#34;</span>
+        f<span style="color:#e6db74">&#34;MAE={metrics.mean_absolute_error:.3f}&#34;</span>
+    )
+
+    <span style="color:#66d9ef">if</span> metrics<span style="color:#f92672">.</span>r_squared <span style="color:#f92672">&gt;=</span> metric_error_threshold:
+        <span style="color:#66d9ef">if</span> metrics<span style="color:#f92672">.</span>r_squared <span style="color:#f92672">&gt;=</span> metric_warning_threshold:
+            log<span style="color:#f92672">.</span>warning(<span style="color:#e6db74">&#34;Metrics breached warning threshold - check for drift.&#34;</span>)
+        s3_location <span style="color:#f92672">=</span> persist_model(s3_bucket, model, dataset, metrics)
+        log<span style="color:#f92672">.</span>info(f<span style="color:#e6db74">&#34;Model serialised and persisted to s3://{s3_location}&#34;</span>)
+    <span style="color:#66d9ef">else</span>:
+        msg <span style="color:#f92672">=</span> (
+            f<span style="color:#e6db74">&#34;r-squared metric ({{metrics.r_squared:.3f}}) is below deployment &#34;</span>
+            f<span style="color:#e6db74">&#34;threshold {metric_error_threshold}&#34;</span>
+        )
+        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">RuntimeError</span>(msg)
+</code></pre></div><p>This splits the job into smaller sub-tasks, such as preparing the data, that can be delegated to specialised functions that are easier to write (unit) tests for. All interaction with cloud object storage (AWS S3), for retrieving datasets and persisting trained models, is handled by functions imported from the <a href="https://github.com/bodywork-ml/bodywork-pipeline-utils">bodywork-pipeline-utils</a> package, leaving three key functions that we will discuss in turn:</p>
+<ul>
+<li><code>prepare_data</code></li>
+<li><code>train_model</code></li>
+<li><code>validate_trained_model_logic</code></li>
+</ul>
+<p>The <code>persist_model</code> function creates the <code>Model</code> object and calls its <code>put_model_to_S3</code> method. It will be tested implicitly in the functional tests for <code>main</code>, which we will look at later on.</p>
+<h3 id="prepare-data">Prepare Data</h3>
+<p>This purpose of this function is to start with the dataset as a <code>DataFrame</code>, split the features from the labels and then partition each of these into ‘test’ and ‘train ‘subsets. We return the results as a <code>NamedTuple</code>  called <code>FeaturesAndLabels</code>, which facilitates easier access within functions that consume these data structures.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> Any, Dict, List, NamedTuple, Tuple
+
+<span style="color:#f92672">from</span> sklearn.model_selection <span style="color:#f92672">import</span> GridSearchCV, train_test_split
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FeatureAndLabels</span>(NamedTuple):
+    <span style="color:#e6db74">&#34;&#34;&#34;Container for features and labels split by test and train sets.&#34;&#34;&#34;</span>
+
+    X_train: DataFrame
+    X_test: DataFrame
+    y_train: DataFrame
+    y_test: DataFrame
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">prepare_data</span>(data: DataFrame) <span style="color:#f92672">-&gt;</span> FeatureAndLabels:
+    <span style="color:#e6db74">&#34;&#34;&#34;Split the data into features and labels for training and testing.&#34;&#34;&#34;</span>
+    X <span style="color:#f92672">=</span> data<span style="color:#f92672">.</span>drop(<span style="color:#e6db74">&#34;hours_to_dispatch&#34;</span>, axis<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+    y <span style="color:#f92672">=</span> data[<span style="color:#e6db74">&#34;hours_to_dispatch&#34;</span>]
+    X_train, X_test, y_train, y_test <span style="color:#f92672">=</span> train_test_split(
+        X, y, test_size<span style="color:#f92672">=</span><span style="color:#ae81ff">0.2</span>, stratify<span style="color:#f92672">=</span>data[<span style="color:#e6db74">&#34;product_code&#34;</span>]<span style="color:#f92672">.</span>values, random_state<span style="color:#f92672">=</span><span style="color:#ae81ff">42</span>
+    )
+    <span style="color:#66d9ef">return</span> FeatureAndLabels(X_train, X_test, y_train, y_test)
+</code></pre></div><p>This is tested in <a href="https://github.com/bodywork-ml/ml-pipeline-engineering/blob/part-two/tests/test_train_model.py">tests/test_train_model.py</a> as follows,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> pandas <span style="color:#f92672">import</span> read_csv, DataFrame
+<span style="color:#f92672">from</span> pytest <span style="color:#f92672">import</span> fixture, raises
+
+<span style="color:#f92672">from</span> bodywork_pipeline_utils.aws <span style="color:#f92672">import</span> Dataset
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#a6e22e">@fixture</span>(scope<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;session&#34;</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">dataset</span>() <span style="color:#f92672">-&gt;</span> Dataset:
+    data <span style="color:#f92672">=</span> read_csv(<span style="color:#e6db74">&#34;tests/resources/dataset.csv&#34;</span>)
+    dataset <span style="color:#f92672">=</span> Dataset(data, datetime(<span style="color:#ae81ff">2021</span>, <span style="color:#ae81ff">7</span>, <span style="color:#ae81ff">15</span>), <span style="color:#e6db74">&#34;tests&#34;</span>, <span style="color:#e6db74">&#34;resources&#34;</span>, <span style="color:#e6db74">&#34;foobar&#34;</span>)
+    <span style="color:#66d9ef">return</span> dataset
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test_prepare_data_splits_labels_and_features_into_test_and_train</span>(dataset: Dataset):
+    label_column <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;hours_to_dispatch&#34;</span>
+    n_rows_in_dataset <span style="color:#f92672">=</span> dataset<span style="color:#f92672">.</span>data<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>]
+    n_cols_in_dataset <span style="color:#f92672">=</span> dataset<span style="color:#f92672">.</span>data<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>]
+    prepared_data <span style="color:#f92672">=</span> prepare_data(dataset<span style="color:#f92672">.</span>data)
+
+    <span style="color:#66d9ef">assert</span> prepared_data<span style="color:#f92672">.</span>X_train<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> n_cols_in_dataset <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">assert</span> label_column <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> prepared_data<span style="color:#f92672">.</span>X_train<span style="color:#f92672">.</span>columns
+
+    <span style="color:#66d9ef">assert</span> prepared_data<span style="color:#f92672">.</span>X_test<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> n_cols_in_dataset <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">assert</span> label_column <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> prepared_data<span style="color:#f92672">.</span>X_test<span style="color:#f92672">.</span>columns
+
+    <span style="color:#66d9ef">assert</span> prepared_data<span style="color:#f92672">.</span>y_train<span style="color:#f92672">.</span>ndim <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">assert</span> prepared_data<span style="color:#f92672">.</span>y_train<span style="color:#f92672">.</span>name <span style="color:#f92672">==</span> label_column
+
+    <span style="color:#66d9ef">assert</span> prepared_data<span style="color:#f92672">.</span>y_test<span style="color:#f92672">.</span>ndim <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">assert</span> prepared_data<span style="color:#f92672">.</span>y_test<span style="color:#f92672">.</span>name <span style="color:#f92672">==</span> label_column
+
+    <span style="color:#66d9ef">assert</span> (prepared_data<span style="color:#f92672">.</span>X_train<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">+</span> prepared_data<span style="color:#f92672">.</span>X_test<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>]
+            <span style="color:#f92672">==</span> n_rows_in_dataset)
+
+    <span style="color:#66d9ef">assert</span> (prepared_data<span style="color:#f92672">.</span>y_train<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">+</span> prepared_data<span style="color:#f92672">.</span>y_test<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>]
+            <span style="color:#f92672">==</span> n_rows_in_dataset)
+</code></pre></div><p>To help with testing, we have saved a snapshot of CSV data to <code>tests/resources/dataset.csv</code> within the project repository, and made it available as a <code>DataFrame</code> to all tests in this model, via a <a href="https://docs.pytest.org/en/6.2.x/fixture.html">Pytest fixture</a> called <code>dataset</code>. There is only one unit test for this function and it tests that <code>prepare_data</code> splits labels from features, for both  ‘test’ and ‘train’ sets, and that it doesn’t lose any rows of data in the process. If we refactor <code>prepare_data</code> in the future, then this test will help prevent us from accidentally leaking the label into the features.</p>
+<h3 id="train-model">Train Model</h3>
+<p>Given a <code>FeaturesAndLabels</code> object together with a grid of hyper-parameters, this function will yield a trained model, together with the model’s performance metrics for the ‘test’ set . The hyper-parameter grid is an input  to this function, so that when testing we can use a single point, but can specify many more points for the actual job, when training time is less of a constraint. The metrics are contained within a <code>NamedTuple</code> called <code>TaskMetrics</code>, to make passing them between functions easier and less prone to error.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> sklearn.model_selection <span style="color:#f92672">import</span> GridSearchCV, train_test_split
+
+<span style="color:#75715e"># ...</span>
+
+PRODUCT_CODE_MAP <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;SKU001&#34;</span>: <span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#34;SKU002&#34;</span>: <span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#34;SKU003&#34;</span>: <span style="color:#ae81ff">2</span>, <span style="color:#e6db74">&#34;SKU004&#34;</span>: <span style="color:#ae81ff">3</span>, <span style="color:#e6db74">&#34;SKU005&#34;</span>: <span style="color:#ae81ff">4</span>}
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TaskMetrics</span>(NamedTuple):
+    <span style="color:#e6db74">&#34;&#34;&#34;Container for the task&#39;s performance metrics.&#34;&#34;&#34;</span>
+
+    r_squared: float
+    mean_absolute_error: float
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">train_model</span>(
+    data: FeatureAndLabels, hyperparam_grid: Dict[str, Any]
+) <span style="color:#f92672">-&gt;</span> Tuple[BaseEstimator, TaskMetrics]:
+    <span style="color:#e6db74">&#34;&#34;&#34;Train a model and compute performance metrics.&#34;&#34;&#34;</span>
+    grid_search <span style="color:#f92672">=</span> GridSearchCV(
+        estimator<span style="color:#f92672">=</span>DecisionTreeRegressor(),
+        param_grid<span style="color:#f92672">=</span>hyperparam_grid,
+        scoring<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;r2&#34;</span>,
+        cv<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>,
+        refit<span style="color:#f92672">=</span>True,
+    )
+    grid_search<span style="color:#f92672">.</span>fit(preprocess(data<span style="color:#f92672">.</span>X_train), data<span style="color:#f92672">.</span>y_train)
+    best_model <span style="color:#f92672">=</span> grid_search<span style="color:#f92672">.</span>best_estimator_
+    y_test_pred <span style="color:#f92672">=</span> best_model<span style="color:#f92672">.</span>predict(preprocess(data<span style="color:#f92672">.</span>X_test))
+    performance_metrics <span style="color:#f92672">=</span> TaskMetrics(
+        r2_score(data<span style="color:#f92672">.</span>y_test, y_test_pred),
+        mean_absolute_error(data<span style="color:#f92672">.</span>y_test, y_test_pred)
+    )
+    <span style="color:#66d9ef">return</span> (best_model, performance_metrics)
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">preprocess</span>(df: DataFrame) <span style="color:#f92672">-&gt;</span> DataFrame:
+    <span style="color:#e6db74">&#34;&#34;&#34;Create features for training model.&#34;&#34;&#34;</span>
+    processed <span style="color:#f92672">=</span> df<span style="color:#f92672">.</span>copy()
+    processed[<span style="color:#e6db74">&#34;product_code&#34;</span>] <span style="color:#f92672">=</span> df[<span style="color:#e6db74">&#34;product_code&#34;</span>]<span style="color:#f92672">.</span>apply(<span style="color:#66d9ef">lambda</span> e: PRODUCT_CODE_MAP[e])
+    <span style="color:#66d9ef">return</span> processed<span style="color:#f92672">.</span>values
+</code></pre></div><p>We have further delegated the task of pre-processing the features for the model (in this case just mapping categories to integers), to a dedicated function called <code>preprocess</code>. The <code>train_model</code> function is tested in <a href="https://github.com/bodywork-ml/ml-pipeline-engineering/blob/part-two/tests/test_train_model.py">tests/test_train_model.py</a> as follows,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> sklearn.utils.validation <span style="color:#f92672">import</span> check_is_fitted
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#a6e22e">@fixture</span>(scope<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;session&#34;</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">prepared_data</span>(dataset: Dataset) <span style="color:#f92672">-&gt;</span> FeatureAndLabels:
+    <span style="color:#66d9ef">return</span> FeatureAndLabels(
+        dataset<span style="color:#f92672">.</span>data[[<span style="color:#e6db74">&#34;orders_placed&#34;</span>, <span style="color:#e6db74">&#34;product_code&#34;</span>]][:<span style="color:#ae81ff">800</span>],
+        dataset<span style="color:#f92672">.</span>data[[<span style="color:#e6db74">&#34;orders_placed&#34;</span>, <span style="color:#e6db74">&#34;product_code&#34;</span>]][<span style="color:#ae81ff">800</span>:<span style="color:#ae81ff">999</span>],
+        dataset<span style="color:#f92672">.</span>data[<span style="color:#e6db74">&#34;hours_to_dispatch&#34;</span>][:<span style="color:#ae81ff">800</span>],
+        dataset<span style="color:#f92672">.</span>data[<span style="color:#e6db74">&#34;hours_to_dispatch&#34;</span>][<span style="color:#ae81ff">800</span>:<span style="color:#ae81ff">999</span>]
+    )
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test_train_model_yields_model_and_metrics</span>(prepared_data: FeaturesAndLabels):
+    model, metrics <span style="color:#f92672">=</span> train_model(prepared_data, {<span style="color:#e6db74">&#34;random_state&#34;</span>: [<span style="color:#ae81ff">42</span>]})
+    <span style="color:#66d9ef">try</span>:
+        check_is_fitted(model)
+        <span style="color:#66d9ef">assert</span> True
+    <span style="color:#66d9ef">except</span> NotFittedError:
+        <span style="color:#66d9ef">assert</span> False
+
+    <span style="color:#66d9ef">assert</span> metrics<span style="color:#f92672">.</span>r_squared <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0.9</span>
+    <span style="color:#66d9ef">assert</span> metrics<span style="color:#f92672">.</span>mean_absolute_error <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">1.25</span>
+</code></pre></div><p>Which tests that <code>train_model</code> returns a fitted model and acceptable performance metrics, given a reasonably sized tranche of data.</p>
+<p>Note, that we haven’t relied on <code>prepare_data</code> to create the <code>FeatureAndLabels object</code>- we have created this manually in another fixture that relies on the <code>dataset</code> fixture discussed earlier. This is a deliberate choice made with the aim of decoupling the outcome of this test from the behaviour of <code>prepare_data</code>. Tests that are dependent on multiple functions can be ‘brittle’ and lead to cascades of failing tests when only a single function or method is raising an error. We cannot stress enough how important it is to structure your code in such a way that it can be easily tested.</p>
+<p>For completeness, we also provide a simple test for <code>preprocess</code>,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> pandas <span style="color:#f92672">import</span> read_csv, DataFrame
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test_preprocess_processes_features</span>():
+    data <span style="color:#f92672">=</span> DataFrame({<span style="color:#e6db74">&#34;orders_placed&#34;</span>: [<span style="color:#ae81ff">30</span>], <span style="color:#e6db74">&#34;product_code&#34;</span>: [<span style="color:#e6db74">&#34;SKU004&#34;</span>]})
+    processed_data <span style="color:#f92672">=</span> preprocess(data)
+    <span style="color:#66d9ef">assert</span> processed_data[<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">30</span>
+    <span style="color:#66d9ef">assert</span> processed_data[<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">3</span>
+</code></pre></div><h3 id="validating-trained-models">Validating Trained Models</h3>
+<p>The goal of the pipeline is to automate the process of training a new model and deploying it - i.e. to take the data scientist out-of-the-loop. Consequently, we need to exercise caution before deploying the latest model. Although the final go/no-go decision on deploying the model will be based on performance metrics, we should also sense-check the model based on basic behaviours we expect it to have. The <code>validate_trained_model_logic</code> function performs three logical tests of the model and will raise an exception if it finds an issue (thereby terminating the pipeline before deployment). The three checks are:</p>
+<ol>
+<li>Does the <code>hours_to_dispatch</code> variable increase with <code>order_placed</code>, for each product?</li>
+<li>Are all predictions for the ‘test’ set positive?</li>
+<li>Are all predictions for the ‘test’ within 25% of the highest <code>hours_to_dispatch</code> observation?</li>
+</ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">validate_trained_model_logic</span>(model: BaseEstimator, data: FeatureAndLabels) <span style="color:#f92672">-&gt;</span> None:
+    <span style="color:#e6db74">&#34;&#34;&#34;Verify that a trained model passes basic logical expectations.&#34;&#34;&#34;</span>
+    issues_detected: List[str] <span style="color:#f92672">=</span> []
+
+    orders_placed_sensitivity_checks <span style="color:#f92672">=</span> [
+        model<span style="color:#f92672">.</span>predict(array([[<span style="color:#ae81ff">100</span>, product], [<span style="color:#ae81ff">150</span>, product]]))<span style="color:#f92672">.</span>tolist()
+        <span style="color:#66d9ef">for</span> product <span style="color:#f92672">in</span> range(len(PRODUCT_CODE_MAP))
+    ]
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> all(e[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">&lt;</span> e[<span style="color:#ae81ff">1</span>] <span style="color:#66d9ef">for</span> e <span style="color:#f92672">in</span> orders_placed_sensitivity_checks):
+        issues_detected<span style="color:#f92672">.</span>append(
+            <span style="color:#e6db74">&#34;hours_to_dispatch predictions do not increase with orders_placed&#34;</span>
+        )
+
+    test_set_predictions <span style="color:#f92672">=</span> model<span style="color:#f92672">.</span>predict(preprocess(data<span style="color:#f92672">.</span>X_test))<span style="color:#f92672">.</span>reshape(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+    <span style="color:#66d9ef">if</span> len(test_set_predictions[test_set_predictions <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>]) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>:
+        issues_detected<span style="color:#f92672">.</span>append(
+            <span style="color:#e6db74">&#34;negative hours_to_dispatch predictions found for test set&#34;</span>
+        )
+    <span style="color:#66d9ef">if</span> len(test_set_predictions[test_set_predictions <span style="color:#f92672">&gt;</span> data<span style="color:#f92672">.</span>y_test<span style="color:#f92672">.</span>max() <span style="color:#f92672">*</span> <span style="color:#ae81ff">1.25</span>]) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>:
+        issues_detected<span style="color:#f92672">.</span>append(
+            <span style="color:#e6db74">&#34;outlier hours_to_dispatch predictions found for test set&#34;</span>
+        )
+
+    <span style="color:#66d9ef">if</span> issues_detected:
+        msg <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Trained model failed verification: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;, &#34;</span><span style="color:#f92672">.</span>join(issues_detected) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.&#34;</span>
+        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">RuntimeError</span>(msg)
+</code></pre></div><p>Note, that we perform all three checks before raising the exception, so that the error message and the logs that will be generated from it, can be maximally informative when it comes to debugging.</p>
+<p>The associated test can also be found in <a href="https://github.com/bodywork-ml/ml-pipeline-engineering/blob/part-two/tests/test_train_model.py">tests/test_train_model.py</a>.  This is the most complex test thus far, because we have to use Scikit-Learn’s <code>DummyRegressor</code> to create models that will fail each one of the tests individually, as can be seen below.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> pytest <span style="color:#f92672">import</span> fixture, raises
+<span style="color:#f92672">from</span> sklearn.dummy <span style="color:#f92672">import</span> DummyRegressor
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test_validate_trained_model_logic_raises_exception_for_failing_models</span>(
+    prepared_data: FeaturesAndLabels
+):
+    dummy_model <span style="color:#f92672">=</span> DummyRegressor(strategy<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;constant&#34;</span>, constant<span style="color:#f92672">=-</span><span style="color:#ae81ff">1.0</span>)
+    dummy_model<span style="color:#f92672">.</span>fit(prepared_data<span style="color:#f92672">.</span>X_train, prepared_data<span style="color:#f92672">.</span>y_train)
+    expected_exception_str <span style="color:#f92672">=</span> (
+        <span style="color:#e6db74">&#34;Trained model failed verification: &#34;</span>
+        <span style="color:#e6db74">&#34;hours_to_dispatch predictions do not increase with orders_placed.&#34;</span>
+    )
+    <span style="color:#66d9ef">with</span> raises(<span style="color:#a6e22e">RuntimeError</span>, match<span style="color:#f92672">=</span>expected_exception_str):
+        validate_trained_model_logic(dummy_model, prepared_data)
+
+    dummy_model <span style="color:#f92672">=</span> DummyRegressor(strategy<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;constant&#34;</span>, constant<span style="color:#f92672">=-</span><span style="color:#ae81ff">1.0</span>)
+    dummy_model<span style="color:#f92672">.</span>fit(prepared_data<span style="color:#f92672">.</span>X_train, prepared_data<span style="color:#f92672">.</span>y_train)
+    expected_exception_str <span style="color:#f92672">=</span> (
+        <span style="color:#e6db74">&#34;Trained model failed verification: &#34;</span>
+        <span style="color:#e6db74">&#34;hours_to_dispatch predictions do not increase with orders_placed, &#34;</span>
+        <span style="color:#e6db74">&#34;negative hours_to_dispatch predictions found for test set.&#34;</span>
+    )
+    <span style="color:#66d9ef">with</span> raises(<span style="color:#a6e22e">RuntimeError</span>, match<span style="color:#f92672">=</span>expected_exception_str):
+        validate_trained_model_logic(dummy_model, prepared_data)
+
+    dummy_model <span style="color:#f92672">=</span> DummyRegressor(strategy<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;constant&#34;</span>, constant<span style="color:#f92672">=</span><span style="color:#ae81ff">1000.0</span>)
+    dummy_model<span style="color:#f92672">.</span>fit(prepared_data<span style="color:#f92672">.</span>X_train, prepared_data<span style="color:#f92672">.</span>y_train)
+    expected_exception_str <span style="color:#f92672">=</span> (
+        <span style="color:#e6db74">&#34;Trained model failed verification: &#34;</span>
+        <span style="color:#e6db74">&#34;hours_to_dispatch predictions do not increase with orders_placed, &#34;</span>
+        <span style="color:#e6db74">&#34;outlier hours_to_dispatch predictions found for test set.&#34;</span>
+    )
+    <span style="color:#66d9ef">with</span> raises(<span style="color:#a6e22e">RuntimeError</span>, match<span style="color:#f92672">=</span>expected_exception_str):
+        validate_trained_model_logic(dummy_model, prepared_data)
+</code></pre></div><h3 id="end-to-end-functional-tests">End-to-End Functional Tests</h3>
+<p>We’ve tested the individual sub-tasks within <code>main</code> , but how do we know that we’ve assembled them correctly, so that <code>persist_model</code> will upload the expected <code>Model</code> object to cloud storage? We now need to turn our attention to testing <code>main</code> from end-to-end - i.e. functional tests for the train-model stage.</p>
+<p>The <code>main</code> function will try to access AWS S3 to get a dataset and then save a pickled <code>Model</code> to S3. We could setup a S3 bucket for testing this integration, but this constitutes an integration test and is not our current aim. We will disable the calls to AWS by mocking the <code>bodywork_pipeline_utils.aws</code> module using the <code>patch</code> function from the Python standard library’s <a href="https://docs.python.org/3/library/unittest.mock.html">unittest.mock</a> module.</p>
+<p>Decorating our test with <code>@patch(&quot;pipeline.train_model.aws&quot;)</code>, causes <code>bodywork_pipeline_utils.aws</code> (which we import into <code>train_model.py</code>) to be replaced by a <code>MagicMock</code> object called <code>mock_aws</code>. This allows us to perform a number of useful tasks:</p>
+<ul>
+<li>Hard-code the return value from <code>aws.get_latest_csv_dataset_from_s3</code>, so that it returns our local test dataset instead of a remote dataset on S3.</li>
+<li>Check if the <code>put_model_to_s3</code>method of the <code>aws.Model</code> object created in <code>persist_model</code>, was called.</li>
+</ul>
+<p>You can see this in action below.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> unittest.mock <span style="color:#f92672">import</span> MagicMock, patch
+
+<span style="color:#f92672">from</span> pytest <span style="color:#f92672">import</span> fixture, raises
+<span style="color:#f92672">from</span> _pytest.logging <span style="color:#f92672">import</span> LogCaptureFixture
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#a6e22e">@patch</span>(<span style="color:#e6db74">&#34;pipeline.train_model.aws&#34;</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test_train_job_happy_path</span>(
+    mock_aws: MagicMock,
+    dataset: Dataset,
+    caplog: LogCaptureFixture,
+):
+    mock_aws<span style="color:#f92672">.</span>get_latest_csv_dataset_from_s3<span style="color:#f92672">.</span>return_value <span style="color:#f92672">=</span> dataset
+    main(<span style="color:#e6db74">&#34;project-bucket&#34;</span>, <span style="color:#ae81ff">0.8</span>, <span style="color:#ae81ff">0.9</span>, {<span style="color:#e6db74">&#34;random_state&#34;</span>: [<span style="color:#ae81ff">42</span>]})
+    mock_aws<span style="color:#f92672">.</span>Model()<span style="color:#f92672">.</span>put_model_to_s3<span style="color:#f92672">.</span>assert_called_once()
+    logs <span style="color:#f92672">=</span> caplog<span style="color:#f92672">.</span>text
+    <span style="color:#66d9ef">assert</span> <span style="color:#e6db74">&#34;Starting train-model stage&#34;</span> <span style="color:#f92672">in</span> logs
+    <span style="color:#66d9ef">assert</span> <span style="color:#e6db74">&#34;Retrieved dataset from s3&#34;</span> <span style="color:#f92672">in</span> logs
+    <span style="color:#66d9ef">assert</span> <span style="color:#e6db74">&#34;Trained model&#34;</span> <span style="color:#f92672">in</span> logs
+    <span style="color:#66d9ef">assert</span> <span style="color:#e6db74">&#34;Model serialised and persisted to s3&#34;</span> <span style="color:#f92672">in</span> logs
+</code></pre></div><p>This test also makes use of Pytest’s <a href="https://docs.pytest.org/en/6.2.x/reference.html?highlight=caplog#pytest.logging.caplog">caplog</a> fixture, enabling us to test that <code>main</code> yields the expected log records when everything goes according to plan (i.e. the ‘happy path’). This gives us confidence that model artefacts will be persisted as expected, when run in production.</p>
+<p>What about the ‘unhappy paths’ - when performance metrics fall below warning and error thresholds? We need to test that <code>main</code> will behave as we expect it too, and so we will have to write tests for these scenarios, as well.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#a6e22e">@patch</span>(<span style="color:#e6db74">&#34;pipeline.train_model.aws&#34;</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test_train_job_raises_exception_when_metrics_below_error_threshold</span>(
+    mock_aws: MagicMock,
+    dataset: Dataset,
+):
+    mock_aws<span style="color:#f92672">.</span>get_latest_csv_dataset_from_s3<span style="color:#f92672">.</span>return_value <span style="color:#f92672">=</span> dataset
+    <span style="color:#66d9ef">with</span> raises(<span style="color:#a6e22e">RuntimeError</span>, match<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;below deployment threshold&#34;</span>):
+        main(<span style="color:#e6db74">&#34;project-bucket&#34;</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0.9</span>, {<span style="color:#e6db74">&#34;random_state&#34;</span>: [<span style="color:#ae81ff">42</span>]})
+
+
+<span style="color:#a6e22e">@patch</span>(<span style="color:#e6db74">&#34;pipeline.train_model.aws&#34;</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test_train_job_logs_warning_when_metrics_below_warning_threshold</span>(
+    mock_aws: MagicMock,
+    dataset: Dataset,
+    caplog: LogCaptureFixture,
+):
+    mock_aws<span style="color:#f92672">.</span>get_latest_csv_dataset_from_s3<span style="color:#f92672">.</span>return_value <span style="color:#f92672">=</span> dataset
+    main(<span style="color:#e6db74">&#34;project-bucket&#34;</span>, <span style="color:#ae81ff">0.5</span>, <span style="color:#ae81ff">0.9</span>, {<span style="color:#e6db74">&#34;random_state&#34;</span>: [<span style="color:#ae81ff">42</span>]})
+    <span style="color:#66d9ef">assert</span> <span style="color:#e6db74">&#34;WARNING&#34;</span> <span style="color:#f92672">in</span> caplog<span style="color:#f92672">.</span>text
+    <span style="color:#66d9ef">assert</span> <span style="color:#e6db74">&#34;breached warning threshold&#34;</span> <span style="color:#f92672">in</span> caplog<span style="color:#f92672">.</span>text
+</code></pre></div><p>These tests work by setting the thresholds artificially high (or low) and checking that exceptions are raised or that warning messages are logged. Note, that this testing strategy only works because <code>main</code> accepts the thresholds as arguments, which was one of the key motivations for designing it in this way.</p>
+<h3 id="input-validation-for-the-stage">Input Validation for the Stage</h3>
+<p>The train-model stage works by executing <code>train_model.py</code>, which requires three arguments to be passed to it (as discussed earlier on). These inputs are validated and this validation needs to be tested for completeness. This is a long and boring test, so we will not reproduce the whole thing, but instead discuss the testing strategy (which is a bit more interesting).</p>
+<p>The approach to testing input validation, is to run <code>test_model.py</code> as Bodywork would run it within a container on Kubernetes, by calling <code>python pipeline/train_model.py</code> from the command line. We can replicate this using <code>subprocess.run</code> from the Python standard library and capturing the output. We can then pass invalid arguments and check the output for the expected error messages. You can see this pattern in-action below, for the case when no arguments are passed.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> subprocess <span style="color:#f92672">import</span> run
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test_run_job_handles_error_for_invalid_args</span>():
+    process_one <span style="color:#f92672">=</span> run(
+        [<span style="color:#e6db74">&#34;python&#34;</span>, <span style="color:#e6db74">&#34;pipeline/train_model.py&#34;</span>], capture_output<span style="color:#f92672">=</span>True, encoding<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span>
+    )
+    <span style="color:#66d9ef">assert</span> process_one<span style="color:#f92672">.</span>returncode <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">assert</span> <span style="color:#e6db74">&#34;ERROR&#34;</span> <span style="color:#f92672">in</span> process_one<span style="color:#f92672">.</span>stdout
+    <span style="color:#66d9ef">assert</span> <span style="color:#e6db74">&#34;Invalid arguments passed to train_model.py&#34;</span> <span style="color:#f92672">in</span> process_one<span style="color:#f92672">.</span>stdout
+
+	  <span style="color:#75715e"># ...</span>
+</code></pre></div><h2 id="developing-the-model-serving-stage">Developing the Model Serving Stage</h2>
+<p>In Part One of this series we developed a skeleton web service that returned a hard-coded value whenever the API was called. Our task in this part is to extend this to downloading the latest model persisted to cloud object storage (AWS S3), and then use the model for generating predictions. Unlike the train-model stage, the effort required for this task is relatively small and so we will reproduce <code>serve_model.py</code> in full and then discuss it in more detail afterwards.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> sys
+<span style="color:#f92672">from</span> enum <span style="color:#f92672">import</span> Enum
+<span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> Dict, Union
+
+<span style="color:#f92672">import</span> uvicorn
+<span style="color:#f92672">from</span> bodywork_pipeline_utils <span style="color:#f92672">import</span> aws, logging
+<span style="color:#f92672">from</span> fastapi <span style="color:#f92672">import</span> FastAPI, status
+<span style="color:#f92672">from</span> numpy <span style="color:#f92672">import</span> array
+<span style="color:#f92672">from</span> pydantic <span style="color:#f92672">import</span> BaseModel, Field
+
+<span style="color:#f92672">from</span> pipeline.train_model <span style="color:#f92672">import</span> PRODUCT_CODE_MAP
+
+app <span style="color:#f92672">=</span> FastAPI(debug<span style="color:#f92672">=</span>False)
+log <span style="color:#f92672">=</span> logging<span style="color:#f92672">.</span>configure_logger()
+
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProductCode</span>(Enum):
+    SKU001 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;SKU001&#34;</span>
+    SKU002 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;SKU002&#34;</span>
+    SKU003 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;SKU003&#34;</span>
+    SKU004 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;SKU004&#34;</span>
+    SKU005 <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;SKU005&#34;</span>
+
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Data</span>(BaseModel):
+    product_code: ProductCode
+    orders_placed: float <span style="color:#f92672">=</span> Field(<span style="color:#f92672">...</span>, ge<span style="color:#f92672">=</span><span style="color:#ae81ff">0.0</span>)
+
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Prediction</span>(BaseModel):
+    est_hours_to_dispatch: float
+    model_version: str
+
+
+<span style="color:#a6e22e">@app.post</span>(
+    <span style="color:#e6db74">&#34;/api/v0.1/time_to_dispatch&#34;</span>,
+    status_code<span style="color:#f92672">=</span>status<span style="color:#f92672">.</span>HTTP_200_OK,
+    response_model<span style="color:#f92672">=</span>Prediction,
+)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">time_to_dispatch</span>(data: Data) <span style="color:#f92672">-&gt;</span> Dict[str, Union[str, float]]:
+    features <span style="color:#f92672">=</span> array([[data<span style="color:#f92672">.</span>orders_placed, PRODUCT_CODE_MAP[data<span style="color:#f92672">.</span>product_code<span style="color:#f92672">.</span>value]]])
+    prediction <span style="color:#f92672">=</span> wrapped_model<span style="color:#f92672">.</span>model<span style="color:#f92672">.</span>predict(features)<span style="color:#f92672">.</span>tolist()[<span style="color:#ae81ff">0</span>]
+    <span style="color:#66d9ef">return</span> {<span style="color:#e6db74">&#34;est_hours_to_dispatch&#34;</span>: prediction, <span style="color:#e6db74">&#34;model_version&#34;</span>: str(wrapped_model)}
+
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    <span style="color:#66d9ef">try</span>:
+        args <span style="color:#f92672">=</span> sys<span style="color:#f92672">.</span>argv
+        s3_bucket <span style="color:#f92672">=</span> args[<span style="color:#ae81ff">1</span>]
+        wrapped_model <span style="color:#f92672">=</span> aws<span style="color:#f92672">.</span>get_latest_pkl_model_from_s3(s3_bucket, <span style="color:#e6db74">&#34;models&#34;</span>)
+        log<span style="color:#f92672">.</span>info(f<span style="color:#e6db74">&#34;Successfully loaded model: {wrapped_model}&#34;</span>)
+    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">IndexError</span>:
+        log<span style="color:#f92672">.</span>error(<span style="color:#e6db74">&#34;Invalid arguments passed to serve_model.py - expected S3_BUCKET&#34;</span>)
+        sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">1</span>)
+    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+        log<span style="color:#f92672">.</span>error(f<span style="color:#e6db74">&#34;Could not get latest model and start web server - {e}&#34;</span>)
+        sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">1</span>)
+    uvicorn<span style="color:#f92672">.</span>run(app, host<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;0.0.0.0&#34;</span>, workers<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</code></pre></div><p>The key changes from the version in Part One are as follows:</p>
+<ul>
+<li>We now pass the name of the AWS S3 bucket as an argument to <code>serve_model.py</code>.</li>
+<li>In the <code>if __name__ == &quot;__main__&quot;</code> block we now attempt to to retrieve latest <code>Model</code> object that was persisted to AWS S3, before starting the FastAPI server.</li>
+<li>We placed a new constraint on the <code>Data.orders_placed</code> field to ensure that all values sent to the API must be greater-than-or-equal-to zero, and another new constraint on <code>Data.product_code</code> that forces this field to be one of the values specified in the <code>ProductCode</code> <a href="https://docs.python.org/3/library/enum.html">enumeration</a>.</li>
+<li>We now use the model to generate predictions, using the <code>PRODUCT_CODE_MAP</code> dictionary from <code>train_model.py</code> to map product codes to integers, before calling the model.</li>
+<li>We use the string representation of the <code>Model</code> object in the response’s <code>model_version</code> field, which contains the full information on which S3 object is being used, as well as other metadata such as the dataset used to train the model, the type of model, etc. This verbose information is designed to facilitate easy debugging of problematic responses.</li>
+</ul>
+<p>If we start the server locally,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> python <span style="color:#f92672">-</span>m pipeline.serve_model time<span style="color:#f92672">-</span>to<span style="color:#f92672">-</span>dispatch
+
+<span style="color:#ae81ff">2021-07-24</span> <span style="color:#ae81ff">09</span><span style="color:#f92672">:</span><span style="color:#ae81ff">56</span><span style="color:#f92672">:</span><span style="color:#ae81ff">42</span>,<span style="color:#ae81ff">718</span> <span style="color:#f92672">-</span> INFO <span style="color:#f92672">-</span> serve_model.<span style="color:#f92672">&lt;</span>module<span style="color:#f92672">&gt;</span> <span style="color:#f92672">-</span> Successfully loaded model<span style="color:#f92672">:</span> name<span style="color:#f92672">:</span>time<span style="color:#f92672">-</span>to<span style="color:#f92672">-</span>dispatch<span style="color:#f92672">|</span>model_type<span style="color:#f92672">:&lt;</span>class <span style="color:#e6db74">&#39;sklearn.tree._classes.DecisionTreeRegressor&#39;</span><span style="color:#f92672">&gt;|</span>model_timestamp<span style="color:#f92672">:</span><span style="color:#ae81ff">2021-07-20</span> <span style="color:#ae81ff">14</span><span style="color:#f92672">:</span><span style="color:#ae81ff">44</span><span style="color:#f92672">:</span><span style="color:#ae81ff">13.558375</span><span style="color:#f92672">|</span>model_hash<span style="color:#f92672">:</span>b4860f56fa24193934fe1ea51b66818d<span style="color:#f92672">|</span>train_dataset_key<span style="color:#f92672">:</span>datasets<span style="color:#f92672">/</span>time_to_dispatch_2021<span style="color:#ae81ff">-07-01</span>T16<span style="color:#f92672">|</span><span style="color:#ae81ff">45</span><span style="color:#f92672">|</span><span style="color:#ae81ff">38</span>.csv<span style="color:#f92672">|</span>train_dataset_hash<span style="color:#f92672">:</span><span style="color:#e6db74">&#34;759eccda4ceb7a07cda66ad4ef7cdfbc&#34;</span><span style="color:#f92672">|</span>pipeline_git_commit_hash<span style="color:#f92672">:</span><span style="color:#66d9ef">NA</span>
+<span style="color:#ae81ff">2021-07-24</span> <span style="color:#ae81ff">09</span><span style="color:#f92672">:</span><span style="color:#ae81ff">56</span><span style="color:#f92672">:</span><span style="color:#ae81ff">42</span>,<span style="color:#ae81ff">718</span> <span style="color:#f92672">-</span> INFO <span style="color:#f92672">-</span> serve_model.<span style="color:#f92672">&lt;</span>module<span style="color:#f92672">&gt;</span> <span style="color:#f92672">-</span> Successfully loaded model<span style="color:#f92672">:</span> name<span style="color:#f92672">:</span>time<span style="color:#f92672">-</span>to<span style="color:#f92672">-</span>dispatch<span style="color:#f92672">|</span>model_type<span style="color:#f92672">:&lt;</span>class <span style="color:#e6db74">&#39;sklearn.tree._classes.DecisionTreeRegressor&#39;</span><span style="color:#f92672">&gt;|</span>model_timestamp<span style="color:#f92672">:</span><span style="color:#ae81ff">2021-07-20</span> <span style="color:#ae81ff">14</span><span style="color:#f92672">:</span><span style="color:#ae81ff">44</span><span style="color:#f92672">:</span><span style="color:#ae81ff">13.558375</span><span style="color:#f92672">|</span>model_hash<span style="color:#f92672">:</span>b4860f56fa24193934fe1ea51b66818d<span style="color:#f92672">|</span>train_dataset_key<span style="color:#f92672">:</span>datasets<span style="color:#f92672">/</span>time_to_dispatch_2021<span style="color:#ae81ff">-07-01</span>T16<span style="color:#f92672">|</span><span style="color:#ae81ff">45</span><span style="color:#f92672">|</span><span style="color:#ae81ff">38</span>.csv<span style="color:#f92672">|</span>train_dataset_hash<span style="color:#f92672">:</span><span style="color:#e6db74">&#34;759eccda4ceb7a07cda66ad4ef7cdfbc&#34;</span><span style="color:#f92672">|</span>pipeline_git_commit_hash<span style="color:#f92672">:</span><span style="color:#66d9ef">NA</span>
+INFO<span style="color:#f92672">:</span>     Started server process [88289]
+INFO<span style="color:#f92672">:</span>     Waiting for application startup.
+INFO<span style="color:#f92672">:</span>     Application startup complete.
+INFO<span style="color:#f92672">:</span>     Uvicorn running on http<span style="color:#f92672">://</span><span style="color:#ae81ff">0.0.0.0</span><span style="color:#f92672">:</span><span style="color:#ae81ff">8000</span> (Press CTRL<span style="color:#f92672">+</span>C to quit)
+</code></pre></div><p>Then we can send a test request,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> curl http<span style="color:#f92672">://</span>localhost<span style="color:#f92672">:</span><span style="color:#ae81ff">8000</span><span style="color:#f92672">/</span>api<span style="color:#f92672">/</span>v0.1<span style="color:#f92672">/</span>time_to_dispatch \
+    <span style="color:#f92672">--</span>request POST \
+    <span style="color:#f92672">--</span>header <span style="color:#e6db74">&#34;Content-Type: application/json&#34;</span> \
+    <span style="color:#f92672">--</span>data <span style="color:#e6db74">&#39;{&#34;product_code&#34;: &#34;SKU001&#34;, &#34;orders_placed&#34;: 10}&#39;</span>
+</code></pre></div><p>Which should return a response along the lines of,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;est_hours_to_dispatch&#34;</span>: <span style="color:#ae81ff">0.6527543057985115</span>,
+  <span style="color:#f92672">&#34;model_version&#34;</span>: <span style="color:#e6db74">&#34;name:time-to-dispatch|model_type:&lt;class &#39;sklearn.tree._classes.DecisionTreeRegressor&#39;&gt;|model_timestamp:2021-07-20 14:44:13.558375|model_hash:b4860f56fa24193934fe1ea51b66818d|train_dataset_key:datasets/time_to_dispatch_2021-07-01T16|45|38.csv|train_dataset_hash:\&#34;759eccda4ceb7a07cda66ad4ef7cdfbc\&#34;|pipeline_git_commit_hash:ed3113197adcbdbe338bf406841b930e895c42d6&#34;</span>
+}
+</code></pre></div><h3 id="updating-the-tests">Updating the Tests</h3>
+<p>We only need to add one more (small) test to <a href="https://github.com/bodywork-ml/ml-pipeline-engineering/blob/part-two/tests/test_serve_model.py">tests/test_serve_model.py</a>, but we will have to modify the existing tests to take into account that we are now using a trained model to generate predictions, as opposed to returning fixed values. This introduces a complication, because we need to inject a working model into the module.</p>
+<p>To facilitate testing, we have persisted a valid <code>Model</code> object to <code>tests/resources/model.pkl</code>, which will be loaded in a function called <code>wrapped_model</code> and injected into the module at test-time as a new object, using <code>unittest.mock.patch</code>. We are unable to use <code>patch</code> as we did in <code>train_model.py</code>, because the model is only loaded when <code>serve_model.py</code> is executed, whereas our tests rely only the FastAPI test client.</p>
+<p>The modified test for a valid request is shown</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> pickle
+<span style="color:#f92672">from</span> subprocess <span style="color:#f92672">import</span> run
+<span style="color:#f92672">from</span> unittest.mock <span style="color:#f92672">import</span> patch
+
+<span style="color:#f92672">from</span> bodywork_pipeline_utils.aws <span style="color:#f92672">import</span> Model
+<span style="color:#f92672">from</span> fastapi.testclient <span style="color:#f92672">import</span> TestClient
+<span style="color:#f92672">from</span> numpy <span style="color:#f92672">import</span> array
+
+test_client <span style="color:#f92672">=</span> TestClient(app)
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">wrapped_model</span>() <span style="color:#f92672">-&gt;</span> Model:
+    <span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#34;tests/resources/model.pkl&#34;</span>, <span style="color:#e6db74">&#34;r+b&#34;</span>) <span style="color:#66d9ef">as</span> file:
+        wrapped_model <span style="color:#f92672">=</span> pickle<span style="color:#f92672">.</span>load(file)
+    <span style="color:#66d9ef">return</span> wrapped_model
+
+
+<span style="color:#a6e22e">@patch</span>(<span style="color:#e6db74">&#34;pipeline.serve_model.wrapped_model&#34;</span>, new<span style="color:#f92672">=</span>wrapped_model(), create<span style="color:#f92672">=</span>True)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test_web_api_returns_valid_response_given_valid_data</span>():
+    prediction_request <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;product_code&#34;</span>: <span style="color:#e6db74">&#34;SKU001&#34;</span>, <span style="color:#e6db74">&#34;orders_placed&#34;</span>: <span style="color:#ae81ff">100</span>}
+    prediction_response <span style="color:#f92672">=</span> test_client<span style="color:#f92672">.</span>post(
+        <span style="color:#e6db74">&#34;/api/v0.1/time_to_dispatch&#34;</span>, json<span style="color:#f92672">=</span>prediction_request
+    )
+    model_obj <span style="color:#f92672">=</span> wrapped_model()
+    expected_prediction <span style="color:#f92672">=</span> model_obj<span style="color:#f92672">.</span>model<span style="color:#f92672">.</span>predict(array([[<span style="color:#ae81ff">100</span>, <span style="color:#ae81ff">0</span>]]))<span style="color:#f92672">.</span>tolist()[<span style="color:#ae81ff">0</span>]
+    <span style="color:#66d9ef">assert</span> prediction_response<span style="color:#f92672">.</span>status_code <span style="color:#f92672">==</span> <span style="color:#ae81ff">200</span>
+    <span style="color:#66d9ef">assert</span> prediction_response<span style="color:#f92672">.</span>json()[<span style="color:#e6db74">&#34;est_hours_to_dispatch&#34;</span>] <span style="color:#f92672">==</span> expected_prediction
+    <span style="color:#66d9ef">assert</span> prediction_response<span style="color:#f92672">.</span>json()[<span style="color:#e6db74">&#34;model_version&#34;</span>] <span style="color:#f92672">==</span> str(model_obj)
+</code></pre></div><p>This works by checking the output from the API against the output from the model loaded from the test resources, to make sure that they are identical. Next, we modify the test that covers the API data validation, to reflect the extra constraints we have placed on requests.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#a6e22e">@patch</span>(<span style="color:#e6db74">&#34;pipeline.serve_model.wrapped_model&#34;</span>, new<span style="color:#f92672">=</span>wrapped_model(), create<span style="color:#f92672">=</span>True)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test_web_api_returns_error_code_given_invalid_data</span>():
+    prediction_request <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;product_code&#34;</span>: <span style="color:#e6db74">&#34;SKU001&#34;</span>, <span style="color:#e6db74">&#34;foo&#34;</span>: <span style="color:#ae81ff">100</span>}
+    prediction_response <span style="color:#f92672">=</span> test_client<span style="color:#f92672">.</span>post(
+        <span style="color:#e6db74">&#34;/api/v0.1/time_to_dispatch&#34;</span>, json<span style="color:#f92672">=</span>prediction_request
+    )
+    <span style="color:#66d9ef">assert</span> prediction_response<span style="color:#f92672">.</span>status_code <span style="color:#f92672">==</span> <span style="color:#ae81ff">422</span>
+    <span style="color:#66d9ef">assert</span> <span style="color:#e6db74">&#34;value_error.missing&#34;</span> <span style="color:#f92672">in</span> prediction_response<span style="color:#f92672">.</span>text
+
+    prediction_request <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;product_code&#34;</span>: <span style="color:#e6db74">&#34;SKU000&#34;</span>, <span style="color:#e6db74">&#34;orders_placed&#34;</span>: <span style="color:#ae81ff">100</span>}
+    prediction_response <span style="color:#f92672">=</span> test_client<span style="color:#f92672">.</span>post(
+        <span style="color:#e6db74">&#34;/api/v0.1/time_to_dispatch&#34;</span>, json<span style="color:#f92672">=</span>prediction_request
+    )
+    <span style="color:#66d9ef">assert</span> prediction_response<span style="color:#f92672">.</span>status_code <span style="color:#f92672">==</span> <span style="color:#ae81ff">422</span>
+    <span style="color:#66d9ef">assert</span> <span style="color:#e6db74">&#34;not a valid enumeration member&#34;</span> <span style="color:#f92672">in</span> prediction_response<span style="color:#f92672">.</span>text
+
+    prediction_request <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;product_code&#34;</span>: <span style="color:#e6db74">&#34;SKU001&#34;</span>, <span style="color:#e6db74">&#34;orders_placed&#34;</span>: <span style="color:#f92672">-</span><span style="color:#ae81ff">100</span>}
+    prediction_response <span style="color:#f92672">=</span> test_client<span style="color:#f92672">.</span>post(
+        <span style="color:#e6db74">&#34;/api/v0.1/time_to_dispatch&#34;</span>, json<span style="color:#f92672">=</span>prediction_request
+    )
+    <span style="color:#66d9ef">assert</span> prediction_response<span style="color:#f92672">.</span>status_code <span style="color:#f92672">==</span> <span style="color:#ae81ff">422</span>
+    <span style="color:#66d9ef">assert</span> <span style="color:#e6db74">&#34;ensure this value is greater than or equal to 0&#34;</span> <span style="color:#f92672">in</span> prediction_response<span style="color:#f92672">.</span>text
+</code></pre></div><p>Finally, we add one more test to cover the input validation for the <code>serve_model.py</code> module, using the same strategy as we did for the equivalent test for <code>train_model.py</code>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> subprocess <span style="color:#f92672">import</span> run
+
+<span style="color:#75715e"># ...</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">test_web_server_raises_exception_if_passed_invalid_args</span>():
+    process <span style="color:#f92672">=</span> run(
+        [<span style="color:#e6db74">&#34;python&#34;</span>, <span style="color:#e6db74">&#34;-m&#34;</span>, <span style="color:#e6db74">&#34;pipeline.serve_model&#34;</span>], capture_output<span style="color:#f92672">=</span>True, encoding<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;utf-8&#34;</span>
+    )
+    <span style="color:#66d9ef">assert</span> process<span style="color:#f92672">.</span>returncode <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>
+    <span style="color:#66d9ef">assert</span> <span style="color:#e6db74">&#34;ERROR&#34;</span> <span style="color:#f92672">in</span> process<span style="color:#f92672">.</span>stdout
+    <span style="color:#66d9ef">assert</span> <span style="color:#e6db74">&#34;Invalid arguments passed to serve_model.py&#34;</span> <span style="color:#f92672">in</span> process<span style="color:#f92672">.</span>stdout
+</code></pre></div><h2 id="updating-the-deployment-and-releasing-to-production">Updating the Deployment and Releasing to Production</h2>
+<p>The last task we need to complete before we can commit all changes, push to GitHub and trigger the CI/CD pipeline, is to update the deployment configuration in <code>bodywork.yaml</code>. This requires three changes:</p>
+<ul>
+<li>Arguments now need to be passed to each stage.</li>
+<li>The Python package requirements for each stage need to be updated.</li>
+<li>AWS credentials need to be injected into each stage, as required by <code>bodywork_pipeline_utils.aws</code>.</li>
+<li>CPU and memory resources need to be updated, together with max completion/startup timeouts.</li>
+</ul>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#66d9ef">version</span>: <span style="color:#e6db74">&#34;1.1&#34;</span>
+<span style="color:#66d9ef">pipeline</span>:
+  <span style="color:#66d9ef">name</span>: time-to-dispatch
+  <span style="color:#66d9ef">docker_image</span>: bodyworkml/bodywork-core:<span style="color:#ae81ff">3.0</span>
+  <span style="color:#66d9ef">DAG</span>: train_model &gt;&gt; serve_model
+  <span style="color:#66d9ef">secrets_group</span>: dev
+<span style="color:#66d9ef">stages</span>:
+  <span style="color:#66d9ef">train_model</span>:
+    <span style="color:#66d9ef">executable_module_path</span>: pipeline/train_model.py
+    <span style="color:#66d9ef">args</span>: [<span style="color:#e6db74">&#34;time-to-dispatch&#34;</span>, <span style="color:#e6db74">&#34;0.9&#34;</span>, <span style="color:#e6db74">&#34;0.8&#34;</span>]
+    <span style="color:#66d9ef">requirements</span>:
+      - numpy&gt;=<span style="color:#ae81ff">1.21.0</span>
+      - pandas&gt;=<span style="color:#ae81ff">1.2.5</span>
+      - scikit-learn&gt;=<span style="color:#ae81ff">1.0.0</span>
+      - git+https://github.com/bodywork-ml/bodywork-pipeline-utils@v0<span style="color:#ae81ff">.1.5</span>
+    <span style="color:#66d9ef">cpu_request</span>: <span style="color:#ae81ff">1.0</span>
+    <span style="color:#66d9ef">memory_request_mb</span>: <span style="color:#ae81ff">1000</span>
+    <span style="color:#66d9ef">batch</span>:
+      <span style="color:#66d9ef">max_completion_time_seconds</span>: <span style="color:#ae81ff">180</span>
+      <span style="color:#66d9ef">retries</span>: <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">secrets</span>:
+      <span style="color:#66d9ef">AWS_ACCESS_KEY_ID</span>: aws-credentials
+      <span style="color:#66d9ef">AWS_SECRET_ACCESS_KEY</span>: aws-credentials
+      <span style="color:#66d9ef">AWS_DEFAULT_REGION</span>: aws-credentials
+  <span style="color:#66d9ef">serve_model</span>:
+    <span style="color:#66d9ef">executable_module_path</span>: pipeline/serve_model.py
+    <span style="color:#66d9ef">args</span>: [<span style="color:#e6db74">&#34;time-to-dispatch&#34;</span>]
+    <span style="color:#66d9ef">requirements</span>:
+      - numpy&gt;=<span style="color:#ae81ff">1.21.0</span>
+      - scikit-learn&gt;=<span style="color:#ae81ff">1.0.0</span>
+      - fastapi&gt;=<span style="color:#ae81ff">0.65.2</span>
+      - uvicorn&gt;=<span style="color:#ae81ff">0.14.0</span>
+      - git+https://github.com/bodywork-ml/bodywork-pipeline-utils@v0<span style="color:#ae81ff">.1.5</span>
+    <span style="color:#66d9ef">cpu_request</span>: <span style="color:#ae81ff">0.5</span>
+    <span style="color:#66d9ef">memory_request_mb</span>: <span style="color:#ae81ff">250</span>
+    <span style="color:#66d9ef">service</span>:
+      <span style="color:#66d9ef">max_startup_time_seconds</span>: <span style="color:#ae81ff">180</span>
+      <span style="color:#66d9ef">replicas</span>: <span style="color:#ae81ff">2</span>
+      <span style="color:#66d9ef">port</span>: <span style="color:#ae81ff">8000</span>
+      <span style="color:#66d9ef">ingress</span>: <span style="color:#66d9ef">true</span>
+    <span style="color:#66d9ef">secrets</span>:
+      <span style="color:#66d9ef">AWS_ACCESS_KEY_ID</span>: aws-credentials
+      <span style="color:#66d9ef">AWS_SECRET_ACCESS_KEY</span>: aws-credentials
+      <span style="color:#66d9ef">AWS_DEFAULT_REGION</span>: aws-credentials
+<span style="color:#66d9ef">logging</span>:
+  <span style="color:#66d9ef">log_level</span>: INFO
+</code></pre></div><p>This will instruct Bodywork to look for <code>AWS_ACCESS_KEY_ID</code>,  <code>AWS_SECRET_ACCESS_KEY</code> and <code>AWS_DEFAULT_REGION</code> in a secret record called <code>aws-credentials</code>, so that it can inject these secrets into the containers running the stages of our pipeline (as environment variables that will be detected silently). So, these will have to be created, which can be done as follows,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> bw create secret aws<span style="color:#f92672">-</span>credentials \
+    <span style="color:#f92672">--</span>group<span style="color:#f92672">=</span>dev \
+    <span style="color:#f92672">--</span>data AWS_ACCESS_KEY_ID<span style="color:#f92672">=</span>put<span style="color:#f92672">-</span>your<span style="color:#f92672">-</span>key<span style="color:#f92672">-</span>in<span style="color:#f92672">-</span>here \
+    <span style="color:#f92672">--</span>data AWS_SECRET_ACCESS_KEY<span style="color:#f92672">=</span>put<span style="color:#f92672">-</span>your<span style="color:#f92672">-</span>other<span style="color:#f92672">-</span>key<span style="color:#f92672">-</span>in<span style="color:#f92672">-</span>here \
+    <span style="color:#f92672">--</span>data AWS_DEFAULT_REGION<span style="color:#f92672">=</span>wherever<span style="color:#f92672">-</span>your<span style="color:#f92672">-</span>cluster<span style="color:#f92672">-</span>is
+</code></pre></div><p>Now you’re ready to push this branch to your remote Git repo! If your tests pass and your colleagues approve the merge, the CD part of the CI/CD pipeline we setup in Part One will ensure the new pipeline is deployed to Kubernetes by Bodywork and executed immediately. Bodywork will perform a rolling-deployment that will ensure zero down-time and automatically roll-back failed deployments to the previous version. When Bodywork has finished, test the new web API,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> curl http<span style="color:#f92672">://</span>CLUSTER_IP<span style="color:#f92672">/</span>pipelines<span style="color:#f92672">/</span>time<span style="color:#f92672">-</span>to<span style="color:#f92672">-</span>dispatch<span style="color:#f92672">--</span>serve<span style="color:#f92672">-</span>model<span style="color:#f92672">/</span>api<span style="color:#f92672">/</span>v0.1<span style="color:#f92672">/</span>time_to_dispatch \
+    <span style="color:#f92672">--</span>request POST \
+    <span style="color:#f92672">--</span>header <span style="color:#e6db74">&#34;Content-Type: application/json&#34;</span> \
+    <span style="color:#f92672">--</span>data <span style="color:#e6db74">&#39;{&#34;product_code&#34;: &#34;SKU001&#34;, &#34;orders_placed&#34;: 10}&#39;</span>
+</code></pre></div><p>Where you should observe the same response you received when testing locally,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;est_hours_to_dispatch&#34;</span>: <span style="color:#ae81ff">0.6527543057985115</span>,
+  <span style="color:#f92672">&#34;model_version&#34;</span>: <span style="color:#e6db74">&#34;name:time-to-dispatch|model_type:&lt;class &#39;sklearn.tree._classes.DecisionTreeRegressor&#39;&gt;|model_timestamp:2021-07-20 14:44:13.558375|model_hash:b4860f56fa24193934fe1ea51b66818d|train_dataset_key:datasets/time_to_dispatch_2021-07-01T16|45|38.csv|train_dataset_hash:\&#34;759eccda4ceb7a07cda66ad4ef7cdfbc\&#34;|pipeline_git_commit_hash:ed3113197adcbdbe338bf406841b930e895c42d6&#34;</span>
+}
+</code></pre></div><p>See our guide to <a href="https://bodywork.readthedocs.io/en/latest/kubernetes/#accessing-services">accessing services</a> for information on how to determine <code>CLUSTER_IP</code>.</p>
+<h2 id="scheduling-the-pipeline-to-run-on-a-schedule">Scheduling the Pipeline to run on a Schedule</h2>
+<p>At this point, the pipeline will have deployed a model using the most recent dataset made available for this task. We know, however, that new data will arrive every Friday evening and so we’d like to schedule the pipeline to run just after the data is expected. We can achieve this using Bodywork cronjobs, as follows,</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> bw create cronjob https<span style="color:#f92672">://</span>github.com<span style="color:#f92672">/</span>bodywork<span style="color:#f92672">-</span>ml<span style="color:#f92672">/</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>engineering \
+    <span style="color:#f92672">--</span>name<span style="color:#f92672">=</span>weekly<span style="color:#f92672">-</span>update \
+    <span style="color:#f92672">--</span>branch master \
+    <span style="color:#f92672">--</span>schedule<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;45 11 * * 5&#34;</span> \
+	<span style="color:#f92672">--</span>retries<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>
+</code></pre></div><h2 id="wrap-up">Wrap-Up</h2>
+<p>In this second part we have gone from a skeleton “Hello, Production!” deployment to a fully-functional train-and-deploy pipeline, that automates re-training and re-deployment in a production environment, on a periodic basis. We have factored-out common code so that it can be re-used across projects and discussed various strategies for developing automated tests for both stages of the pipeline, ensuring that subsequent modifications can be reliably integrated and deployed, with relative ease.</p>
+<h2 id="appendix">Appendix</h2>
+<p>For reference.</p>
+<h3 id="the-dataset-class">The <code>Dataset</code> Class</h3>
+<p>Reproduced from the <a href="https://github.com/bodywork-ml/bodywork-pipeline-utils">bodywork-pipeline-utils</a> package, which is available to download from <a href="https://pypi.org/project/bodywork-pipeline-utils/">PyPI</a>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> datetime <span style="color:#f92672">import</span> datetime
+<span style="color:#f92672">from</span> tempfile <span style="color:#f92672">import</span> NamedTemporaryFile
+<span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> Any, NamedTuple
+
+<span style="color:#f92672">from</span> pandas <span style="color:#f92672">import</span> DataFrame, read_csv, read_parquet
+
+<span style="color:#f92672">from</span> bodywork_pipeline_utils.aws.artefacts <span style="color:#f92672">import</span> (
+    find_latest_artefact_on_s3,
+    make_timestamped_filename,
+    put_file_to_s3,
+)
+
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Dataset</span>(NamedTuple):
+    <span style="color:#e6db74">&#34;&#34;&#34;Container for downloaded datasets and associated metadata.&#34;&#34;&#34;</span>
+
+    data: DataFrame
+    datetime: datetime
+    bucket: str
+    key: str
+    hash: str
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_latest_csv_dataset_from_s3</span>(bucket: str, folder: str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>) <span style="color:#f92672">-&gt;</span> Dataset:
+    <span style="color:#e6db74">&#34;&#34;&#34;Get the latest CSV dataset from S3.
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Args:
+</span><span style="color:#e6db74">        bucket: S3 bucket to look in.
+</span><span style="color:#e6db74">        folder: Folder within bucket to limit search, defaults to &#34;&#34;.
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Returns:
+</span><span style="color:#e6db74">        Dataset object.
+</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+    artefact <span style="color:#f92672">=</span> find_latest_artefact_on_s3(<span style="color:#e6db74">&#34;csv&#34;</span>, bucket, folder)
+    data <span style="color:#f92672">=</span> read_csv(artefact<span style="color:#f92672">.</span>get())
+    <span style="color:#66d9ef">return</span> Dataset(data, artefact<span style="color:#f92672">.</span>timestamp, bucket, artefact<span style="color:#f92672">.</span>obj_key, artefact<span style="color:#f92672">.</span>etag)
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_latest_parquet_dataset_from_s3</span>(bucket: str, folder: str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>) <span style="color:#f92672">-&gt;</span> Dataset:
+    <span style="color:#e6db74">&#34;&#34;&#34;Get the latest Parquet dataset from S3.
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Args:
+</span><span style="color:#e6db74">        bucket: S3 bucket to look in.
+</span><span style="color:#e6db74">        folder: Folder within bucket to limit search, defaults to &#34;&#34;.
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Returns:
+</span><span style="color:#e6db74">        Dataset object.
+</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+    artefact <span style="color:#f92672">=</span> find_latest_artefact_on_s3(<span style="color:#e6db74">&#34;parquet&#34;</span>, bucket, folder)
+    data <span style="color:#f92672">=</span> read_parquet(artefact<span style="color:#f92672">.</span>get())
+    <span style="color:#66d9ef">return</span> Dataset(data, artefact<span style="color:#f92672">.</span>timestamp, bucket, artefact<span style="color:#f92672">.</span>obj_key, artefact<span style="color:#f92672">.</span>etag)
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">put_csv_dataset_to_s3</span>(
+    data: DataFrame,
+    filename_prefix: str,
+    ref_datetime: datetime,
+    bucket: str,
+    folder: str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>,
+    <span style="color:#f92672">**</span>kwargs: Any,
+) <span style="color:#f92672">-&gt;</span> None:
+    <span style="color:#e6db74">&#34;&#34;&#34;Upload DataFrame to S3 as a CSV file.
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Args:
+</span><span style="color:#e6db74">        data: The DataFrame to upload.
+</span><span style="color:#e6db74">        filename_prefix: Prefix before datetime filename element.
+</span><span style="color:#e6db74">        ref_datetime: The reference date associated with data.
+</span><span style="color:#e6db74">        bucket: Location on S3 to persist the data.
+</span><span style="color:#e6db74">        folder: Folder within the bucket, defaults to &#34;&#34;.
+</span><span style="color:#e6db74">        kwargs: Keywork arguments to pass to pandas.to_csv.
+</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+    filename <span style="color:#f92672">=</span> make_timestamped_filename(filename_prefix, ref_datetime, <span style="color:#e6db74">&#34;csv&#34;</span>)
+    <span style="color:#66d9ef">with</span> NamedTemporaryFile() <span style="color:#66d9ef">as</span> temp_file:
+        data<span style="color:#f92672">.</span>to_csv(temp_file, <span style="color:#f92672">**</span>kwargs)
+        put_file_to_s3(temp_file<span style="color:#f92672">.</span>name, bucket, folder, filename)
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">put_parquet_dataset_to_s3</span>(
+    data: DataFrame,
+    filename_prefix: str,
+    ref_datetime: datetime,
+    bucket: str,
+    folder: str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>,
+    <span style="color:#f92672">**</span>kwargs: Any,
+) <span style="color:#f92672">-&gt;</span> None:
+    <span style="color:#e6db74">&#34;&#34;&#34;Upload DataFrame to S3 as a Parquet file.
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Args:
+</span><span style="color:#e6db74">        data: The DataFrame to upload.
+</span><span style="color:#e6db74">        filename_prefix: Prefix before datetime filename element.
+</span><span style="color:#e6db74">        ref_datetime: The reference date associated with data.
+</span><span style="color:#e6db74">        bucket: Location on S3 to persist the data.
+</span><span style="color:#e6db74">        folder: Folder within the bucket, defaults to &#34;&#34;.
+</span><span style="color:#e6db74">        kwargs: Keywork arguments to pass to pandas.to_csv.
+</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+    filename <span style="color:#f92672">=</span> make_timestamped_filename(filename_prefix, ref_datetime, <span style="color:#e6db74">&#34;parquet&#34;</span>)
+    <span style="color:#66d9ef">with</span> NamedTemporaryFile() <span style="color:#66d9ef">as</span> temp_file:
+        data<span style="color:#f92672">.</span>to_parquet(temp_file, <span style="color:#f92672">**</span>kwargs)
+        put_file_to_s3(temp_file<span style="color:#f92672">.</span>name, bucket, folder, filename)
+</code></pre></div><h3 id="the-model-class">The <code>Model</code> Class</h3>
+<p>Reproduced from the <a href="https://github.com/bodywork-ml/bodywork-pipeline-utils">bodywork-pipeline-utils</a> package, which is available to download from <a href="https://pypi.org/project/bodywork-pipeline-utils/">PyPI</a>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> datetime <span style="color:#f92672">import</span> datetime
+<span style="color:#f92672">from</span> hashlib <span style="color:#f92672">import</span> md5
+<span style="color:#f92672">from</span> os <span style="color:#f92672">import</span> environ
+<span style="color:#f92672">from</span> pickle <span style="color:#f92672">import</span> dump, dumps, loads, PicklingError, UnpicklingError
+<span style="color:#f92672">from</span> tempfile <span style="color:#f92672">import</span> NamedTemporaryFile
+<span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> Any, cast, Dict, Optional
+
+<span style="color:#f92672">from</span> bodywork_pipeline_utils.aws.datasets <span style="color:#f92672">import</span> Dataset
+<span style="color:#f92672">from</span> bodywork_pipeline_utils.aws.artefacts <span style="color:#f92672">import</span> (
+    find_latest_artefact_on_s3,
+    make_timestamped_filename,
+    put_file_to_s3,
+)
+
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Model</span>:
+    <span style="color:#e6db74">&#34;&#34;&#34;Base class for representing ML models and metadata.&#34;&#34;&#34;</span>
+
+    <span style="color:#66d9ef">def</span> __init__(
+        self,
+        name: str,
+        model: Any,
+        train_dataset: Dataset,
+        metadata: Optional[Dict[str, Any]] <span style="color:#f92672">=</span> None,
+    ):
+        <span style="color:#e6db74">&#34;&#34;&#34;Constructor.
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">        Args:
+</span><span style="color:#e6db74">            name: Model name.
+</span><span style="color:#e6db74">            model: Trained model object.
+</span><span style="color:#e6db74">            train_dataset: Dataset object used to train the model.
+</span><span style="color:#e6db74">            metadata: Arbitrary model metadata.
+</span><span style="color:#e6db74">        &#34;&#34;&#34;</span>
+        self<span style="color:#f92672">.</span>_name <span style="color:#f92672">=</span> name
+        self<span style="color:#f92672">.</span>_train_dataset_key <span style="color:#f92672">=</span> train_dataset<span style="color:#f92672">.</span>key
+        self<span style="color:#f92672">.</span>_train_dataset_hash <span style="color:#f92672">=</span> train_dataset<span style="color:#f92672">.</span>hash
+        self<span style="color:#f92672">.</span>_model_hash <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>_compute_model_hash(model)
+        self<span style="color:#f92672">.</span>_model <span style="color:#f92672">=</span> model
+        self<span style="color:#f92672">.</span>_model_type <span style="color:#f92672">=</span> type(model)
+        self<span style="color:#f92672">.</span>_creation_time <span style="color:#f92672">=</span> datetime<span style="color:#f92672">.</span>now()
+        self<span style="color:#f92672">.</span>_pipeline_git_commit_hash <span style="color:#f92672">=</span> environ<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;GIT_COMMIT_HASH&#34;</span>, <span style="color:#e6db74">&#34;NA&#34;</span>)
+        self<span style="color:#f92672">.</span>_metadata <span style="color:#f92672">=</span> metadata
+
+    <span style="color:#66d9ef">def</span> __eq__(self, other: object) <span style="color:#f92672">-&gt;</span> bool:
+        <span style="color:#e6db74">&#34;&#34;&#34;Model quality operator.&#34;&#34;&#34;</span>
+        <span style="color:#66d9ef">if</span> isinstance(other, Model):
+            conditions <span style="color:#f92672">=</span> [
+                self<span style="color:#f92672">.</span>_train_dataset_hash <span style="color:#f92672">==</span> other<span style="color:#f92672">.</span>_train_dataset_hash,
+                self<span style="color:#f92672">.</span>_train_dataset_key <span style="color:#f92672">==</span> other<span style="color:#f92672">.</span>_train_dataset_key,
+                self<span style="color:#f92672">.</span>_creation_time <span style="color:#f92672">==</span> other<span style="color:#f92672">.</span>_creation_time,
+                self<span style="color:#f92672">.</span>_pipeline_git_commit_hash <span style="color:#f92672">==</span> other<span style="color:#f92672">.</span>_pipeline_git_commit_hash,
+            ]
+            <span style="color:#66d9ef">if</span> all(conditions):
+                <span style="color:#66d9ef">return</span> True
+            <span style="color:#66d9ef">else</span>:
+                <span style="color:#66d9ef">return</span> False
+        <span style="color:#66d9ef">else</span>:
+            <span style="color:#66d9ef">return</span> False
+
+    <span style="color:#66d9ef">def</span> __repr__(self) <span style="color:#f92672">-&gt;</span> str:
+        <span style="color:#e6db74">&#34;&#34;&#34;Stdout representation.&#34;&#34;&#34;</span>
+        info <span style="color:#f92672">=</span> (
+            f<span style="color:#e6db74">&#34;name: {self._name}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>
+            f<span style="color:#e6db74">&#34;model_type: {self._model_type}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>
+            f<span style="color:#e6db74">&#34;model_timestamp: {self._creation_time}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>
+            f<span style="color:#e6db74">&#34;model_hash: {self._model_hash}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>
+            f<span style="color:#e6db74">&#34;train_dataset_key: {self._train_dataset_key}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>
+            f<span style="color:#e6db74">&#34;train_dataset_hash: {self._train_dataset_hash}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>
+            f<span style="color:#e6db74">&#34;pipeline_git_commit_hash: {self._pipeline_git_commit_hash}&#34;</span>
+        )
+        <span style="color:#66d9ef">return</span> info
+
+    <span style="color:#66d9ef">def</span> __str__(self) <span style="color:#f92672">-&gt;</span> str:
+        <span style="color:#e6db74">&#34;&#34;&#34;String representation.&#34;&#34;&#34;</span>
+        info <span style="color:#f92672">=</span> (
+            f<span style="color:#e6db74">&#34;name:{self._name}|&#34;</span>
+            f<span style="color:#e6db74">&#34;model_type:{self._model_type}|&#34;</span>
+            f<span style="color:#e6db74">&#34;model_timestamp:{self._creation_time}|&#34;</span>
+            f<span style="color:#e6db74">&#34;model_hash:{self._model_hash}|&#34;</span>
+            f<span style="color:#e6db74">&#34;train_dataset_key:{self._train_dataset_key}|&#34;</span>
+            f<span style="color:#e6db74">&#34;train_dataset_hash:{self._train_dataset_hash}|&#34;</span>
+            f<span style="color:#e6db74">&#34;pipeline_git_commit_hash:{self._pipeline_git_commit_hash}&#34;</span>
+        )
+        <span style="color:#66d9ef">return</span> info
+
+    <span style="color:#a6e22e">@property</span>
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">metadata</span>(self) <span style="color:#f92672">-&gt;</span> Optional[Dict[str, Any]]:
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_metadata
+
+    <span style="color:#a6e22e">@property</span>
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">model</span>(self) <span style="color:#f92672">-&gt;</span> Any:
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_model
+
+    <span style="color:#a6e22e">@staticmethod</span>
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_compute_model_hash</span>(model: Any) <span style="color:#f92672">-&gt;</span> str:
+        <span style="color:#e6db74">&#34;&#34;&#34;Compute a hash for a model object.&#34;&#34;&#34;</span>
+        <span style="color:#66d9ef">try</span>:
+            model_bytestream <span style="color:#f92672">=</span> dumps(model, protocol<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>)
+            hash <span style="color:#f92672">=</span> md5(model_bytestream)
+            <span style="color:#66d9ef">return</span> hash<span style="color:#f92672">.</span>hexdigest()
+        <span style="color:#66d9ef">except</span> PicklingError:
+            msg <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Could not pickle model into bytes before hashing.&#34;</span>
+            <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">RuntimeError</span>(msg)
+        <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+            msg <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Could not hash model.&#34;</span>
+            <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">RuntimeError</span>(msg) <span style="color:#f92672">from</span> e
+
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">put_model_to_s3</span>(self, bucket: str, folder: str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>) <span style="color:#f92672">-&gt;</span> str:
+        <span style="color:#e6db74">&#34;&#34;&#34;Upload model to S3 as a pickle file.
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">        Args:
+</span><span style="color:#e6db74">            bucket: Location on S3 to persist the data.
+</span><span style="color:#e6db74">            folder: Folder within the bucket, defaults to &#34;&#34;.
+</span><span style="color:#e6db74">        &#34;&#34;&#34;</span>
+        filename <span style="color:#f92672">=</span> make_timestamped_filename(self<span style="color:#f92672">.</span>_name, self<span style="color:#f92672">.</span>_creation_time, <span style="color:#e6db74">&#34;pkl&#34;</span>)
+        <span style="color:#66d9ef">with</span> NamedTemporaryFile() <span style="color:#66d9ef">as</span> temp_file:
+            dump(self, temp_file, protocol<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>)
+            put_file_to_s3(temp_file<span style="color:#f92672">.</span>name, bucket, folder, filename)
+        <span style="color:#66d9ef">return</span> f<span style="color:#e6db74">&#34;{bucket}/{folder}/{filename}&#34;</span>
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_latest_pkl_model_from_s3</span>(bucket: str, folder: str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>) <span style="color:#f92672">-&gt;</span> Model:
+    <span style="color:#e6db74">&#34;&#34;&#34;Get the latest model from S3.
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Args:
+</span><span style="color:#e6db74">        bucket: S3 bucket to look in.
+</span><span style="color:#e6db74">        folder: Folder within bucket to limit search, defaults to &#34;&#34;.
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Returns:
+</span><span style="color:#e6db74">        Dataset object.
+</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+    artefact <span style="color:#f92672">=</span> find_latest_artefact_on_s3(<span style="color:#e6db74">&#34;pkl&#34;</span>, bucket, folder)
+    <span style="color:#66d9ef">try</span>:
+        artefact_bytes <span style="color:#f92672">=</span> artefact<span style="color:#f92672">.</span>get()<span style="color:#f92672">.</span>read()
+        model <span style="color:#f92672">=</span> cast(Model, loads(artefact_bytes))
+        <span style="color:#66d9ef">return</span> model
+    <span style="color:#66d9ef">except</span> UnpicklingError:
+        msg <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;artefact at {bucket}/{model.obj_key} could not be unpickled.&#34;</span>
+        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">RuntimeError</span>(msg)
+    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">AttributeError</span>:
+        msg <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;artefact at {bucket}/{model.obj_key} is not type Model.&#34;</span>
+        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">RuntimeError</span>(msg)
+</code></pre></div><h3 id="train_modelpy"><code>train_model.py</code></h3>
+<p>Reproduced from the ml-<a href="https://github.com/bodywork-ml/ml-pipeline-engineering/tree/part-two">pipeline-engineering</a> repository.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#e6db74">&#34;&#34;&#34;
+</span><span style="color:#e6db74">- Download training dataset from AWS S3.
+</span><span style="color:#e6db74">- Prepare data and train model.
+</span><span style="color:#e6db74">- Persist model to AWS S3.
+</span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+<span style="color:#f92672">import</span> sys
+<span style="color:#f92672">from</span> typing <span style="color:#f92672">import</span> Any, Dict, List, NamedTuple, Tuple
+
+<span style="color:#f92672">from</span> bodywork_pipeline_utils <span style="color:#f92672">import</span> aws, logging
+<span style="color:#f92672">from</span> bodywork_pipeline_utils.aws <span style="color:#f92672">import</span> Dataset
+<span style="color:#f92672">from</span> numpy <span style="color:#f92672">import</span> array
+<span style="color:#f92672">from</span> pandas <span style="color:#f92672">import</span> DataFrame
+<span style="color:#f92672">from</span> sklearn.base <span style="color:#f92672">import</span> BaseEstimator
+<span style="color:#f92672">from</span> sklearn.model_selection <span style="color:#f92672">import</span> GridSearchCV, train_test_split
+<span style="color:#f92672">from</span> sklearn.metrics <span style="color:#f92672">import</span> mean_absolute_error, r2_score
+<span style="color:#f92672">from</span> sklearn.tree <span style="color:#f92672">import</span> DecisionTreeRegressor
+
+PRODUCT_CODE_MAP <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#34;SKU001&#34;</span>: <span style="color:#ae81ff">0</span>, <span style="color:#e6db74">&#34;SKU002&#34;</span>: <span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#34;SKU003&#34;</span>: <span style="color:#ae81ff">2</span>, <span style="color:#e6db74">&#34;SKU004&#34;</span>: <span style="color:#ae81ff">3</span>, <span style="color:#e6db74">&#34;SKU005&#34;</span>: <span style="color:#ae81ff">4</span>}
+HYPERPARAM_GRID <span style="color:#f92672">=</span> {
+    <span style="color:#e6db74">&#34;random_state&#34;</span>: [<span style="color:#ae81ff">42</span>],
+    <span style="color:#e6db74">&#34;criterion&#34;</span>: [<span style="color:#e6db74">&#34;squared_error&#34;</span>, <span style="color:#e6db74">&#34;absolute_error&#34;</span>],
+    <span style="color:#e6db74">&#34;max_depth&#34;</span>: [<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">6</span>, <span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">10</span>, None],
+    <span style="color:#e6db74">&#34;min_samples_split&#34;</span>: [<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">6</span>, <span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">10</span>],
+    <span style="color:#e6db74">&#34;min_samples_leaf&#34;</span>: [<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">6</span>, <span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">10</span>],
+}
+
+log <span style="color:#f92672">=</span> logging<span style="color:#f92672">.</span>configure_logger()
+
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FeatureAndLabels</span>(NamedTuple):
+    <span style="color:#e6db74">&#34;&#34;&#34;Container for features and labels split by test and train sets.&#34;&#34;&#34;</span>
+
+    X_train: DataFrame
+    X_test: DataFrame
+    y_train: DataFrame
+    y_test: DataFrame
+
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TaskMetrics</span>(NamedTuple):
+    <span style="color:#e6db74">&#34;&#34;&#34;Container for the task&#39;s performance metrics.&#34;&#34;&#34;</span>
+
+    r_squared: float
+    mean_absolute_error: float
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>(
+    s3_bucket: str,
+    metric_error_threshold: float,
+    metric_warning_threshold: float,
+    hyperparam_grid: Dict[str, Any],
+) <span style="color:#f92672">-&gt;</span> None:
+    <span style="color:#e6db74">&#34;&#34;&#34;Main training job.&#34;&#34;&#34;</span>
+    log<span style="color:#f92672">.</span>info(<span style="color:#e6db74">&#34;Starting train-model stage.&#34;</span>)
+    dataset <span style="color:#f92672">=</span> aws<span style="color:#f92672">.</span>get_latest_csv_dataset_from_s3(s3_bucket, <span style="color:#e6db74">&#34;datasets&#34;</span>)
+    log<span style="color:#f92672">.</span>info(f<span style="color:#e6db74">&#34;Retrieved dataset from s3://{s3_bucket}/{dataset.key}&#34;</span>)
+
+    feature_and_labels <span style="color:#f92672">=</span> prepare_data(dataset<span style="color:#f92672">.</span>data)
+    model, metrics <span style="color:#f92672">=</span> train_model(feature_and_labels, hyperparam_grid)
+    validate_trained_model_logic(model, feature_and_labels)
+    log<span style="color:#f92672">.</span>info(
+        f<span style="color:#e6db74">&#34;Trained model: r-squared={metrics.r_squared:.3f}, &#34;</span>
+        f<span style="color:#e6db74">&#34;MAE={metrics.mean_absolute_error:.3f}&#34;</span>
+    )
+
+    <span style="color:#66d9ef">if</span> metrics<span style="color:#f92672">.</span>r_squared <span style="color:#f92672">&gt;=</span> metric_error_threshold:
+        <span style="color:#66d9ef">if</span> metrics<span style="color:#f92672">.</span>r_squared <span style="color:#f92672">&gt;=</span> metric_warning_threshold:
+            log<span style="color:#f92672">.</span>warning(<span style="color:#e6db74">&#34;Metrics breached warning threshold - check for drift.&#34;</span>)
+        s3_location <span style="color:#f92672">=</span> persist_model(s3_bucket, model, dataset, metrics)
+        log<span style="color:#f92672">.</span>info(f<span style="color:#e6db74">&#34;Model serialised and persisted to s3://{s3_location}&#34;</span>)
+    <span style="color:#66d9ef">else</span>:
+        msg <span style="color:#f92672">=</span> (
+            f<span style="color:#e6db74">&#34;r-squared metric ({{metrics.r_squared:.3f}}) is below deployment &#34;</span>
+            f<span style="color:#e6db74">&#34;threshold {metric_error_threshold}&#34;</span>
+        )
+        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">RuntimeError</span>(msg)
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">prepare_data</span>(data: DataFrame) <span style="color:#f92672">-&gt;</span> FeatureAndLabels:
+    <span style="color:#e6db74">&#34;&#34;&#34;Split the data into features and labels for training and testing.&#34;&#34;&#34;</span>
+    X <span style="color:#f92672">=</span> data<span style="color:#f92672">.</span>drop(<span style="color:#e6db74">&#34;hours_to_dispatch&#34;</span>, axis<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+    y <span style="color:#f92672">=</span> data[<span style="color:#e6db74">&#34;hours_to_dispatch&#34;</span>]
+    X_train, X_test, y_train, y_test <span style="color:#f92672">=</span> train_test_split(
+        X, y, test_size<span style="color:#f92672">=</span><span style="color:#ae81ff">0.2</span>, stratify<span style="color:#f92672">=</span>data[<span style="color:#e6db74">&#34;product_code&#34;</span>]<span style="color:#f92672">.</span>values, random_state<span style="color:#f92672">=</span><span style="color:#ae81ff">42</span>
+    )
+    <span style="color:#66d9ef">return</span> FeatureAndLabels(X_train, X_test, y_train, y_test)
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">train_model</span>(
+    data: FeatureAndLabels, hyperparam_grid: Dict[str, Any]
+) <span style="color:#f92672">-&gt;</span> Tuple[BaseEstimator, TaskMetrics]:
+    <span style="color:#e6db74">&#34;&#34;&#34;Train a model and compute performance metrics.&#34;&#34;&#34;</span>
+    grid_search <span style="color:#f92672">=</span> GridSearchCV(
+        estimator<span style="color:#f92672">=</span>DecisionTreeRegressor(),
+        param_grid<span style="color:#f92672">=</span>hyperparam_grid,
+        scoring<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;r2&#34;</span>,
+        cv<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>,
+        refit<span style="color:#f92672">=</span>True,
+    )
+    grid_search<span style="color:#f92672">.</span>fit(preprocess(data<span style="color:#f92672">.</span>X_train), data<span style="color:#f92672">.</span>y_train)
+    best_model <span style="color:#f92672">=</span> grid_search<span style="color:#f92672">.</span>best_estimator_
+    y_test_pred <span style="color:#f92672">=</span> best_model<span style="color:#f92672">.</span>predict(preprocess(data<span style="color:#f92672">.</span>X_test))
+    performance_metrics <span style="color:#f92672">=</span> TaskMetrics(
+        r2_score(data<span style="color:#f92672">.</span>y_test, y_test_pred),
+        mean_absolute_error(data<span style="color:#f92672">.</span>y_test, y_test_pred),
+    )
+    <span style="color:#66d9ef">return</span> (best_model, performance_metrics)
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">validate_trained_model_logic</span>(model: BaseEstimator, data: FeatureAndLabels) <span style="color:#f92672">-&gt;</span> None:
+    <span style="color:#e6db74">&#34;&#34;&#34;Verify that a trained model passes basic logical expectations.&#34;&#34;&#34;</span>
+    issues_detected: List[str] <span style="color:#f92672">=</span> []
+
+    orders_placed_sensitivity_checks <span style="color:#f92672">=</span> [
+        model<span style="color:#f92672">.</span>predict(array([[<span style="color:#ae81ff">100</span>, product], [<span style="color:#ae81ff">150</span>, product]]))<span style="color:#f92672">.</span>tolist()
+        <span style="color:#66d9ef">for</span> product <span style="color:#f92672">in</span> range(len(PRODUCT_CODE_MAP))
+    ]
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> all(e[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">&lt;</span> e[<span style="color:#ae81ff">1</span>] <span style="color:#66d9ef">for</span> e <span style="color:#f92672">in</span> orders_placed_sensitivity_checks):
+        issues_detected<span style="color:#f92672">.</span>append(
+            <span style="color:#e6db74">&#34;hours_to_dispatch predictions do not increase with orders_placed&#34;</span>
+        )
+
+    test_set_predictions <span style="color:#f92672">=</span> model<span style="color:#f92672">.</span>predict(preprocess(data<span style="color:#f92672">.</span>X_test))<span style="color:#f92672">.</span>reshape(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
+    <span style="color:#66d9ef">if</span> len(test_set_predictions[test_set_predictions <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>]) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>:
+        issues_detected<span style="color:#f92672">.</span>append(
+            <span style="color:#e6db74">&#34;negative hours_to_dispatch predictions found for test set&#34;</span>
+        )
+    <span style="color:#66d9ef">if</span> len(test_set_predictions[test_set_predictions <span style="color:#f92672">&gt;</span> data<span style="color:#f92672">.</span>y_test<span style="color:#f92672">.</span>max() <span style="color:#f92672">*</span> <span style="color:#ae81ff">1.25</span>]) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>:
+        issues_detected<span style="color:#f92672">.</span>append(
+            <span style="color:#e6db74">&#34;outlier hours_to_dispatch predictions found for test set&#34;</span>
+        )
+
+    <span style="color:#66d9ef">if</span> issues_detected:
+        msg <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Trained model failed verification: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;, &#34;</span><span style="color:#f92672">.</span>join(issues_detected) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.&#34;</span>
+        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">RuntimeError</span>(msg)
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">preprocess</span>(df: DataFrame) <span style="color:#f92672">-&gt;</span> DataFrame:
+    <span style="color:#e6db74">&#34;&#34;&#34;Create features for training model.&#34;&#34;&#34;</span>
+    processed <span style="color:#f92672">=</span> df<span style="color:#f92672">.</span>copy()
+    processed[<span style="color:#e6db74">&#34;product_code&#34;</span>] <span style="color:#f92672">=</span> df[<span style="color:#e6db74">&#34;product_code&#34;</span>]<span style="color:#f92672">.</span>apply(<span style="color:#66d9ef">lambda</span> e: PRODUCT_CODE_MAP[e])
+    <span style="color:#66d9ef">return</span> processed<span style="color:#f92672">.</span>values
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">persist_model</span>(
+    bucket: str, model: BaseEstimator, dataset: Dataset, metrics: TaskMetrics
+) <span style="color:#f92672">-&gt;</span> str:
+    <span style="color:#e6db74">&#34;&#34;&#34;Persist the model and metadata to S3.&#34;&#34;&#34;</span>
+    metadata <span style="color:#f92672">=</span> {
+        <span style="color:#e6db74">&#34;r_squared&#34;</span>: metrics<span style="color:#f92672">.</span>r_squared,
+        <span style="color:#e6db74">&#34;mean_absolute_error&#34;</span>: metrics<span style="color:#f92672">.</span>mean_absolute_error,
+    }
+    wrapped_model <span style="color:#f92672">=</span> aws<span style="color:#f92672">.</span>Model(<span style="color:#e6db74">&#34;time-to-dispatch&#34;</span>, model, dataset, metadata)
+    s3_location <span style="color:#f92672">=</span> wrapped_model<span style="color:#f92672">.</span>put_model_to_s3(bucket, <span style="color:#e6db74">&#34;models&#34;</span>)
+    <span style="color:#66d9ef">return</span> s3_location
+
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    <span style="color:#66d9ef">try</span>:
+        args <span style="color:#f92672">=</span> sys<span style="color:#f92672">.</span>argv
+        s3_bucket <span style="color:#f92672">=</span> args[<span style="color:#ae81ff">1</span>]
+        r2_metric_error_threshold <span style="color:#f92672">=</span> float(args[<span style="color:#ae81ff">2</span>])
+        <span style="color:#66d9ef">if</span> r2_metric_error_threshold <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">or</span> r2_metric_error_threshold <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>:
+            <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">ValueError</span>()
+        r2_metric_warning_threshold <span style="color:#f92672">=</span> float(args[<span style="color:#ae81ff">3</span>])
+        <span style="color:#66d9ef">if</span> r2_metric_warning_threshold <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">or</span> r2_metric_warning_threshold <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>:
+            <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">ValueError</span>()
+    <span style="color:#66d9ef">except</span> (<span style="color:#a6e22e">ValueError</span>, <span style="color:#a6e22e">IndexError</span>):
+        log<span style="color:#f92672">.</span>error(
+            <span style="color:#e6db74">&#34;Invalid arguments passed to train_model.py. &#34;</span>
+            <span style="color:#e6db74">&#34;Expected S3_BUCKET R_SQUARED_ERROR_THRESHOLD R_SQUARED_WARNING_THRESHOLD, &#34;</span>
+            <span style="color:#e6db74">&#34;where all thresholds must be in the range [0, 1].&#34;</span>
+        )
+        sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">1</span>)
+
+    <span style="color:#66d9ef">try</span>:
+        main(
+            s3_bucket,
+            r2_metric_error_threshold,
+            r2_metric_warning_threshold,
+            HYPERPARAM_GRID,
+        )
+    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+        log<span style="color:#f92672">.</span>error(f<span style="color:#e6db74">&#34;Error encountered when training model - {e}&#34;</span>)
+        sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">1</span>)
+</code></pre></div>
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+      <div>
+        <br>
+        <div>
+          <h5 class="title is-small">Share to social media</h5>
+          <div>
+            <a class="share share-network-twitter" style="background-color:#008080;"><i class="fab fah fa-lg fa-twitter"></i><span>Twitter</span></a>
+            <a class="share share-network-facebook" style="background-color:#1877f2;"><i class="fab fah fa-lg fa-facebook-f"></i><span>Facebook</span></a>
+            <a class="share share-network-linkedin" style="background-color:#2B1B17;"><i class="fab fah fa-lg fa-linkedin"></i><span>LinkedIn</span></a>
+            <a class="share share-network-hackernews" style="background-color:#008000"><i class="fab fah fa-lg fa-hacker-news"></i><span>HackerNews</span></a>
+            <a class="share share-network-pinterest" style="background-color:#bd081c;"><i class="fab fah fa-lg fa-pinterest"></i><span>Pinterest</span></a>
+            <a class="share share-network-pocket" style="background-color:#7F38EC;"><i class="fab fah fa-lg fa-get-pocket"></i><span>Pocket</span></a>
+            <a class="share share-network-email" style="background-color:#333333;"><i class="far fah fa-lg fa-envelope"></i><span>Email</span></a>
+            <a class="share share-network-flipboard" style="background-color: #837E7C;"><i class="fab fah fa-lg fa-flipboard"></i><span>Flipboard</span></a>
+            <a class="share share-network-quora" style="background-color:#808000;"><i class="fab fah fa-lg fa-quora"></i><span>Quora</span></a>
+            <a class="share share-network-reddit" style="background-color: #581845
+            ;"><i class="fab fah fa-lg fa-reddit-alien"></i><span>Reddit</span></a>
+            <a class="share share-network-telegram" style="background-color:#000080;"><i class="fab fah fa-lg fa-telegram-plane"></i><span>Telegram</span></a>
+            <a class="share share-network-whatsapp" style="background-color:#E55451;"><i class="fab fah fa-lg fa-whatsapp"></i><span>Whatsapp</span></a>
+            <a class="share share-network-sms" style="background-color:#513B1C;"><i class="far fah fa-lg fa-comment-dots"></i><span>SMS</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="comments">
+        <div id="disqus_thread" pageConfig="[object Object]"></div>
+      </div>
+      
+      <div id="disqus_thread"></div>
+      <script>
+          
+
+          
+
+          (function() { 
+          var d = document, s = d.createElement('script');
+          s.src = 'https://engineer-dancun-personal-blog.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      
+      <br><br><br>
+      <footer>
+        &copy;  
+        Powered by <a href="https://github.com/gohugoio/hugo" target="_blank">Hugo
+      </footer>
+      <script type="application/ld+json">
+        {
+          "@context" : "http://schema.org",
+          "@type" : "Blog",
+          "name": " Engineer Dancun ",
+          "url" : "https://devopsengineerdan.github.io",
+          "image": "./static/avatar.jpg",
+          "description": "Software Engineer and Researcher"
+        }
+        </script>
+        <script id="dsq-count-scr" src="//engineer-dancun.disqus.com/count.js" async></script>
+    </main>
+  </body>
+</html>
