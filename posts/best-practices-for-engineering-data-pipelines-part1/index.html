@@ -21,6 +21,27 @@
 <meta property="article:published_time" content="2023-09-09T13:29:58+03:00" />
 <meta property="article:modified_time" content="2023-09-09T13:29:58+03:00" />
 
+
+	  <!-- Favicons -->
+    <link href="https://devopsengineerdan.github.io/assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
+
+    <!-- Google Fonts -->
+    <link href="https://devopsengineerdan.github.io/assets/vendor/google/css/icons.css" rel="stylesheet" />
+
+<!-- Vendor CSS Files -->
+
+    <link href="https://devopsengineerdan.github.io/assets/vendor/aos/aos.css" rel="stylesheet" />
+    <link href="https://devopsengineerdan.github.io/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" />
+    <link
+      href="https://devopsengineerdan.github.io/assets/vendor/glightbox/css/glightbox.min.css"
+      rel="stylesheet"
+    />
+    <link href="https://devopsengineerdan.github.io/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" />
+
+    <!-- Template Main CSS File -->
+    <link href="https://devopsengineerdan.github.io/assets/assets/css/style.css" rel="stylesheet" />
+
+
   </head>
   <body>
     <header class="app-header">
@@ -90,9 +111,32 @@
         </div>
       </div>
     </header>
-    <div class="post-content">
+    <div class="post-content" id="main">
       <hr>
-<p><img src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/4eb0599c-7062-4e5a-84cf-b03055e87bf1" alt="pipelines-logo"></p>
+
+
+	 
+	    
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+               
+              <p><img src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/4eb0599c-7062-4e5a-84cf-b03055e87bf1" alt="pipelines-logo"    class="img-fluid"
+                  alt=""></p>
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+	    
+
 <p>The is the first in a series of articles demonstrating how to engineer a machine learning pipeline and deploy it to a production environment. We’re going to assume that a solution to a ML problem already exists within a Jupyter notebook, and that our task is to engineer this solution into an operational ML system, that can train a model, serve it via a web API and automatically repeat this process on a schedule when new data is made available.</p>
 <p>The focus will be on software engineering and DevOps, as applied to ML, with an emphasis on ‘best practices’. All of the code developed in each part of this project, is available on <a href="https://github.com/bodywork-ml/ml-pipeline-engineering">GitHub</a>, with a dedicated branch for each part, so you can explore the code in its various stages of development.</p>
 <p>This first part is focused on how to setup a ML pipeline engineering project and covers:</p>
@@ -144,7 +188,28 @@
     <span style="color:#f92672">&#34;model_version&#34;</span>: <span style="color:#e6db74">&#34;0.1&#34;</span>
 }
 </code></pre></div><h2 id="solution-architecture">Solution Architecture</h2>
-<p><img src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/2ae81780-080a-46d0-a876-f2915d6752c3" alt="scope_and_context"></p>
+
+ <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+               
+              <p><img src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/2ae81780-080a-46d0-a876-f2915d6752c3" alt="scope_and_context"    class="img-fluid"
+                  alt=""></p>
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+
+	    
+
 <p>The architecture for the target solution is outlined above - the workflow is as follows:</p>
 <ul>
 <li>Every Friday night at 2300 a new batch of training data is added to an S3 bucket in CSV format.</li>
@@ -371,7 +436,27 @@ INFO<span style="color:#f92672">:</span>     Uvicorn running on http<span style=
 </code></pre></div><p>And then deploy the workflow directly from the GitHub repository (so make sure all commits have been pushed to your remote branch),</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> bw create deployment https<span style="color:#f92672">://</span>github.com<span style="color:#f92672">/</span>bodywork<span style="color:#f92672">-</span>ml<span style="color:#f92672">/</span>ml<span style="color:#f92672">-</span>pipeline<span style="color:#f92672">-</span>engineering <span style="color:#f92672">--</span>branch part<span style="color:#f92672">-</span>one
 </code></pre></div><p>We like to watch our deployments rolling-out using the Kubernetes dashboard, as you can see in the video clip below.</p>
-<p><img src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/87d18387-2657-43e9-bf35-03864ac95b4e" alt="ml-pipeline-engineering"></p>
+
+ <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+              <p><img src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/87d18387-2657-43e9-bf35-03864ac95b4e" alt="ml-pipeline-engineering" class="img-fluid"
+                  alt=""</p>
+              </div>    
+            </div>
+
+	  </div></div></section>
+	    
+
+	    
+
 <p>Once the deployment has completed successfully, retrieve the details of the prediction service,</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span> bw get deployment time<span style="color:#f92672">-</span>to<span style="color:#f92672">-</span>dispatch serve<span style="color:#f92672">-</span>model
 </code></pre></div><p>You can manually test the deployed prediction endpoint using,</p>
@@ -386,7 +471,28 @@ INFO<span style="color:#f92672">:</span>     Uvicorn running on http<span style=
 }
 </code></pre></div><p>See our guide to <a href="https://bodywork.readthedocs.io/en/latest/kubernetes/#accessing-services">accessing services</a> for information on how to determine <code>CLUSTER_IP</code>.</p>
 <h2 id="configuring-cicd">Configuring CI/CD</h2>
-<p><img src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/5c9e5a25-33ca-4afa-89e3-eb308dc562a5" alt="ci_workflow"></p>
+
+	 
+	    
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+              <p><img src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/5c9e5a25-33ca-4afa-89e3-eb308dc562a5" alt="ci_workflow">  class="img-fluid"
+                  alt=""</p>
+              </div>    
+            </div>
+
+	  </div></div></section>
+	    
+	    
+
 <p>Now that the overall structure of the project has been created, all that remains is to put in-place the processes required to get new code merged and deployed as quickly and efficiently as possible. The process of getting new code merged on an <em>ad hoc</em>  basis, is referred to as Continuous Integration (CI), while getting new code deployed as soon as it is merged, is known as Continuous Deployment (CD). The workflow we intend to impose is outlined in the diagram above. Briefly:</p>
 <ol>
 <li>Pushing changes (commits) to the <code>master</code> branch of the repository is forbidden. All changes should first be raised as merge (or pull) requests, that have to pass all automated testing and some kind of peer review process (e.g. a code review), before they can be merged to the <code>master</code> branch.</li>
@@ -460,7 +566,26 @@ INFO<span style="color:#f92672">:</span>     Uvicorn running on http<span style=
 <li>A workflow that is triggered upon every merge request: <code>run-static-code-analysis</code> is first executed, which runs <code>tox -e py39_static_code_analysis</code>. If this passes, then the <code>run-tests</code> job is executed, which runs <code>tox -e py39_unit_and_functional_tests</code>. If this also passes, then CircleCI will mark this workflow as ‘passed’ and report this back to GitHub (see below).</li>
 <li>A workflow that is triggered upon every merge to <code>master</code>: <code>trigger-bodywork-deployment</code>is the only job in this pipeline, which uses Bodywork to deploy the latest pipeline (using rolling updates to maintain service availability).</li>
 </ul>
-<p><img src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/7710ef07-91d1-4e55-a9e1-91e76541f3ad" alt="github_pr"></p>
+
+
+
+	     <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+              <p><img src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/7710ef07-91d1-4e55-a9e1-91e76541f3ad"  class="img-fluid" >
+                  alt=""</p>
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <h2 id="wrapping-up">Wrapping-Up</h2>
 <p>In the first part of this project we have expended a lot of effort to lay the foundations for the work that is to come - developing the model training job, the prediction service and deploying these to a production environment where they will need to be monitored. Thanks to automated tests and CI/CD, our team will be able to quickly iterate towards a well-engineered solution, with results that can be demonstrated to stakeholders early on.</p>
 
