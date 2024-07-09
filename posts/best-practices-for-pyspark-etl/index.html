@@ -221,7 +221,7 @@ config <span style="color:#f92672">=</span> json<span style="color:#f92672">.</s
 <p>Note, that dependencies (e.g. NumPy) requiring extensions (e.g. C code) to be compiled locally, will have to be installed manually on each node as part of the node setup.</p>
 </blockquote>
 <h2 id="running-the-etl-job">Running the ETL job</h2>
-<p>Assuming that the <code>$SPARK_HOME</code> environment variable points to your local Spark installation folder, then the ETL job can be run from the project&rsquo;s root directory using the following command from the terminal,</p>
+<p>Assuming that the <code>$ SPARK_HOME</code> environment variable points to your local Spark installation folder, then the ETL job can be run from the project&rsquo;s root directory using the following command from the terminal,</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span>SPARK_HOME<span style="color:#f92672">/</span>bin<span style="color:#f92672">/</span>spark<span style="color:#f92672">-</span>submit \
 <span style="color:#f92672">--</span>master local[<span style="color:#f92672">*</span>] \
 <span style="color:#f92672">--</span>packages <span style="color:#e6db74">&#39;com.some-spark-jar.dependency:1.0.0&#39;</span> \
@@ -337,29 +337,29 @@ self<span style="color:#f92672">.</span>assertEqual(expected_avg_steps, avg_step
 self<span style="color:#f92672">.</span>assertTrue([col <span style="color:#f92672">in</span> expected_data<span style="color:#f92672">.</span>columns
                  <span style="color:#66d9ef">for</span> col <span style="color:#f92672">in</span> data_transformed<span style="color:#f92672">.</span>columns])
 </code></pre></div><p>To execute the example unit test for this project run,</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">pipenv run python <span style="color:#f92672">-</span>m unittest tests<span style="color:#f92672">/</span>test_<span style="color:#f92672">*</span>.py
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">$ pipenv run python <span style="color:#f92672">-</span>m unittest tests<span style="color:#f92672">/</span>test_<span style="color:#f92672">*</span>.py
 </code></pre></div><p>If you&rsquo;re wondering what the <code>pipenv</code> command is, then read the next section.</p>
 <h2 id="managing-project-dependencies-using-pipenv">Managing Project Dependencies using Pipenv</h2>
 <p>We use <a href="https://docs.pipenv.org">Pipenv</a> for managing project dependencies and Python environments (i.e. virtual environments). All direct packages dependencies (e.g. NumPy may be used in a User Defined Function), as well as all the packages used during development (e.g. PySpark, flake8 for code linting, IPython for interactive console sessions, etc.), are described in the <code>Pipfile</code>. Their <strong>precise</strong> downstream dependencies are described and frozen in <code>Pipfile.lock</code> (generated automatically by Pipenv, given a Pipfile).</p>
 <h3 id="installing-pipenv">Installing Pipenv</h3>
 <p>To get started with Pipenv, first of all download it - assuming that there is a global version of Python available on your system and on the PATH, then this can be achieved by running the following command,</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">pip3 install pipenv
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">$ pip3 install pipenv
 </code></pre></div><p>Pipenv is also available to install from many non-Python package managers. For example, on OS X it can be installed using the <a href="https://brew.sh">Homebrew</a> package manager, with the following terminal command,</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">brew install pipenv
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">$ brew install pipenv
 </code></pre></div><p>For more information, including advanced configuration options, see the <a href="https://docs.pipenv.org">official Pipenv documentation</a>.</p>
 <h3 id="installing-this-projects-dependencies">Installing this Projects&rsquo; Dependencies</h3>
 <p>Make sure that you&rsquo;re in the project&rsquo;s root directory (the same one in which the <code>Pipfile</code> resides), and then run,</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">pipenv install <span style="color:#f92672">--</span>dev
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">$ pipenv install <span style="color:#f92672">--</span>dev
 </code></pre></div><p>This will install all of the direct project dependencies as well as the development dependencies (the latter a consequence of the <code>--dev</code> flag).</p>
 <h3 id="running-python-and-ipython-from-the-projects-virtual-environment">Running Python and IPython from the Project&rsquo;s Virtual Environment</h3>
 <p>In order to continue development in a Python environment that precisely mimics the one the project was initially developed with, use Pipenv from the command line as follows,</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">pipenv run python3
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">$ pipenv run python3
 </code></pre></div><p>The <code>python3</code> command could just as well be <code>ipython3</code>, for example,</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">pipenv run ipython
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">$ pipenv run ipython
 </code></pre></div><p>This will fire-up an IPython console session <em>where the default Python 3 kernel includes all of the direct and development project dependencies</em> - this is our preference.</p>
 <h3 id="pipenv-shells">Pipenv Shells</h3>
 <p>Prepending <code>pipenv</code> to every command you want to run within the context of your Pipenv-managed virtual environment can get very tedious. This can be avoided by entering into a Pipenv-managed shell,</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">pipenv shell
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">$ pipenv shell
 </code></pre></div><p>This is equivalent to &lsquo;activating&rsquo; the virtual environment; any command will now be executed within the virtual environment. Use <code>exit</code> to leave the shell session.</p>
 <h3 id="automatic-loading-of-environment-variables">Automatic Loading of Environment Variables</h3>
 <p>Pipenv will automatically pick-up and load any environment variables declared in the <code>.env</code> file, located in the package&rsquo;s root directory. For example, adding,</p>
