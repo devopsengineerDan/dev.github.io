@@ -45,7 +45,44 @@ Here are some of the technologies I work with:
     <!-- Template Main CSS File  
     <link href="https://devopsengineerdan.github.io/assets/assets/css/style.css" rel="stylesheet" />   -->
     
-    
+    <style>
+      .wrapperzoom {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .parentzoom {
+        width: 37%;
+        margin: 20px;
+        height: 280px;
+        overflow: hidden;
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+      }
+
+      .childzoom {
+        height: 100%;
+        width: 100%;
+        background-size: cover;
+        transition: all 1.1s;
+      }
+
+      .bg-one-zoom {
+        background-image: ;
+      }
+
+      .parentzoom:hover .childzoom {
+        transform: scale(1.2);
+      }
+
+      .content:hover > * {
+        transform: translateY(0px);
+      }
+    </style>
     
     
 	  
@@ -109,11 +146,27 @@ Here are some of the technologies I work with:
           >
             <div class="col-lg-4 col-md-6 portfolio-item filter-app">
               <div class="portfolio-wrap">
-                <img
+		      <div class="wrapperzoom">
+      <div class="parentzoom">
+        <div class="childzoom bg-one-zoom">
+
+<img
                   src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/22371748-1176-4a73-9a56-338c2f474a34" alt="avatar"  alt="Dancun&rsquo;s-profile-photo"
                   class="img-fluid"
                   alt=""
                 />
+
+		
+          <div class="content">
+		  
+            <p style="color: red; text-align: justify">Software Engineer</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+		      
+                
               
               </div>    
             </div>
