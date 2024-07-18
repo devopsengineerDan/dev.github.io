@@ -45,42 +45,55 @@
 
 
 <style>
-  .wrapperhover {
+  .image {
     width: ;
-    height: ;
-    display: flex;
-    justify-content: ;
-    align-items: ;
+    position: relative;  
   }
 	
-  .framehover {
+  .image_img {
     display: block;
-    margin: auto;
   }
 	
-  .content {
+  .image_overlay {
     height: ;
     width: ;
-    top: ;
-    left: ;
+    top: 0;
+    left: 0;
     position: absolute;
     background: rgba(0,0,0, 0.6);
+    colour: #ffffff;
+    font-family: "Quicksand", sans-serif;
     display: flex;
-    justify-content: ;
-    flex-direction: ;
-    opacity: 0.5;
-    transition: 0.6s;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    opacity: 0;	  
+    transition: opacity 0.6s;
   }
 
-  .content:hover {
-    opacity: 0.5;
+  .image_overlay:hover {
+    opacity: 1;
   }
 	
- .content:hover > * {
+  .image_title {
+    font-size: 2em;
+    font-weight: bold;
+  }
+
+  .image_description {
+    font-size: 1.25em;
+    margin-top: 0.25em;
+  }
+	
+ .image_overlay:hover {
+    opacity: 1;
+  }
+
+ .image_overlay:hover > * {
     transform: translateY(0px);
   }
 
-  .content > * {
+  .image_overlay > * {
     transform: translateY(25px);
     transition: transform 0.6s;
   }
@@ -250,14 +263,15 @@
 
 
 		      
-<div class="wrapperhover">
-<div class="framehover">
-    <div class="content">
-  <p><img src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/2ae81780-080a-46d0-a876-f2915d6752c3" alt="scope_and_context"    class="img-fluid"
-                  alt=""></p>
+<div class="image">
+	<img class="image_img" src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/2ae81780-080a-46d0-a876-f2915d6752c3" alt="scope_and_context"    class="img-fluid"
+                  alt="">
+<div class="image_overlay">
+    <div class="image_title">AWS</div>
+  <p class="image_description">Solution Architecture Workflow</p>
     </div>
    </div>        
-    </div> 
+  
 
 
 		      
