@@ -45,6 +45,72 @@ MicroPython implements the entire Python 3.4 syntax (including exceptions, with,
 
     <!-- Template Main CSS File  
     <link href="https://devopsengineerdan.github.io/assets/assets/css/style.css" rel="stylesheet" />   -->
+
+
+
+
+
+	  <style>
+  .image {
+    width: 100%;
+    position: relative;  
+  }
+	
+  .image_img {
+    display: block;
+  }
+	
+  .image_overlay {
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    background: rgba(0,0,0, 0.6);
+    colour: #ffffff;
+    font-family: "Quicksand", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    opacity: 0;	  
+    transition: opacity 0.6s;
+  }
+	
+  .image_title {
+    font-size: 2em;
+    font-weight: bold;
+  }
+
+  .image_description {
+    font-size: 1.25em;
+    margin-top: 0.25em;
+  }
+	
+  image_overlay {
+    opacity: 0.5; // if you need a different colour
+  }
+	
+ .image_overlay:hover {
+    opacity: 1;
+  }
+
+ .image_overlay:hover > * {
+    transform: translateY(0px);
+  }
+
+  .image_overlay > * {
+    transform: translateY(25px);
+    transition: transform 0.6s;
+  }
+
+
+</style>
+
+
+
+
+
 	  
     </head>
   <body> 
@@ -137,6 +203,23 @@ MicroPython implements the entire Python 3.4 syntax (including exceptions, with,
             </div>
 
 	  </div></div>
+
+
+
+
+
+
+		<div class="image">
+	<img height=100%; width=100%; class="image_img" src="https://github.com/devopsengineerDan/engineer-dancun-personal-blog/assets/48592378/2ae81780-080a-46d0-a876-f2915d6752c3" alt="scope_and_context"    class="img-fluid"
+                  alt="">
+	 <p>
+		 <iframe width="780" height="439" src="//www.youtube.com/embed/5LbgyDmRu9s?rel=0" frameborder="0" allowfullscreen style="width:100%;" class="img-fluid"></iframe>      
+                   </p> 
+<div class="image_overlay">
+    <div class="image_title">AWS</div>
+  <p class="image_description">Solution Architecture Workflow</p>
+    </div>
+   </div>     
 
  <p>
 		 <iframe width="780" height="439" src="//www.youtube.com/embed/5LbgyDmRu9s?rel=0" frameborder="0" allowfullscreen style="width:100%;" class="img-fluid"></iframe>      
