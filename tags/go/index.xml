@@ -1,38 +1,37 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>go on Engineer Dancun</title>
-    <link>https://devopsengineerdan.github.io/tags/go/</link>
-    <description>Recent content in go on Engineer Dancun</description>
+    <title>cybersecurity on Engineer Dancun</title>
+    <link>https://devopsengineerdan.github.io/tags/cybersecurity/</link>
+    <description>Recent content in cybersecurity on Engineer Dancun</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 17 Apr 2018 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://devopsengineerdan.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Thu, 14 Nov 2024 01:29:29 +0300</lastBuildDate><atom:link href="https://devopsengineerdan.github.io/tags/cybersecurity/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>(Hu)go Template Primer</title>
-      <link>https://devopsengineerdan.github.io/posts/goisforlovers/</link>
-      <pubDate>Tue, 17 Apr 2018 00:00:00 +0000</pubDate>
+      <title>GOAD Part 2: Domain Enumeration</title>
+      <link>https://devopsengineerdan.github.io/goad_part2/</link>
+      <pubDate>Thu, 14 Nov 2024 01:29:29 +0300</pubDate>
       
-      <guid>https://devopsengineerdan.github.io/posts/goisforlovers/</guid>
-      <description>Hugo uses the excellent Go html/template library for its template engine. It is an extremely lightweight engine that provides a very small amount of logic. In our experience that it is just the right amount of logic to be able to create a good static website. If you have used other template systems from different languages or frameworks you will find a lot of similarities in Go templates.
-This document is a brief primer on using Go templates.</description>
+      <guid>https://devopsengineerdan.github.io/goad_part2/</guid>
+      <description> GOAD Part 2: Domain Enumeration </description>
     </item>
     
     <item>
-      <title>Getting Started with Hugo</title>
-      <link>https://devopsengineerdan.github.io/posts/hugoisforlovers/</link>
-      <pubDate>Mon, 02 Apr 2018 00:00:00 +0000</pubDate>
+      <title>GOAD Part 1: AD Recon, Password Spraying , ASREPRoasting &amp; LLMNR Poisoning</title>
+      <link>https://devopsengineerdan.github.io/goad_part1/</link>
+      <pubDate>Thu, 14 Nov 2024 01:29:20 +0300</pubDate>
       
-      <guid>https://devopsengineerdan.github.io/posts/hugoisforlovers/</guid>
-      <description>Step 1. Install Hugo Go to Hugo releases and download the appropriate version for your OS and architecture.
-Save it somewhere specific as we will be using it in the next step.
-More complete instructions are available at Install Hugo
-Step 2. Build the Docs Hugo has its own example site which happens to also be the documentation site you are reading right now.
-Follow the following steps:
- Clone the Hugo repository Go into the repo Run hugo in server mode and build the docs Open your browser to http://localhost:1313  Corresponding pseudo commands:</description>
+      <guid>https://devopsengineerdan.github.io/goad_part1/</guid>
+      <description> GOAD Part 1: AD Recon, Password Spraying , ASREPRoasting &amp;amp; LLMNR Poisoning </description>
+    </item>
+    
+    <item>
+      <title>Creating malicious .MSIX files for initial access</title>
+      <link>https://devopsengineerdan.github.io/posts/msix/</link>
+      <pubDate>Tue, 12 Nov 2024 23:43:31 +0300</pubDate>
+      
+      <guid>https://devopsengineerdan.github.io/posts/msix/</guid>
+      <description>Creating malicious .MSIX files for initial access  Table of Contents   Introduction The MSIX File Format  Package Payload Footprint Files   Package Support Framework  StartingScriptWrapper.ps1   Analysis of a malicious sample  AppxManifest Config.json StartingScriptWrapper usJzY The Target Script   Building a malicious msix for Initial Access  Setting up the MSIX packaging tool and our setup file The implant being staged Create an SSL certificate Bundle the package and stage our loader   Testing our malicious sample  Introduction  I recently worked on a project involving adversary emulation of the BlackCat/ALPHV ransomware operation.</description>
     </item>
     
   </channel>
