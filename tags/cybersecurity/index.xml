@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>cybersecurity on Engineer Dancun</title>
+    <link>https://devopsengineerdan.github.io/tags/cybersecurity/</link>
+    <description>Recent content in cybersecurity on Engineer Dancun</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 15 Nov 2024 16:59:04 +0300</lastBuildDate><atom:link href="https://devopsengineerdan.github.io/tags/cybersecurity/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Secure Code Review - Path Traversal Bugs</title>
+      <link>https://devopsengineerdan.github.io/posts/secure_code_path_traversal/</link>
+      <pubDate>Fri, 15 Nov 2024 16:59:04 +0300</pubDate>
+      
+      <guid>https://devopsengineerdan.github.io/posts/secure_code_path_traversal/</guid>
+      <description> </description>
+    </item>
+    
+    <item>
+      <title>Secure Code Review - Hash Length Extension Attack</title>
+      <link>https://devopsengineerdan.github.io/posts/secure_code_hash_length/</link>
+      <pubDate>Fri, 15 Nov 2024 16:53:41 +0300</pubDate>
+      
+      <guid>https://devopsengineerdan.github.io/posts/secure_code_hash_length/</guid>
+      <description> </description>
+    </item>
+    
+    <item>
+      <title>GOAD Part 2: Domain Enumeration</title>
+      <link>https://devopsengineerdan.github.io/posts/goad_part2/</link>
+      <pubDate>Thu, 14 Nov 2024 01:29:29 +0300</pubDate>
+      
+      <guid>https://devopsengineerdan.github.io/posts/goad_part2/</guid>
+      <description>Table of Contents   Introduction Kerberoasting in the north domain Cracking with hashcat Spidering and Dumping Shares Known Vulnerabilities  Introduction  In the previous walkthrough we exploited various misconfigurations and obtained some valid domain user credentials. With valid credentials, we can perform more enumeration using tools like bloodhound and also explore various attacks such as kerberoasting. We will explore kerberoasting and domain enumeration using bloodhound…..  Kerberoasting in the north domain  With our valid credentials we can try and abuse kerberoasting to obtain more credential material that can grant further access to systems and data.</description>
+    </item>
+    
+    <item>
+      <title>GOAD Part 1: AD Recon, Password Spraying, ASREPRoasting &amp; LLMNR Poisoning</title>
+      <link>https://devopsengineerdan.github.io/posts/goad_part1/</link>
+      <pubDate>Thu, 14 Nov 2024 01:29:20 +0300</pubDate>
+      
+      <guid>https://devopsengineerdan.github.io/posts/goad_part1/</guid>
+      <description>Table of Contents   Introduction Network Diagram Reconnaissance and Enumeration  Hosts file setup Domain User enumeration Domain Group enumeration   Valid Usernames  Password Spraying AS-REPRoasting   No Valid Credentials or Usernames  LLMNR Poisoning  Listen and capture hashes Crack with hashcat Find targets for relaying     Appendix  Valid Credentials Valid Users    Introduction  Game of Active Directory is a fully functional AD lab environment, misconfigured with several AD issues designed to help understand various AD security concepts.</description>
+    </item>
+    
+    <item>
+      <title>Creating malicious .MSIX files for initial access</title>
+      <link>https://devopsengineerdan.github.io/posts/msix/</link>
+      <pubDate>Tue, 12 Nov 2024 23:43:31 +0300</pubDate>
+      
+      <guid>https://devopsengineerdan.github.io/posts/msix/</guid>
+      <description>Creating malicious .MSIX files for initial access  Table of Contents   Introduction The MSIX File Format  Package Payload Footprint Files   Package Support Framework  StartingScriptWrapper.ps1   Analysis of a malicious sample  AppxManifest Config.json StartingScriptWrapper usJzY The Target Script   Building a malicious msix for Initial Access  Setting up the MSIX packaging tool and our setup file The implant being staged Create an SSL certificate Bundle the package and stage our loader   Testing our malicious sample  Introduction  I recently worked on a project involving adversary emulation of the BlackCat/ALPHV ransomware operation.</description>
+    </item>
+    
+  </channel>
+</rss>
