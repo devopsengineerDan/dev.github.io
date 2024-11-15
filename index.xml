@@ -8,6 +8,24 @@
     <language>en-us</language>
   <lastBuildDate>Thu, 14 Nov 2024 01:29:29 +0300</lastBuildDate>
 	<atom:link href="https://devopsengineerdan.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+	  
+      <item>
+      <title>Secure Code Review - Path Traversal Bugs</title>
+      <link>https://devopsengineerdan.github.io/posts/secure_code_path_traversal/</link>
+      <pubDate>Fri, 15 Nov 2024 16:59:04 +0300</pubDate>
+      
+      <guid>https://devopsengineerdan.github.io/posts/secure_code_path_traversal/</guid>
+      <description> </description>
+    </item>
+    
+    <item>
+      <title>Secure Code Review - Hash Length Extension Attack</title>
+      <link>https://devopsengineerdan.github.io/posts/secure_code_hash_length/</link>
+      <pubDate>Fri, 15 Nov 2024 16:53:41 +0300</pubDate>
+      
+      <guid>https://devopsengineerdan.github.io/posts/secure_code_hash_length/</guid>
+      <description> </description>
+    </item>
     
         <item>
       <title>GOAD Part 2: Domain Enumeration</title>
