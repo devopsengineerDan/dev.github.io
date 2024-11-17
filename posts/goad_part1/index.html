@@ -1,1 +1,321 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>GOAD Part 1: AD Recon, Password Spraying, ASREPRoasting &amp; LLMNR Poisoning // Engineer Dancun</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.2" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Dancun Manyinsa" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://devopsengineerdan.github.io/css/main.min.d5ed8558bcfb3aab1e3d1790fb902decbac1f989a0d27aa3b2a2320773186707.css" />
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="GOAD Part 1: AD Recon, Password Spraying, ASREPRoasting &amp; LLMNR Poisoning"/>
+<meta name="twitter:description" content="Table of Contents   Introduction Network Diagram Reconnaissance and Enumeration  Hosts file setup Domain User enumeration Domain Group enumeration   Valid Usernames  Password Spraying AS-REPRoasting   No Valid Credentials or Usernames  LLMNR Poisoning  Listen and capture hashes Crack with hashcat Find targets for relaying     Appendix  Valid Credentials Valid Users    Introduction  Game of Active Directory is a fully functional AD lab environment, misconfigured with several AD issues designed to help understand various AD security concepts."/>
+
+    <meta property="og:title" content="GOAD Part 1: AD Recon, Password Spraying, ASREPRoasting &amp; LLMNR Poisoning" />
+<meta property="og:description" content="Table of Contents   Introduction Network Diagram Reconnaissance and Enumeration  Hosts file setup Domain User enumeration Domain Group enumeration   Valid Usernames  Password Spraying AS-REPRoasting   No Valid Credentials or Usernames  LLMNR Poisoning  Listen and capture hashes Crack with hashcat Find targets for relaying     Appendix  Valid Credentials Valid Users    Introduction  Game of Active Directory is a fully functional AD lab environment, misconfigured with several AD issues designed to help understand various AD security concepts." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://devopsengineerdan.github.io/posts/goad_part1/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-11-14T01:29:20+03:00" />
+<meta property="article:modified_time" content="2024-11-14T01:29:20+03:00" />
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://devopsengineerdan.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Dancun Manyinsa" /></a>
+      <h1>Engineer Dancun</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/about/">About</a>
+      </nav>
+      <p>Software Engineer, Researcher(AI and Quantum Science), and Habitual Quant</p>
+      <div class="app-header-social">
+        
+          <a href="https://www.github.com/DancunManyinsa" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/dancun-manyinsa-42518a17b/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="mailto:dancunmoruri@gmail.com" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-link">
+  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">GOAD Part 1: AD Recon, Password Spraying, ASREPRoasting &amp; LLMNR Poisoning</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 14, 2024
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          3 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://devopsengineerdan.github.io/tags/cybersecurity/">cybersecurity</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <hr>
+<p><img src="https://github.com/user-attachments/assets/03da8b24-ab3c-4264-b6dc-2851c0840b8c" alt="goad_part1_1"></p>
+<blockquote>
+<h3 id="table-of-contents">Table of Contents</h3>
+</blockquote>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#network-diagram">Network Diagram</a></li>
+<li><a href="#reconnaissance-and-enumeration">Reconnaissance and Enumeration</a>
+<ul>
+<li><a href="#hosts-file-setup">Hosts file setup</a></li>
+<li><a href="#domain-user-enumeration">Domain User enumeration</a></li>
+<li><a href="#domain-group-enumeration">Domain Group enumeration</a></li>
+</ul>
+</li>
+<li><a href="#valid-usernames">Valid Usernames</a>
+<ul>
+<li><a href="#password-spraying">Password Spraying</a></li>
+<li><a href="#as-reproasting">AS-REPRoasting</a></li>
+</ul>
+</li>
+<li><a href="#no-valid-credentials-or-usernames">No Valid Credentials or Usernames</a>
+<ul>
+<li><a href="#llmnr-poisoning">LLMNR Poisoning</a>
+<ul>
+<li><a href="#listen-and-capture-hashes">Listen and capture hashes</a></li>
+<li><a href="#crack-with-hashcat">Crack with hashcat</a></li>
+<li><a href="#find-targets-for-relaying">Find targets for relaying</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#appendix">Appendix</a>
+<ul>
+<li><a href="#valid-credentials">Valid Credentials</a></li>
+<li><a href="#valid-users">Valid Users</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<ul>
+<li><a href="https://github.com/Orange-Cyberdefense/GOAD">Game of Active Directory</a> is a fully functional AD lab environment, misconfigured with several AD issues designed to help understand various AD security concepts.</li>
+<li>In this n-part series, we will explore how we can abuse the misconfigurations. In part 1, we focus on <code>enumerating</code> the environment to find <code>domains, domain controllers, usernames and groups</code>. We further leverage this to conduct various attacks, showcasing techniques like <code>password spraying &amp; ASREPRoasting</code>.</li>
+<li>We then finish off by exploring what attacks can be carried out when we have <code>no credentials or usernames</code> to work with such as the <code>LLMNR Poisoning and NTLM relay</code>.</li>
+</ul>
+<h2 id="network-diagram">Network Diagram</h2>
+<p><img src="https://github.com/user-attachments/assets/758bc9f7-7337-45e7-8ab5-3bff783f6d5f" alt="goad_part1_2"></p>
+<h2 id="reconnaissance-and-enumeration">Reconnaissance and Enumeration</h2>
+<ul>
+<li>From our network diagram, we are dealing with 5 different machines across 3 domains in the network.</li>
+</ul>
+<ol>
+<li><code>north.sevenkingdoms.local</code>
+<ul>
+<li>DC01 (kingslanding)</li>
+</ul>
+</li>
+<li><code>sevenkingdoms.local</code>
+<ul>
+<li>DC02 (winterfell)</li>
+<li>SRV02 (castleback)</li>
+</ul>
+</li>
+<li><code>essos.local</code>
+<ul>
+<li>DC02 (mereen)</li>
+<li>SRV03 (braavos)</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li>The creators of GOAD - Orange Cyberdefense - have also come up with <a href="https://orange-cyberdefense.github.io/ocd-mindmaps/">this</a> mindmap that structures our AD pentesting approach. We will frequently refer to this resource when exploring the lab.</li>
+</ul>
+<blockquote>
+<p>Example1 of Active Directory Penetration Testing</p>
+</blockquote>
+<p><img src="https://github.com/user-attachments/assets/a2c12381-5182-487a-afb2-04d03e36b796" alt="pentest_active_directory_1"></p>
+<blockquote>
+<p>Example2 of Active Directory Penetration Testing</p>
+</blockquote>
+<p><img src="https://github.com/user-attachments/assets/8e8ac296-202b-4a54-be98-d3b600bc4675" alt="pentest_active_directory_2"></p>
+<h3 id="hosts-file-setup">Hosts file setup</h3>
+<ul>
+<li>We can begin by mapping out all the machines in our hosts file. Using the IP information and domains given to us, we can find the <code>domain controllers</code> in the network.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">nslookup <span style="color:#f92672">-</span>type<span style="color:#f92672">=</span>SRV _ldap._tcp.dc._msdcs.north.sevenkingdoms.local <span style="color:#ae81ff">192.168.56.11</span>
+Server<span style="color:#f92672">:</span>         <span style="color:#ae81ff">192.168.56.11</span>
+Address<span style="color:#f92672">:</span>        <span style="color:#ae81ff">192.168.56.11</span><span style="color:#75715e">#53</span>
+
+_ldap._tcp.dc._msdcs.north.sevenkingdoms.local  service <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">100</span> <span style="color:#ae81ff">389</span> winterfell.north.sevenkingdoms.local.
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">nslookup <span style="color:#f92672">-</span>type<span style="color:#f92672">=</span>SRV _ldap._tcp.dc._msdcs.sevenkingdoms.local <span style="color:#ae81ff">192.168.56.10</span>
+Server<span style="color:#f92672">:</span>         <span style="color:#ae81ff">192.168.56.10</span>
+Address<span style="color:#f92672">:</span>        <span style="color:#ae81ff">192.168.56.10</span><span style="color:#75715e">#53</span>
+
+_ldap._tcp.dc._msdcs.sevenkingdoms.local        service <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">100</span> <span style="color:#ae81ff">389</span> kingslanding.sevenkingdoms.local.
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">nslookup <span style="color:#f92672">-</span>type<span style="color:#f92672">=</span>SRV _ldap._tcp.dc._msdcs.essos.local <span style="color:#ae81ff">192.168.56.12</span>
+Server<span style="color:#f92672">:</span>         <span style="color:#ae81ff">192.168.56.12</span>
+Address<span style="color:#f92672">:</span>        <span style="color:#ae81ff">192.168.56.12</span><span style="color:#75715e">#53</span>
+
+_ldap._
+
+<span style="color:#f92672">-</span> Our hosts file will look as shown<span style="color:#f92672">:</span>
+
+```s
+<span style="color:#ae81ff">192.168.56.10</span>   sevenkingdoms.local kingslanding.sevenkingdoms.local kingslanding
+<span style="color:#ae81ff">192.168.56.11</span>   winterfell.north.sevenkingdoms.local north.sevenkingdoms.local winterfell
+<span style="color:#ae81ff">192.168.56.12</span>   essos.local meereen.essos.local meereen
+<span style="color:#ae81ff">192.168.56.22</span>   castelblack.north.sevenkingdoms.local castelblack
+<span style="color:#ae81ff">192.168.56.23</span>   braavos.essos.local braavos
+</code></pre></div><h3 id="domain-user-enumeration">Domain User enumeration</h3>
+<ul>
+<li>We have several options for this. We will use <code>crackmapexec and enum4linux</code> to check for this information.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/2358e58c-56c1-4f28-80b7-8b82781d9163" alt="goad_part1_3"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">crackmapexec smb <span style="color:#ae81ff">192.168.56.10-23</span> <span style="color:#f92672">--</span>users
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/f37d19a8-5be3-459a-856d-d523212b6b01" alt="goad_part1_4"></p>
+<ul>
+<li>We get some domain users from the winterfell DC (the DC allows anonymous sessions) and credentials in a user’s description.</li>
+</ul>
+<pre tabindex="0"><code>| Hostname   | Username                                |
+| ---------- | --------------------------------------- |
+| WINTERFELL | north.sevenkingdoms.local\Guest         |
+| WINTERFELL | north.sevenkingdoms.local\arya.stark    |
+| WINTERFELL | north.sevenkingdoms.local\sansa.stark   |
+| WINTERFELL | north.sevenkingdoms.local\brandon.stark |
+| WINTERFELL | north.sevenkingdoms.local\rickon.stark  |
+| WINTERFELL | north.sevenkingdoms.local\hodor         |
+| WINTERFELL | north.sevenkingdoms.local\jon.snow      |
+| WINTERFELL | north.sevenkingdoms.local\samwell.tarly |
+| WINTERFELL | north.sevenkingdoms.local\jeor.mormont  |
+| WINTERFELL | north.sevenkingdoms.local\sql_svc       |
+</code></pre><ul>
+<li>Recon is a recursive process. Upon getting valid credentials, you should rerun your user enumeration commands with credentials to see whether you get more information.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">crackmapexec smb ips.txt <span style="color:#f92672">-</span>u samwell.tarly <span style="color:#f92672">-</span>p Heartsbane
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/cedea679-d0b7-419d-90b4-a0ef442b96ad" alt="goad_part1_5"></p>
+<ul>
+<li>We get more users on the domain.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/1ce0139d-4084-4ccf-b4fb-078c59dd8f86" alt="goad_part1_6"></p>
+<h3 id="domain-group-enumeration">Domain Group enumeration</h3>
+<ul>
+<li>I ran crackmapexec without creds but did don’t get an output on any domain</li>
+<li>We can run either <code>crackmapexec</code> or <code>enum4linux</code> with samwell’s creds and extract some domain group information. We will only able to retrieve information on the <code>north</code> domain.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">enum4linux <span style="color:#f92672">-</span>a <span style="color:#f92672">-</span>U <span style="color:#ae81ff">192.168.56.11</span>  <span style="color:#f92672">-</span>u samwell.tarly <span style="color:#f92672">-</span>p Heartsbane
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/cdcb2492-9302-4229-8e16-7c9f549fe3c5" alt="goad_part1_7"></p>
+<ul>
+<li>We can map them out as shown:</li>
+</ul>
+<pre tabindex="0"><code>| Group                       | RID  | Members                                                                                                                                                                                                                                                                                              |
+| --------------------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mormont                     | 1108 | NORTH\jeor.mormont                                                                                                                                                                                                                                                                                   |
+| Night Watch                 | 1107 | NORTH\jon.snow, NORTH\samwell.tarly, NORTH\jeor.mormont                                                                                                                                                                                                                                              |
+| Domain Guests               | 514  | NORTH\Guest                                                                                                                                                                                                                                                                                          |
+| Group Policy Creator Owners | 520  | NORTH\Administrator                                                                                                                                                                                                                                                                                  |
+| Domain Computers            | 515  | NORTH\CASTELBLACK$                                                                                                                                                                                                                                                                                   |
+| Stark                       | 1106 | NORTH\arya.stark, NORTH\eddard.stark, NORTH\catelyn.stark, NORTH\robb.stark, NORTH\sansa.stark, NORTH\brandon.stark, NORTH\rickon.stark, NORTH\hodor, NORTH\jon.snow                                                                                                                                 |
+| Domain Users                | 513  | NORTH\Administrator, NORTH\vagrant, NORTH\krbtgt, NORTH\SEVENKINGDOMS$, NORTH\arya.stark, NORTH\eddard.stark, NORTH\catelyn.stark, NORTH\robb.stark, NORTH\sansa.stark, NORTH\brandon.stark, NORTH\rickon.stark, NORTH\hodor, NORTH\jon.snow, NORTH\samwell.tarly, NORTH\jeor.mormont, NORTH\sql_svc |
+</code></pre>
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+      <div>
+        <br>
+        <div>
+          <h5 class="title is-small">Share to social media</h5>
+          <div>
+            <a class="share share-network-twitter" style="background-color:#008080;"><i class="fab fah fa-lg fa-twitter"></i><span>Twitter</span></a>
+            <a class="share share-network-facebook" style="background-color:#1877f2;"><i class="fab fah fa-lg fa-facebook-f"></i><span>Facebook</span></a>
+            <a class="share share-network-linkedin" style="background-color:#2B1B17;"><i class="fab fah fa-lg fa-linkedin"></i><span>LinkedIn</span></a>
+            <a class="share share-network-hackernews" style="background-color:#008000"><i class="fab fah fa-lg fa-hacker-news"></i><span>HackerNews</span></a>
+            <a class="share share-network-pinterest" style="background-color:#bd081c;"><i class="fab fah fa-lg fa-pinterest"></i><span>Pinterest</span></a>
+            <a class="share share-network-pocket" style="background-color:#7F38EC;"><i class="fab fah fa-lg fa-get-pocket"></i><span>Pocket</span></a>
+            <a class="share share-network-email" style="background-color:#333333;"><i class="far fah fa-lg fa-envelope"></i><span>Email</span></a>
+            <a class="share share-network-flipboard" style="background-color: #837E7C;"><i class="fab fah fa-lg fa-flipboard"></i><span>Flipboard</span></a>
+            <a class="share share-network-quora" style="background-color:#808000;"><i class="fab fah fa-lg fa-quora"></i><span>Quora</span></a>
+            <a class="share share-network-reddit" style="background-color: #581845
+            ;"><i class="fab fah fa-lg fa-reddit-alien"></i><span>Reddit</span></a>
+            <a class="share share-network-telegram" style="background-color:#000080;"><i class="fab fah fa-lg fa-telegram-plane"></i><span>Telegram</span></a>
+            <a class="share share-network-whatsapp" style="background-color:#E55451;"><i class="fab fah fa-lg fa-whatsapp"></i><span>Whatsapp</span></a>
+            <a class="share share-network-sms" style="background-color:#513B1C;"><i class="far fah fa-lg fa-comment-dots"></i><span>SMS</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="comments">
+        <div id="disqus_thread" pageConfig="[object Object]"></div>
+      </div>
+      
+      <div id="disqus_thread"></div>
+      <script>
+          
+
+          
+
+          (function() { 
+          var d = document, s = d.createElement('script');
+          s.src = 'https://engineer-dancun-personal-blog.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      
+      <br><br><br>
+      <footer>
+        &copy;  
+        Powered by <a href="https://github.com/gohugoio/hugo" target="_blank">Hugo
+      </footer>
+      <script type="application/ld+json">
+        {
+          "@context" : "http://schema.org",
+          "@type" : "Blog",
+          "name": " Engineer Dancun ",
+          "url" : "https://devopsengineerdan.github.io",
+          "image": "./static/avatar.jpg",
+          "description": "Software Engineer and Researcher"
+        }
+        </script>
+        <script id="dsq-count-scr" src="//engineer-dancun.disqus.com/count.js" async></script>
+    </main>
+  </body>
+</html>
 
