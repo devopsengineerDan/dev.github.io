@@ -1,1 +1,365 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Secure Code Review - Hash Length Extension Attack // Engineer Dancun</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.2" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Dancun Manyinsa" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://devopsengineerdan.github.io/css/main.min.d5ed8558bcfb3aab1e3d1790fb902decbac1f989a0d27aa3b2a2320773186707.css" />
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Secure Code Review - Hash Length Extension Attack"/>
+<meta name="twitter:description" content="Table of Contents   Introduction  Strategies Reviewing Code   Sample Vulnerable Code Overview  Dependencies Functionality Dangerous functions   Hash-Length Extension attack  Conditions to be met in an attack Attack principle   Remediation  Cryptographic Signing Schemes    Introduction  Welcome to the secure code review series, where we take a closer look at different types of code and evaluate them based on potential security vulnerabilities."/>
+
+    <meta property="og:title" content="Secure Code Review - Hash Length Extension Attack" />
+<meta property="og:description" content="Table of Contents   Introduction  Strategies Reviewing Code   Sample Vulnerable Code Overview  Dependencies Functionality Dangerous functions   Hash-Length Extension attack  Conditions to be met in an attack Attack principle   Remediation  Cryptographic Signing Schemes    Introduction  Welcome to the secure code review series, where we take a closer look at different types of code and evaluate them based on potential security vulnerabilities." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://devopsengineerdan.github.io/posts/secure_code_hash_length/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-11-15T16:53:41+03:00" />
+<meta property="article:modified_time" content="2024-11-15T16:53:41+03:00" />
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://devopsengineerdan.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Dancun Manyinsa" /></a>
+      <h1>Engineer Dancun</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/about/">About</a>
+      </nav>
+      <p>Software Engineer, Researcher(AI and Quantum Science), and Habitual Quant</p>
+      <div class="app-header-social">
+        
+          <a href="https://www.github.com/DancunManyinsa" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/dancun-manyinsa-42518a17b/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="mailto:dancunmoruri@gmail.com" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-link">
+  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Secure Code Review - Hash Length Extension Attack</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 15, 2024
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          8 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://devopsengineerdan.github.io/tags/cybersecurity/">cybersecurity</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <hr>
+<p><img src="https://github.com/user-attachments/assets/ec04ba0f-fbff-4e38-9963-302be29344c3" alt="code1"></p>
+<blockquote>
+<h3 id="table-of-contents">Table of Contents</h3>
+</blockquote>
+<ul>
+<li><a href="#introduction">Introduction</a>
+<ul>
+<li><a href="#strategies">Strategies</a></li>
+<li><a href="#reviewing-code">Reviewing Code</a></li>
+</ul>
+</li>
+<li><a href="#sample-vulnerable-code">Sample Vulnerable Code</a></li>
+<li><a href="#overview">Overview</a>
+<ul>
+<li><a href="#dependencies">Dependencies</a></li>
+<li><a href="#functionality">Functionality</a></li>
+<li><a href="#dangerous-functions">Dangerous functions</a></li>
+</ul>
+</li>
+<li><a href="#hash-length-extension-attack">Hash-Length Extension attack</a>
+<ul>
+<li><a href="#conditions-to-be-met-in-an-attack">Conditions to be met in an attack</a></li>
+<li><a href="#attack-principle">Attack principle</a></li>
+</ul>
+</li>
+<li><a href="#remediation">Remediation</a>
+<ul>
+<li><a href="#cryptographic-signing-schemes">Cryptographic Signing Schemes</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<ul>
+<li>Welcome to the secure code review series, where we take a closer look at different types of code and evaluate them based on potential security vulnerabilities. In this series, we’ll be reviewing code from various programming languages, including <code>Python, Java, and PHP</code>.</li>
+<li>The goal is to provide valuable insights and feedback to developers and security engineers, as well as to encourage a culture of continuous improvement within the tech community. In each review, we’ll be examining sample code for potential security vulnerabilities and providing concrete suggestions for improvement. Whether you’re a seasoned developer or just starting out, I hope you’ll find this series informative and helpful.</li>
+<li>The only prerequisite for this series is <code>being able to read some code :)</code></li>
+</ul>
+<h3 id="strategies">Strategies</h3>
+<ul>
+<li>Let us discuss some of the best-practice strategies and method we can use when reviewing source code.</li>
+</ul>
+<h4 id="1-top-to-bottom-approach">1. Top-to-bottom approach</h4>
+<ul>
+<li>This practice takes an approach that <code>begins reviewing code at the highest level of abstraction</code>. By looking at the bigger picture, one can start off by studying the overall architecture of the application, which entails looking into the various modules in an application and their functionalities, dependencies and design patterns.</li>
+<li>Gradually, you move into the specific modules’ functionalities and logic, examining implementation details, documentation, and use of libraries, APIs or dependencies.</li>
+<li>This approach provides a good overview of the application code base and functionalities, and how the different functionalities interact with each other.</li>
+</ul>
+<h4 id="2-bottom-to-top-approach">2. Bottom-to-top approach</h4>
+<ul>
+<li>This idea aims to <code>focus on the specific implementation of the details in the code</code> such as how data types, functions, APIs, libraries, application logic etc. This information lies at the lowest abstraction of code and the reviewer gradually works upward towards higher level of abstraction such as the architecture in use.</li>
+</ul>
+<h4 id="3-threat-modelling-approach">3. Threat-Modelling approach</h4>
+<ul>
+<li>This approach involves identifying known vulnerabilities and reviewing the code to find those vulns.</li>
+</ul>
+<h4 id="4-risk-based-approach">4. Risk-based approach</h4>
+<ul>
+<li>This approach involves identifying any potential risks to the system and focusing the code review process on these potential risks.</li>
+<li>These approaches can be used alone or in combination to get a greater understanding of the code base, from the bigger picture down to the intricate details. Automation is also a good way to speed up the process and can help to narrow it down to specific and reduce noise.</li>
+<li>Let us begin by focusing on the various building blocks to performing secure code review in python applications.</li>
+</ul>
+<h3 id="reviewing-code">Reviewing Code</h3>
+<ul>
+<li>When reviewing sample code for vulnerabilities at the implementation level, you can look for the following:</li>
+</ul>
+<h4 id="1-dangerous-functions">1. Dangerous functions</h4>
+<ul>
+<li>Some functions introduce security issues when used <code>incorrectly or regardless of how they are used</code>. e.g a function like <code>gets() in C</code>, should never be used as it introduces buffer overflow vulnerabilities. <code>include()</code> or <code>require() in PHP</code> can be used to achieve RCE via LFI or RFI vulnerabilities, but correct usage of the functions prevents that</li>
+</ul>
+<h4 id="2-arguments-and-constants">2. Arguments and constants</h4>
+<ul>
+<li>Ensure arguments or constants passed to any potentially dangerous functions are <code>properly validated and sanitized</code> to prevent injection attacks</li>
+</ul>
+<h4 id="3-filters">3. Filters</h4>
+<ul>
+<li>Ensure input and output is properly sanitized and filtered to prevent XSS or other types of injection attacks.</li>
+</ul>
+<h4 id="4-error-handling">4. Error handling</h4>
+<ul>
+<li>Properly handling errors prevents leaking of information which may pose security threats</li>
+</ul>
+<h4 id="5-authentication-and-authorization">5. Authentication and Authorization</h4>
+<ul>
+<li>Sensitive data and resources should be protected to prevent privilege escalation vulnerabilities or authentication bypasses that access such information. Passwords should be hashed properly, salted or encrypted. Users should also be granted minimum permissions/privileges to perform their jobs</li>
+</ul>
+<h2 id="sample-vulnerable-code">Sample Vulnerable Code</h2>
+<ul>
+<li>Let us look into how we can utilize the strategies and chokepoints discussed above for a simple secure code review.</li>
+<li>Can you spot the vulnerability in the code below:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">
+<span style="color:#f92672">import</span> hashlib
+<span style="color:#f92672">from</span> flask <span style="color:#f92672">import</span> Flask, redirect
+<span style="color:#f92672">from</span> secrets <span style="color:#f92672">import</span> token_hex
+
+secret <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;secret_key&#34;</span>
+app <span style="color:#f92672">=</span> Flask(__name__)
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">sign_for_reset</span>(reset_information):
+    <span style="color:#75715e"># compute signature to ensure the reset details cannot be tampered with</span>
+    data <span style="color:#f92672">=</span> secret<span style="color:#f92672">+</span>reset_information
+    <span style="color:#66d9ef">return</span> hashlib<span style="color:#f92672">.</span>sha256(data<span style="color:#f92672">.</span>encode(<span style="color:#e6db74">&#39;utf-8&#39;</span>))<span style="color:#f92672">.</span>hexdigest()
+
+<span style="color:#a6e22e">@app</span><span style="color:#f92672">.</span>route(<span style="color:#e6db74">&#39;/reset_password/&lt;email&gt;&#39;</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">reset_password_route</span>(email):
+    token <span style="color:#f92672">=</span> token_hex(<span style="color:#ae81ff">16</span>)
+    reset_info <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;token=&#34;</span><span style="color:#f92672">+</span>token<span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&amp;email=&#34;</span><span style="color:#f92672">+</span>email
+    params <span style="color:#f92672">=</span> reset_info<span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&amp;sign=&#34;</span><span style="color:#f92672">+</span>sign_for_reset(reset_info)
+    <span style="color:#66d9ef">return</span> redirect(<span style="color:#e6db74">&#34;https://trevorsaudi.com/reset_password?&#34;</span><span style="color:#f92672">+</span>params, code<span style="color:#f92672">=</span><span style="color:#ae81ff">302</span>)
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    app<span style="color:#f92672">.</span>run()
+</code></pre></div><h2 id="overview">Overview</h2>
+<ul>
+<li>We begin by understanding what the sample code does using a top-to-bottom-approach.</li>
+</ul>
+<h3 id="dependencies">Dependencies</h3>
+<ul>
+<li>The sample code begins by importing <code>hashlib, secrets</code> and <code>Flask</code>. The <code>hashlib</code>library is used for hashing of files and objects, <code>secrets</code> module is used to generate secure tokens that are difficult to bruteforce and can be used for tokens for password resets, hard-to-guess URLs etc. <code>Flask</code>is used to create a flask app.</li>
+</ul>
+<h3 id="functionality">Functionality</h3>
+<ul>
+<li>We have 2 functions: <code>sign_for_reset</code> and <code>reset_password</code>.</li>
+<li>We can identify one route as well in the application <code>/reset_password</code>. This route maps to the <code>reset_password()</code> function in the application. We can also see that it calls sign_for_reset and is hence a good starting point for our code review.</li>
+</ul>
+<h4 id="1-sign_for_reset">1. sign_for_reset()</h4>
+<ul>
+<li>The function begins by generating a random ID using token_hex, a method in the <code>secrets</code> module.</li>
+<li>The <code>reset_info</code> variable contains a concatenation of the token ID and the email we are resetting the password for.</li>
+<li>The <code>reset_info</code> information then gets concatenated with a signature generated by the <strong>sign_for_reset</strong> function which takes the download info and a secret hardcoded in the code, computes a SHA256 hash of the concatenation and returns the hexdigest.</li>
+<li>The function redirects to <a href="https://devopsengineerdan.github.io/reset_password">https://devopsengineerdan.github.io/reset_password</a>? with the download information as the parameters.</li>
+</ul>
+<h4 id="2-sign_for_reset">2. sign_for_reset</h4>
+<ul>
+<li>This function uses the SHA256 hash function to sign the download information, which involves concatenating a secret with the password reset information and then computing the SHA256 hash of the concatenated string.</li>
+</ul>
+<h3 id="dangerous-functions">Dangerous functions</h3>
+<ul>
+<li>In the <a href="#reviewing-code">Reviewing Code section</a>, we talked about various building blocks and places to focus on in code review. Let us single out the usage of dangerous functions. We mentioned that some functions are not inherently vulnerable, but could introduce security issues when used incorrectly.</li>
+<li>The <code>sign_for_reset</code> function computes the <code>SHA256</code> hash of the concatenation of the secret and download information.</li>
+<li>Cryptographic hash functions like <code>MD5,SHA1, SHA256, SHA512</code> are vulnerable to several attacks. In this implementation, we are looking at a length extension attack that allows us to tamper with the download data information and still be able to sign it as valid.</li>
+<li>Let us look into the vulnerability in depth:</li>
+</ul>
+<h2 id="hash-length-extension-attack">Hash-Length Extension attack</h2>
+<ul>
+<li>This attack abuses poorly constructed authentication schemes.</li>
+<li>A hash function takes input, performs calculations on it, and produces a fixed-length output called a digest.</li>
+<li>If the input is large, it is split into smaller blocks and processed one at a time, such as the <code>CBC (Cipher Block Chaining)</code>, where a hash is generated for a block, then for the next block, add the previous hash to the block and hash it.</li>
+<li>The function also adds <code>predictable padding</code> to the input before processing it. The padding does not add any security to the overall process. <code>It will vary based on the length of secret+data</code>, introducing a requirement where the length of the secret is needed to be able to append more data.</li>
+</ul>
+<h3 id="conditions-to-be-met-in-an-attack">Conditions to be met in an attack:</h3>
+<ol>
+<li>We should know the length of the key.</li>
+<li>We can control the content of the message.</li>
+<li>We already know the hash value of a message containing a key.</li>
+</ol>
+<h3 id="attack-principle">Attack principle</h3>
+<ul>
+<li>In summary, this is how the attack works:</li>
+</ul>
+<ol>
+<li>An attacker intercepts a password reset link that is sent to a user’s email. The link contains a token and a hash of the token and email address.</li>
+<li>The attacker knows that the hash function being used is vulnerable to hash length extension attacks, such as the one in the code provided.</li>
+<li>The attacker can use a tool such as hashpump to generate a new hash that has the same prefix as the original hash, but with additional data appended to it. The additional data is a command to change the email address associated with the account to the attacker’s email address.</li>
+<li>The attacker can then use the modified password reset link to reset the password for the account, effectively taking over the account.</li>
+</ol>
+<blockquote>
+<p><strong>Tip</strong> In case we do not know the length of the secret, we can bruteforce the padding length to find a hash similar to the one generated by the program</p>
+</blockquote>
+<h2 id="remediation">Remediation</h2>
+<h3 id="cryptographic-signing-schemes">Cryptographic Signing Schemes</h3>
+<ul>
+<li>A more secure alternative to using a simple hash function is to implement a cryptographic signing scheme, such as HMAC or a digital signature scheme like RSA or ECDSA. These methods use a key to sign and verify the data, making it more difficult for an attacker to alter it.</li>
+<li>Below is an example of the secure implementation to remediate the vulnerability. hmac module is used to create a message authentication code (MAC) of the reset information. The MAC uses a secret key to sign the data. An attacker can’t generate a valid MAC without knowing the secret key.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> hmac
+
+secret <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;secret_key&#34;</span>
+app <span style="color:#f92672">=</span> Flask(__name__)
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">sign_for_reset</span>(reset_information):
+    <span style="color:#75715e"># compute signature to ensure the reset details cannot be tampered with</span>
+    data <span style="color:#f92672">=</span> reset_information
+    <span style="color:#66d9ef">return</span> hmac<span style="color:#f92672">.</span>new(secret<span style="color:#f92672">.</span>encode(<span style="color:#e6db74">&#39;utf-8&#39;</span>), msg<span style="color:#f92672">=</span>data<span style="color:#f92672">.</span>encode(<span style="color:#e6db74">&#39;utf-8&#39;</span>), digestmod<span style="color:#f92672">=</span>hashlib<span style="color:#f92672">.</span>sha256)<span style="color:#f92672">.</span>hexdigest()
+
+<span style="color:#a6e22e">@app</span><span style="color:#f92672">.</span>route(<span style="color:#e6db74">&#39;/reset_password/&lt;email&gt;&#39;</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">reset_password_route</span>(email):
+    token <span style="color:#f92672">=</span> token_hex(<span style="color:#ae81ff">16</span>)
+    reset_info <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;token=&#34;</span><span style="color:#f92672">+</span>token<span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&amp;email=&#34;</span><span style="color:#f92672">+</span>email
+    params <span style="color:#f92672">=</span> reset_info<span style="color:#f92672">+</span><span style="color:#e6db74">&#34;&amp;sign=&#34;</span><span style="color:#f92672">+</span>sign_for_reset(reset_info)
+    <span style="color:#66d9ef">return</span> redirect(<span style="color:#e6db74">&#34;https://trevorsaudi.com/reset_password?&#34;</span><span style="color:#f92672">+</span>params, code<span style="color:#f92672">=</span><span style="color:#ae81ff">302</span>)
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    app<span style="color:#f92672">.</span>run()
+</code></pre></div><ul>
+<li>Hmac module is used to create a message authentication code (MAC) of the reset information. The MAC uses a secret key to sign the data. An attacker can’t generate a valid MAC without knowing the secret key, hence mitigating the vulnerability.</li>
+</ul>
+<blockquote>
+<p>[!NOTE]<br>
+Highlights information that users should take into account, even when skimming</p>
+</blockquote>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+      <div>
+        <br>
+        <div>
+          <h5 class="title is-small">Share to social media</h5>
+          <div>
+            <a class="share share-network-twitter" style="background-color:#008080;"><i class="fab fah fa-lg fa-twitter"></i><span>Twitter</span></a>
+            <a class="share share-network-facebook" style="background-color:#1877f2;"><i class="fab fah fa-lg fa-facebook-f"></i><span>Facebook</span></a>
+            <a class="share share-network-linkedin" style="background-color:#2B1B17;"><i class="fab fah fa-lg fa-linkedin"></i><span>LinkedIn</span></a>
+            <a class="share share-network-hackernews" style="background-color:#008000"><i class="fab fah fa-lg fa-hacker-news"></i><span>HackerNews</span></a>
+            <a class="share share-network-pinterest" style="background-color:#bd081c;"><i class="fab fah fa-lg fa-pinterest"></i><span>Pinterest</span></a>
+            <a class="share share-network-pocket" style="background-color:#7F38EC;"><i class="fab fah fa-lg fa-get-pocket"></i><span>Pocket</span></a>
+            <a class="share share-network-email" style="background-color:#333333;"><i class="far fah fa-lg fa-envelope"></i><span>Email</span></a>
+            <a class="share share-network-flipboard" style="background-color: #837E7C;"><i class="fab fah fa-lg fa-flipboard"></i><span>Flipboard</span></a>
+            <a class="share share-network-quora" style="background-color:#808000;"><i class="fab fah fa-lg fa-quora"></i><span>Quora</span></a>
+            <a class="share share-network-reddit" style="background-color: #581845
+            ;"><i class="fab fah fa-lg fa-reddit-alien"></i><span>Reddit</span></a>
+            <a class="share share-network-telegram" style="background-color:#000080;"><i class="fab fah fa-lg fa-telegram-plane"></i><span>Telegram</span></a>
+            <a class="share share-network-whatsapp" style="background-color:#E55451;"><i class="fab fah fa-lg fa-whatsapp"></i><span>Whatsapp</span></a>
+            <a class="share share-network-sms" style="background-color:#513B1C;"><i class="far fah fa-lg fa-comment-dots"></i><span>SMS</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="comments">
+        <div id="disqus_thread" pageConfig="[object Object]"></div>
+      </div>
+      
+      <div id="disqus_thread"></div>
+      <script>
+          
+
+          
+
+          (function() { 
+          var d = document, s = d.createElement('script');
+          s.src = 'https://engineer-dancun-personal-blog.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      
+      <br><br><br>
+      <footer>
+        &copy;  
+        Powered by <a href="https://github.com/gohugoio/hugo" target="_blank">Hugo
+      </footer>
+      <script type="application/ld+json">
+        {
+          "@context" : "http://schema.org",
+          "@type" : "Blog",
+          "name": " Engineer Dancun ",
+          "url" : "https://devopsengineerdan.github.io",
+          "image": "./static/avatar.jpg",
+          "description": "Software Engineer and Researcher"
+        }
+        </script>
+        <script id="dsq-count-scr" src="//engineer-dancun.disqus.com/count.js" async></script>
+    </main>
+  </body>
+</html>
+
 
