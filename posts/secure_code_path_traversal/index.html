@@ -1,1 +1,330 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Secure Code Review - Path Traversal Bugs // Engineer Dancun</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.92.2" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Dancun Manyinsa" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="https://devopsengineerdan.github.io/css/main.min.d5ed8558bcfb3aab1e3d1790fb902decbac1f989a0d27aa3b2a2320773186707.css" />
+    
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Secure Code Review - Path Traversal Bugs"/>
+<meta name="twitter:description" content="Table of Contents   Introduction Sample Vulnerable Code Overview  Functionality Source and Sink Vulnerability   Attack principle Impact Mitigations Conclusion  Introduction  In the second part of the secure code review series, we look at path traversal bugs. A pretty simple bug to exploit with a very high impact on vulnerable systems. The path/directory traversal bug allows an attacker to read arbitrary files on the server hosting the application."/>
+
+    <meta property="og:title" content="Secure Code Review - Path Traversal Bugs" />
+<meta property="og:description" content="Table of Contents   Introduction Sample Vulnerable Code Overview  Functionality Source and Sink Vulnerability   Attack principle Impact Mitigations Conclusion  Introduction  In the second part of the secure code review series, we look at path traversal bugs. A pretty simple bug to exploit with a very high impact on vulnerable systems. The path/directory traversal bug allows an attacker to read arbitrary files on the server hosting the application." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://devopsengineerdan.github.io/posts/secure_code_path_traversal/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-11-15T16:59:04+03:00" />
+<meta property="article:modified_time" content="2024-11-15T16:59:04+03:00" />
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://devopsengineerdan.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Dancun Manyinsa" /></a>
+      <h1>Engineer Dancun</h1>
+      <nav class="app-header-menu">
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/">Home</a>
+             - 
+          
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/tags/">Tags</a>
+             - 
+          
+          <a class="app-header-menu-item" href="https://devopsengineerdan.github.io/about/">About</a>
+      </nav>
+      <p>Software Engineer, Researcher(AI and Quantum Science), and Habitual Quant</p>
+      <div class="app-header-social">
+        
+          <a href="https://www.github.com/DancunManyinsa" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+          <a href="https://www.linkedin.com/in/dancun-manyinsa-42518a17b/" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-linkedin">
+  <title>Linkedin</title>
+  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle>
+</svg>
+          </a>
+        
+          <a href="mailto:dancunmoruri@gmail.com" target="_blank" rel="noreferrer noopener">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-link">
+  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Secure Code Review - Path Traversal Bugs</h1>
+      <div class="post-meta">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Nov 15, 2024
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          6 min read
+        </div>
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tag">
+  <title>tag</title>
+  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+</svg>
+              <a class="tag" href="https://devopsengineerdan.github.io/tags/cybersecurity/">cybersecurity</a>
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <hr>
+<p><img src="https://github.com/user-attachments/assets/0506d067-25c6-49af-8db1-d8b4c440677c" alt="code2"></p>
+<blockquote>
+<h3 id="table-of-contents">Table of Contents</h3>
+</blockquote>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#sample-vulnerable-code">Sample Vulnerable Code</a></li>
+<li><a href="#overview">Overview</a>
+<ul>
+<li><a href="#functionality">Functionality</a></li>
+<li><a href="#source-and-sink">Source and Sink</a></li>
+<li><a href="#vulnerability">Vulnerability</a></li>
+</ul>
+</li>
+<li><a href="#attack-principle">Attack principle</a></li>
+<li><a href="#impact">Impact</a></li>
+<li><a href="#mitigations">Mitigations</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<ul>
+<li>In the second part of the secure code review series, we look at <code>path traversal bugs</code>. A pretty simple bug to exploit with a very high impact on vulnerable systems.</li>
+<li>The path/directory traversal bug allows an attacker to read arbitrary files on the server hosting the application. The impact may lead to the loss of sensitive information like credentials, customer data etc.</li>
+<li>Let us look into some vulnerable Python code and see how this issue arises.</li>
+</ul>
+<h2 id="sample-vulnerable-code">Sample Vulnerable Code</h2>
+<ul>
+<li>Can you spot where the issue is?</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyServer</span>(BaseHTTPRequestHandler):
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">do_GET</span>(self):
+        cookies <span style="color:#f92672">=</span> SimpleCookie(self<span style="color:#f92672">.</span>headers<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;Auth-Token&#39;</span>))
+        <span style="color:#66d9ef">if</span> cookies<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;auth_id&#39;</span>):
+            username<span style="color:#f92672">=</span>open(cookies<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;auth_id&#39;</span>)<span style="color:#f92672">.</span>value)<span style="color:#f92672">.</span>readlines()[<span style="color:#ae81ff">0</span>]
+        <span style="color:#66d9ef">else</span>:
+            username<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;guest&#39;</span>
+        self<span style="color:#f92672">.</span>send_response(<span style="color:#ae81ff">200</span>)
+        self<span style="color:#f92672">.</span>send_header(<span style="color:#e6db74">&#34;Content-type&#34;</span>, <span style="color:#e6db74">&#34;text/html&#34;</span>)
+        self<span style="color:#f92672">.</span>end_headers()
+        self<span style="color:#f92672">.</span>wfile<span style="color:#f92672">.</span>write(bytes(<span style="color:#e6db74">&#34;&lt;html&gt;&lt;head&gt;&lt;title&gt;Welcome&lt;/title&gt;&lt;/head&gt;&#34;</span>, <span style="color:#e6db74">&#34;utf-8&#34;</span>))
+        self<span style="color:#f92672">.</span>wfile<span style="color:#f92672">.</span>write(bytes(<span style="color:#e6db74">&#34;&lt;body&gt;&#34;</span>, <span style="color:#e6db74">&#34;utf-8&#34;</span>))
+        self<span style="color:#f92672">.</span>wfile<span style="color:#f92672">.</span>write(bytes(<span style="color:#e6db74">&#34;&lt;h1&gt;Hello </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&lt;/h1&gt;&#34;</span> <span style="color:#f92672">%</span> username, <span style="color:#e6db74">&#34;utf-8&#34;</span>))
+        self<span style="color:#f92672">.</span>wfile<span style="color:#f92672">.</span>write(bytes(<span style="color:#e6db74">&#34;&lt;p&gt;This is a protected area, please provide valid token to access&lt;/p&gt;&#34;</span>, <span style="color:#e6db74">&#34;utf-8&#34;</span>))
+        self<span style="color:#f92672">.</span>wfile<span style="color:#f92672">.</span>write(bytes(<span style="color:#e6db74">&#34;&lt;/body&gt;&lt;/html&gt;&#34;</span>, <span style="color:#e6db74">&#34;utf-8&#34;</span>))
+</code></pre></div><h2 id="overview">Overview</h2>
+<ul>
+<li>Let us look at what the application does, discuss a technique for tracing user input and then identify our vulnerability.</li>
+</ul>
+<h3 id="functionality">Functionality</h3>
+<ul>
+<li>We have one class containing a method called <code>do_GET</code>.</li>
+<li>From the <a href="https://docs.python.org/3/library/http.server.html#http.server.SimpleHTTPRequestHandler.do_GET">python documentation</a>, the method works by mapping a request to a local file by interpreting the request as a path relative to the working directory.</li>
+<li>This method is contained with the <code>http.server</code> in-built module.</li>
+<li>We begin by retrieving the value of the header ‘Auth-Token’ and creating a <code>SimpleCookie</code> object.</li>
+<li>We then check if there is a cookie named <code>auth_id</code> in the request headers by using the <code>get()</code> method of the SimpleCookie object. When such a cookie is present, the open function <code>opens a file with the value of the cookie as its name</code>, reads the first line of that file, and assigns it to the username variable. When the cookie is not present, the username variable is assigned the value of <code>guest</code>.</li>
+</ul>
+<h3 id="source-and-sink">Source and Sink</h3>
+<ul>
+<li>This terminology is commonly used in data flow analysis and can be applied to the analysis of code. A source is where data comes from while a sink is where data ends. Therefore, we approach our analysis by looking for <code>any areas of the application where a user can input data</code>, then look at how the data is being handled. Spot any <code>dangerous functions</code> that handle the user input. Are there any ways of exploiting these functions?</li>
+</ul>
+<h3 id="vulnerability">Vulnerability</h3>
+<ul>
+<li>Let us apply the above method in finding the issue with the code.</li>
+<li>We have this line where we get the header of Auth-Token.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">    cookies <span style="color:#f92672">=</span> SimpleCookie(self<span style="color:#f92672">.</span>headers<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;Auth-Token&#39;</span>))
+</code></pre></div><ul>
+<li>A user can change the value of the Auth-Token ID and supply the request to the server with their own data. But this is not helpful because that data is not processed by any dangerous function in the code.</li>
+<li>The other part of the code where we receive user input is.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">    username<span style="color:#f92672">=</span>open(cookies<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;auth_id&#39;</span>)<span style="color:#f92672">.</span>value)<span style="color:#f92672">.</span>readlines()[<span style="color:#ae81ff">0</span>]
+</code></pre></div><ul>
+<li>We are getting the value of the auth_id cookie. This data can be modified by a user before sending it to the server. Being a point of input, let us look at any dangerous functions in use.</li>
+<li>The data is passed to the <code>open</code> function that <code>opens a file and returns a file object</code>. Because we can edit into the cookie value, it makes it possible that <code>we can supply a file outside the web root directory</code> in the server and a file object will be returned and we can read information from the server.</li>
+<li>In a nutshell, that is how such a bug can occur in an application. How can this be exploited?</li>
+</ul>
+<h2 id="attack-principle">Attack principle</h2>
+<ol>
+<li>We modify a request being sent to the server and change the “auth_id” cookie to a value such as <code>'../../../etc/passwd'</code></li>
+<li>The server processes the request by parsing that value and using the <code>open</code> function to load the directory. The <code>../</code> character allows the attacker to move upward the directory tree.</li>
+<li>The object is accessed and returned to the body.</li>
+</ol>
+<ul>
+<li>The example below shows how the attack works in real-time. Using the python3 IDLE terminal, we can use the open function to read the etc passwd directory as shown:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">&gt;&gt;&gt;</span> open(<span style="color:#e6db74">&#39;../../../etc/passwd&#39;</span>)<span style="color:#f92672">.</span>readlines()[<span style="color:#ae81ff">0</span>]
+<span style="color:#e6db74">&#39;root: x:0:0:root:/root:/usr/bin/zsh</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>
+<span style="color:#f92672">&gt;&gt;&gt;</span>
+</code></pre></div><h2 id="impact">Impact</h2>
+<ol>
+<li><code>Arbitrary File read</code>:` An attacker can read files on the system with the permissions the web server is running on. This could lead to the disclosure of sensitive info.</li>
+<li><code>Remote Code Execution</code>: Typically, this vulnerability exists commonly in applications that allow one to upload files. An attacker could potentially upload malware to a server and use the path traversal vuln to execute the file gaining remote code execution on a server.</li>
+</ol>
+<h2 id="mitigations">Mitigations</h2>
+<ol>
+<li>Input validation/ Sanitizing user input</li>
+</ol>
+<ul>
+<li>In this method, we patch the issue by sanitizing any foreign characters that may be sent as part of the cookie such as the <code>../</code>.</li>
+<li>A good way to implement input validation is by <code>combining it with different security measures</code>.</li>
+<li>In the example below, we filter the <code>..</code> by ensuring those characters do not appear in the cookie:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> os
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyServer</span>(BaseHTTPRequestHandler):
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">do_GET</span>(self):
+      cookies <span style="color:#f92672">=</span> SimpleCookie(self<span style="color:#f92672">.</span>headers<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;Auth-Token&#39;</span>))
+      <span style="color:#66d9ef">if</span> cookies<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;auth_id&#39;</span>):
+        auth_id <span style="color:#f92672">=</span> cookies<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;auth_id&#39;</span>)<span style="color:#f92672">.</span>value
+        <span style="color:#66d9ef">if</span> <span style="color:#e6db74">&#34;..&#34;</span> <span style="color:#f92672">in</span> auth_id <span style="color:#f92672">or</span> <span style="color:#f92672">not</span> auth_id<span style="color:#f92672">.</span>isalnum():
+          self<span style="color:#f92672">.</span>send_response(<span style="color:#ae81ff">400</span>)
+       <span style="color:#f92672">.</span>
+       <span style="color:#f92672">.</span>
+       <span style="color:#f92672">.</span>
+       <span style="color:#66d9ef">return</span>
+       username<span style="color:#f92672">=</span>open(auth_id)<span style="color:#f92672">.</span>readlines()[<span style="color:#ae81ff">0</span>]
+      <span style="color:#66d9ef">else</span>:
+        username<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;stranger&#39;</span>
+        self<span style="color:#f92672">.</span>send_response(<span style="color:#ae81ff">200</span>)
+       <span style="color:#f92672">.</span>
+       <span style="color:#f92672">.</span>
+       <span style="color:#f92672">.</span>
+</code></pre></div><blockquote>
+<p><strong>Alert</strong> The problem with this implementation is the filter can be bypassed e.g using <code>URL encoded characters like %2e%2e which represents a dot(.)</code> and other methods.</p>
+</blockquote>
+<ul>
+<li>Input validating for those URL-encoded characters and other potential bypasses <code>is not enough</code> because attackers are constantly finding new creative ways to bypass filters.</li>
+</ul>
+<ol start="2">
+<li>Whitelisting</li>
+</ol>
+<ul>
+<li>This makes it way harder to perform a path traversal because only a select number of paths are allowed. It prevents one from accessing any other files. In the example below we use an array called whitelist which contains the directories the user can access.</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyServer</span>(BaseHTTPRequestHandler):
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">do_GET</span>(self):
+      cookies <span style="color:#f92672">=</span> SimpleCookie(self<span style="color:#f92672">.</span>headers<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;Cookie&#39;</span>))
+      <span style="color:#66d9ef">if</span> cookies<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;session_id&#39;</span>):
+        session_id <span style="color:#f92672">=</span> cookies<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;session_id&#39;</span>)<span style="color:#f92672">.</span>value
+        whitelist <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#34;/path/to/file1&#34;</span>, <span style="color:#e6db74">&#34;/path/to/file2&#34;</span>, <span style="color:#e6db74">&#34;/path/to/file3&#34;</span>]
+        <span style="color:#66d9ef">if</span> session_id <span style="color:#f92672">not</span> <span style="color:#f92672">in</span> whitelist:
+          self<span style="color:#f92672">.</span>send_response(<span style="color:#ae81ff">404</span>)
+          <span style="color:#f92672">.</span>
+          <span style="color:#f92672">.</span>
+          <span style="color:#f92672">.</span>
+          <span style="color:#66d9ef">return</span>
+        username<span style="color:#f92672">=</span>open(session_id)<span style="color:#f92672">.</span>readlines()[<span style="color:#ae81ff">0</span>]
+
+      <span style="color:#66d9ef">else</span>:
+        username<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;stranger&#39;</span>
+</code></pre></div><ol start="3">
+<li>Principle of least privilege</li>
+</ol>
+<ul>
+<li>Ensure the web server user is running with only the minimum necessary privileges. This reduces the impact of the vulnerability.</li>
+</ul>
+<ol start="4">
+<li>Sandboxing</li>
+</ol>
+<ul>
+<li>Sandbox environments are hardened environments that create a string boundary between the running programs and the operating system.</li>
+<li>Even if an attacker were to gain access, they won’t be able to reach other areas of the system, network, OS etc.</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<ul>
+<li>The path traversal bug is very simple to exploit and is still occurring in modern applications. We discussed a few use cases but there’s still a tonne of possible scenarios that may lead to this bug.</li>
+<li>This has been captured in the <a href="https://www.cvedetails.com/vulnerability-list/opdirt-1/directory-traversal.html">CVE details</a> website, with cases stemming as late as 26th January 2023.</li>
+</ul>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+      <div>
+        <br>
+        <div>
+          <h5 class="title is-small">Share to social media</h5>
+          <div>
+            <a class="share share-network-twitter" style="background-color:#008080;"><i class="fab fah fa-lg fa-twitter"></i><span>Twitter</span></a>
+            <a class="share share-network-facebook" style="background-color:#1877f2;"><i class="fab fah fa-lg fa-facebook-f"></i><span>Facebook</span></a>
+            <a class="share share-network-linkedin" style="background-color:#2B1B17;"><i class="fab fah fa-lg fa-linkedin"></i><span>LinkedIn</span></a>
+            <a class="share share-network-hackernews" style="background-color:#008000"><i class="fab fah fa-lg fa-hacker-news"></i><span>HackerNews</span></a>
+            <a class="share share-network-pinterest" style="background-color:#bd081c;"><i class="fab fah fa-lg fa-pinterest"></i><span>Pinterest</span></a>
+            <a class="share share-network-pocket" style="background-color:#7F38EC;"><i class="fab fah fa-lg fa-get-pocket"></i><span>Pocket</span></a>
+            <a class="share share-network-email" style="background-color:#333333;"><i class="far fah fa-lg fa-envelope"></i><span>Email</span></a>
+            <a class="share share-network-flipboard" style="background-color: #837E7C;"><i class="fab fah fa-lg fa-flipboard"></i><span>Flipboard</span></a>
+            <a class="share share-network-quora" style="background-color:#808000;"><i class="fab fah fa-lg fa-quora"></i><span>Quora</span></a>
+            <a class="share share-network-reddit" style="background-color: #581845
+            ;"><i class="fab fah fa-lg fa-reddit-alien"></i><span>Reddit</span></a>
+            <a class="share share-network-telegram" style="background-color:#000080;"><i class="fab fah fa-lg fa-telegram-plane"></i><span>Telegram</span></a>
+            <a class="share share-network-whatsapp" style="background-color:#E55451;"><i class="fab fah fa-lg fa-whatsapp"></i><span>Whatsapp</span></a>
+            <a class="share share-network-sms" style="background-color:#513B1C;"><i class="far fah fa-lg fa-comment-dots"></i><span>SMS</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="comments">
+        <div id="disqus_thread" pageConfig="[object Object]"></div>
+      </div>
+      
+      <div id="disqus_thread"></div>
+      <script>
+          
+
+          
+
+          (function() { 
+          var d = document, s = d.createElement('script');
+          s.src = 'https://engineer-dancun-personal-blog.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+      </script>
+      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+      
+      <br><br><br>
+      <footer>
+        &copy;  
+        Powered by <a href="https://github.com/gohugoio/hugo" target="_blank">Hugo
+      </footer>
+      <script type="application/ld+json">
+        {
+          "@context" : "http://schema.org",
+          "@type" : "Blog",
+          "name": " Engineer Dancun ",
+          "url" : "https://devopsengineerdan.github.io",
+          "image": "./static/avatar.jpg",
+          "description": "Software Engineer and Researcher"
+        }
+        </script>
+        <script id="dsq-count-scr" src="//engineer-dancun.disqus.com/count.js" async></script>
+    </main>
+  </body>
+</html>
 
